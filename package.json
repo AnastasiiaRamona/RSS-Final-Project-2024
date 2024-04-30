@@ -31,11 +31,8 @@
   },
   "scripts": {
     "start": "webpack serve --open --config ./webpack.config.js --env mode=dev",
-    "build": "webpack --config ./webpack.config.js --env mode=prod",
-    "lint": "eslint -c ./.eslintrc.json . --ext .ts",
-    "format": "prettier **/*.ts --write --config ./.prettierrc.json",
-    "ci:format": "prettier **/*.ts --check --config ./.prettierrc.json",
-    "prepare": "cd ../ && husky ./RSS-Final-Project-2024/.husky"
+    "build": "webpack --config ./webpack.config.js --env mode=prod"
+
   },
   "validate-branch-name": {
     "pattern": "^RSS-ECOMM-[1-4]_[1-9]{2}$",
