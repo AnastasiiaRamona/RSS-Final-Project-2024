@@ -1,2 +1,2 @@
 npx validate-branch-name
-npx eslint .
+npm run lint
