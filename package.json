@@ -40,6 +40,7 @@
     "lint": "eslint -c ./.eslintrc.json . --ext .ts",
     "format": "prettier **/*.ts --write --config ./.prettierrc.json",
     "ci:format": "prettier **/*.ts --check --config ./.prettierrc.json",
+    "test": "jest",
     "prepare": "husky"
   },
   "validate-branch-name": {
