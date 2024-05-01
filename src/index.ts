@@ -1,3 +1,5 @@
+import './global.scss';
+
 // For test
 
 // console.log('Hello World');
