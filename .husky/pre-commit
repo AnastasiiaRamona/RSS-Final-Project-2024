@@ -1,2 +1,2 @@
-npx prettier --write "**/*.ts"
+npm run format
 git add -A
