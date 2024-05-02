@@ -1,7 +1,1 @@
-export default class App {
-  constructor() {
-  }
-
-  render() {
-  }
-}
+export default class App {}

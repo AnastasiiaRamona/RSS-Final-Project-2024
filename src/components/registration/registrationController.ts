@@ -1,4 +1,4 @@
-import RegistrationModel from "./registrationModel";
+import RegistrationModel from './registrationModel';
 
 export default class RegistrationController {
   model: RegistrationModel;

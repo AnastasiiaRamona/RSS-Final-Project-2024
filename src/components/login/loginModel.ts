@@ -1,3 +1,1 @@
-export default class LoginModel {
-
-}
+export default class LoginModel {}

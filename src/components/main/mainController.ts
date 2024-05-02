@@ -1,4 +1,4 @@
-import MainModel from "./mainModel";
+import MainModel from './mainModel';
 
 export default class MainController {
   model: MainModel;

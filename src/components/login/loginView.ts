@@ -1,5 +1,5 @@
-import HTMLCreation from "../HTMLCreation";
-import LoginController from "./loginController";
+import HTMLCreation from '../HTMLCreation';
+import LoginController from './loginController';
 
 export default class Login {
   controller: LoginController;
@@ -9,10 +9,13 @@ export default class Login {
   }
 
   renderPage() {
-    HTMLCreation.createElement('h1', { class: 'title'}, ['Online-shop']); // For example
+    HTMLCreation.createElement('h1', { class: 'title' }, ['Online-shop']); // For example
+    const a = this.controller; // For example
+    return a;
   }
 
   addEventListeners() {
-    
+    const a = this.controller; // For example
+    return a;
   }
 }

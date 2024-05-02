@@ -1,3 +1,1 @@
-export default class RegistrationModel {
-  
-}
+export default class RegistrationModel {}

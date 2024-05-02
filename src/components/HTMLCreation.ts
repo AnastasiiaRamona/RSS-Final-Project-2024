@@ -2,7 +2,7 @@ export default class HTMLCreation {
   static createElement(
     tagName: string,
     attributes: { [key: string]: string },
-    children: (HTMLElement | HTMLInputElement | string | null | undefined)[] = [],
+    children: (HTMLElement | HTMLInputElement | string | null | undefined)[] = []
   ): HTMLElement | HTMLInputElement {
     const element = document.createElement(tagName);
 
