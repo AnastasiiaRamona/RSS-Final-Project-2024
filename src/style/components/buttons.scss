@@ -1,0 +1,11 @@
+button {
+  @include font('Arial', clamp(22px, 7vw, 32px), 600, 1.5, $black);
+  text-transform: uppercase;
+  padding: 10px 20px;
+  background-color: $btn-bca-color;
+  border-radius: 4px;
+  @include size(200px, auto);
+  margin-bottom: 10px;
+  margin-top: 10px;
+  transition: all 0.5s linear;
+}

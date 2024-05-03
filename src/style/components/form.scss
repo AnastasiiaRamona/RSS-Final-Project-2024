@@ -1,0 +1,8 @@
+.form {
+  @include flexbox(column);
+  padding: 20px 40px;
+  background-color: $form-bca-color;
+  max-width: 400px;
+  border-radius: 25px;
+  border: $primary-color 2px solid;
+}
