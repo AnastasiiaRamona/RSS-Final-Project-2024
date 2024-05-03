@@ -1,4 +1,4 @@
-input {
+.input {
   @include font('Arial', clamp(18px, 4vw, 25px), 500, 1.5, #333333);
   padding: 10px 15px 10px 10px;
   border-radius: 10px;
