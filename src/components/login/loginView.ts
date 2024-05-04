@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import HTMLCreation from '../HTMLCreation';
 import LoginController from './loginController';
 
@@ -8,7 +9,7 @@ export default class Login {
     this.controller = new LoginController();
   }
 
-  renderPage() {
+  static renderPage() {
     const loginWrapper = HTMLCreation.createElement('section', { class: 'login__wrapper' }, [
       HTMLCreation.createElement(
         'form',
