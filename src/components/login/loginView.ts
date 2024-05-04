@@ -14,23 +14,43 @@ export default class Login {
         'form',
         {
           id: 'loginform',
-          class: 'login__form',
+          class: 'login__form form',
         },
         [
-          HTMLCreation.createElement('input', { type: 'text', placeholder: 'Username', class: 'login__username' }),
-          HTMLCreation.createElement('input', { type: 'password', placeholder: 'Password', class: 'login__password' }),
-          HTMLCreation.createElement('button', { type: 'submit', value: 'Login', class: 'login__submit-button' }),
+          HTMLCreation.createElement('input', { type: 'text', placeholder: 'Email', class: 'login__email input' }),
+          HTMLCreation.createElement('input', {
+            type: 'password',
+            placeholder: 'Password',
+            class: 'login__password input',
+          }),
+          HTMLCreation.createElement(
+            'button',
+            { type: 'submit', form: 'loginform', class: 'login__submit-button button' },
+            [`LOGIN`]
+          ),
+          HTMLCreation.createElement('button', { class: 'login__registration-button button' }, ['Registration']),
         ]
       ),
     ]);
 
-    const registrationButton = HTMLCreation.createElement('div', { class: 'login__registration-wrapper' }, [
-      HTMLCreation.createElement('button', { class: 'login__registration-button' }, ['Registration']),
-    ]);
-
-    const main = HTMLCreation.createElement('main', {}, [loginWrapper, registrationButton]);
-
+    const main = HTMLCreation.createElement('main', {}, [loginWrapper]);
     const body = document.querySelector('body') as HTMLElement;
     body.append(main);
+    return main;
+  }
+
+  addEventListeners() {
+    const nameInput = document.querySelector('.login__email') as HTMLInputElement;
+    const passwordInput = document.querySelector('.login__password') as HTMLInputElement;
+    const submitButtonInput = document.querySelector('.login__submit-button') as HTMLInputElement;
+    nameInput?.addEventListener('input', (event) => {
+      this.controller.updateButtonValidity(submitButtonInput, nameInput, passwordInput);
+      this.controller.validateEmailInput(event);
+    });
+
+    passwordInput?.addEventListener('input', (event) => {
+      this.controller.updateButtonValidity(submitButtonInput, nameInput, passwordInput);
+      this.controller.validatePasswordInput(event);
+    });
   }
 }

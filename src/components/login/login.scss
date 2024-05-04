@@ -1,4 +1,21 @@
 
+@import '../../style/components/buttons';
+@import '../../style/components/form';
+@import '../../style/components/input';
+
+
 .login__wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20svh;
+}
+
+.login__form {
   @include flexbox(column);
+  gap: 7px;
+}
+
+.login__registration-button {
+  font-size: clamp(15px, 7vw, 22px);
 }
