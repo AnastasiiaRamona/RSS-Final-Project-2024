@@ -1,5 +1,5 @@
 class FormValidate {
-  inputs: NodeListOf<HTMLInputElement>;
+  private inputs: NodeListOf<HTMLInputElement>;
 
   constructor() {
     this.inputs = document.querySelectorAll('.input');
@@ -7,7 +7,7 @@ class FormValidate {
 
   checkValidate(): void {
     this.inputs.forEach((input: HTMLInputElement) => {
-      input.addEventListener('input', (event) => {
+      input.addEventListener('input', (event: Event) => {
         const element: HTMLInputElement = event.target as HTMLInputElement;
         const { value } = element;
         if (element.classList.contains('input-mail')) {
@@ -55,17 +55,21 @@ class FormValidate {
           }
         }
         if (element.classList.contains('input-code')) {
-          if (!(/^\d{5}$/.test(value) || /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(value))) {
-            element.setCustomValidity(
-              'Postal code should be in the format "12345" for the USA or "A1B 2C3" for Canada.'
-            );
+          if (
+            !(
+              /^\d{5}$/.test(value) ||
+              /^([A-Za-z]{1,2}\d{1,2}|[A-Za-z]\d[A-Za-z]\d[A-Za-z])$/.test(value) ||
+              /^\d{5}$/.test(value)
+            )
+          ) {
+            element.setCustomValidity('Enter the correct code');
           } else {
             element.setCustomValidity('');
           }
         }
-        if (element.classList.contains('input-сountry')) {
-          if (!(/^\d{5}$/.test(value) || /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(value))) {
-            element.setCustomValidity('US and Canada only');
+        if (element.classList.contains('input-country')) {
+          if (!/(United Kingdom|Germany|United States)/.test(value)) {
+            element.setCustomValidity('Select one country from the list');
           } else {
             element.setCustomValidity('');
           }

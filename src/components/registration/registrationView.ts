@@ -98,9 +98,18 @@ export default class Registration {
   inputCountry: HTMLInputElement | HTMLElement = HTMLCreation.createElement('input', {
     type: 'text',
     class: 'input-country input',
-    placeholder: 'country',
+    placeholder: 'select one country',
     required: 'true',
+    list: 'countryList',
   });
+
+  datalist: HTMLElement = HTMLCreation.createElement('datalist', { id: 'countryList' });
+
+  optionUSA: HTMLElement = HTMLCreation.createElement('option', { value: 'United States' });
+
+  optionGermany: HTMLElement = HTMLCreation.createElement('option', { value: 'Germany' });
+
+  optionUK: HTMLElement = HTMLCreation.createElement('option', { value: 'United Kingdom' });
 
   buttonRegistration: HTMLElement = HTMLCreation.createElement('button', { class: 'button button-registration' }, [
     'registration',
@@ -123,14 +132,18 @@ export default class Registration {
     this.fieldset.appendChild(this.inputSurname);
     this.fieldset.appendChild(this.labelDate);
     this.fieldset.appendChild(this.inputDate);
+    this.fieldset.appendChild(this.labelCountry);
+    this.fieldset.appendChild(this.inputCountry);
+    this.fieldset.appendChild(this.datalist);
+    this.datalist.appendChild(this.optionUK);
+    this.datalist.appendChild(this.optionUSA);
+    this.datalist.appendChild(this.optionGermany);
     this.fieldset.appendChild(this.labelStreet);
     this.fieldset.appendChild(this.inputStreet);
     this.fieldset.appendChild(this.labelPostalCode);
     this.fieldset.appendChild(this.inputPostalCode);
     this.fieldset.appendChild(this.labelCity);
     this.fieldset.appendChild(this.inputCity);
-    this.fieldset.appendChild(this.labelCountry);
-    this.fieldset.appendChild(this.inputCountry);
     this.fieldset.appendChild(this.buttonRegistration);
   }
 }

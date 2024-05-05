@@ -47,7 +47,7 @@
     "prepare": "husky"
   },
   "validate-branch-name": {
-    "pattern": "^RSS-ECOMM-[1-4]_[1-9]{2}$",
+    "pattern": "^RSS-ECOMM-[1-4]_(0[1-9]|[1-9][0-9])$",
     "errorMsg": "The name of the branch doesn't follow repository rules"
   }
 }

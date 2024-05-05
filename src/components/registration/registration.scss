@@ -23,3 +23,7 @@
 .legend-registration {
   @include font('Arial', clamp(16px, 5vw, 24px), bold, 1.5, $success-color);
 }
+
+.datalist {
+  background-color: red;
+}
