@@ -6,4 +6,9 @@ export default class LoginController {
   constructor() {
     this.model = new LoginModel();
   }
+
+  async login(email: string, password: string) {
+    const result = await this.model.login(email, password);
+    return result;
+  }
 }
