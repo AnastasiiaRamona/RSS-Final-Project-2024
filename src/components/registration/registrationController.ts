@@ -1,9 +1,9 @@
-import RegistrationModel from './registrationModel';
+// import RegistrationModel from './registrationModel';
 
-export default class RegistrationController {
-  model: RegistrationModel;
+// export default class RegistrationController {
+//   model: RegistrationModel;
 
-  constructor() {
-    this.model = new RegistrationModel();
-  }
-}
+//   constructor() {
+//     this.model = new RegistrationModel();
+//   }
+// }

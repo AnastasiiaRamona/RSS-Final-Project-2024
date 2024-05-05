@@ -1,0 +1,25 @@
+@import '../../style/components/buttons.scss';
+@import '../../style/components/form.scss';
+@import '../../style/components/input.scss';
+@import '../../style/components/label.scss';
+
+.title-registration {
+  @include font('Arial', clamp(32px, 8vw, 70px), bold, 1.5, $white);
+}
+.registration-bca {
+  background: $bca-gradient;
+  height: 100vh;
+  @include flexbox(column, center, center);
+}
+.container {
+  @include container($max-width: 1200px, $padding: 15px, $margin: 0 auto);
+  @include flexbox(column, center, center);
+}
+
+.fieldset-registration {
+  @include flexbox(column, center, center);
+}
+
+.legend-registration {
+  @include font('Arial', clamp(16px, 5vw, 24px), bold, 1.5, $success-color);
+}
