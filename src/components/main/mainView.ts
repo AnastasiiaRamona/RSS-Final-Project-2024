@@ -8,11 +8,17 @@ export default class Main {
     this.controller = new MainController();
   }
 
-  renderPage() {
-    HTMLCreation.createElement('h1', { class: 'title' }, ['Online-shop']); // For example
-    const a = this.controller; // For example
-    return a;
+  renderHeader() {
+    const header = HTMLCreation.createElement('header', { class: 'upper-dashboard' }, [
+      HTMLCreation.createElement('button', { class: 'upper-dashboard__logout-button' }, ['Log out']),
+      HTMLCreation.createElement('button', { class: 'upper-dashboard__register-button' }, ['Register a new user']),
+    ]);
+    return header;
   }
+
+  // renderPage() {
+
+  // }
 
   addEventListeners() {
     const a = this.controller; // For example
