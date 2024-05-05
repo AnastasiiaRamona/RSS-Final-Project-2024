@@ -50,7 +50,8 @@ export default class Login {
     const nameInput = document.querySelector('.login__email') as HTMLInputElement;
     const passwordInput = document.querySelector('.login__password') as HTMLInputElement;
     const submitButtonInput = document.querySelector('.login__submit-button') as HTMLInputElement;
-    const passwordButtonControl = document.querySelector('login__password-control') as HTMLInputElement;
+    // const passwordButtonControl = document.querySelector('login__password-control') as HTMLInputElement;
+
     nameInput?.addEventListener('input', (event) => {
       this.controller.updateButtonValidity(submitButtonInput, nameInput, passwordInput);
       this.controller.validateEmailInput(event);
@@ -60,5 +61,7 @@ export default class Login {
       this.controller.updateButtonValidity(submitButtonInput, nameInput, passwordInput);
       this.controller.validatePasswordInput(event);
     });
+
+    // passwordButtonControl.addEventListener('click', ())
   }
 }
