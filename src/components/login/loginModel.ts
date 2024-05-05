@@ -25,6 +25,8 @@ export default class LoginModel {
     if (!/\d/.test(password)) return 'Password should contain at least one digit.';
     if (!/[a-z]/.test(password)) return 'Password should contain at least one lowercase letter.';
     if (!/[A-Z]/.test(password)) return 'Password should contain at least one uppercase letter.';
+    if (!/[\W_]/.test(password)) return 'Password should contain at least one special character.';
+    if (!/^\S.*\S$/.test(password)) return 'Password must not contain leading or trailing whitespace.';
     return '';
   }
 }
