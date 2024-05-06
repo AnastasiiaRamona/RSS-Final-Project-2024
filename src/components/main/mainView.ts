@@ -21,8 +21,8 @@ export default class Main {
         ]),
       ]),
       HTMLCreation.createElement('div', { class: 'upper-dashboard__buttons' }, [
-        HTMLCreation.createElement('button', { class: 'upper-dashboard__logout-button' }, ['Log out']),
-        HTMLCreation.createElement('button', { class: 'upper-dashboard__register-button' }, ['Register a new user']),
+        HTMLCreation.createElement('button', { class: 'upper-dashboard__logout-button' }, ['Login']),
+        HTMLCreation.createElement('button', { class: 'upper-dashboard__register-button' }, ['Register']),
         HTMLCreation.createElement('img', {
           class: 'upper-dashboard__image',
           src: dogPath,
