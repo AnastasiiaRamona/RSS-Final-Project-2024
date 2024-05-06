@@ -22,6 +22,13 @@ img {
 a {
   text-decoration: none;
   cursor: pointer;
+  color: white;
+  transition: transform 0.2s ease-in-out;
+}
+
+a:hover {
+  transform: translateY(-1.5px);
+  color: gainsboro;
 }
 
 ul {
@@ -41,8 +48,8 @@ h6 {
 p {
   margin: 0;
 }
-button {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-}
+// button {
+//   background-color: transparent;
+//   border: none;
+//   cursor: pointer;
+// }
