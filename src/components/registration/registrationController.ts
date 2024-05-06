@@ -6,4 +6,9 @@ export default class RegistrationController {
   constructor() {
     this.model = new RegistrationModel();
   }
+
+  async getRegistration(email: string, password: string) {
+    const result = await this.model.register(email, password);
+    return result;
+  }
 }
