@@ -54,20 +54,14 @@ class FormValidate {
         }
       }
       if (element.classList.contains('input-code')) {
-        if (
-          !(
-            /^\d{5}$/.test(value) ||
-            /^([A-Za-z]{1,2}\d{1,2}|[A-Za-z]\d[A-Za-z]\d[A-Za-z])$/.test(value) ||
-            /^\d{5}$/.test(value)
-          )
-        ) {
+        if (!/^\d{5}$/.test(value)) {
           element.setCustomValidity('Enter the correct code');
         } else {
           element.setCustomValidity('');
         }
       }
       if (element.classList.contains('input-country')) {
-        if (!/(United Kingdom|Germany|United States)/.test(value)) {
+        if (!/(Italy|Germany|United States)/.test(value)) {
           element.setCustomValidity('Select one country from the list');
         } else {
           element.setCustomValidity('');
@@ -75,7 +69,7 @@ class FormValidate {
       }
 
       if (element.classList.contains('input-date')) {
-        const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
+        const dateRegex = /^(0[1-9]|[1-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4}$/;
         if (!dateRegex.test(value)) {
           element.setCustomValidity('Enter the date in the format DD.MM.YYYY');
         } else {

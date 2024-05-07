@@ -4,7 +4,7 @@ import FormValidate from './registrationController';
 
 export default class Registration {
   renderDatalist() {
-    const countries = ['United States', 'Germany', 'United Kingdom'];
+    const countries = ['United States', 'Germany', 'Italy'];
     const options = countries.map((country) => HTMLCreation.createElement('option', { value: country }));
     return HTMLCreation.createElement('datalist', { id: 'countryList' }, options);
   }
@@ -33,7 +33,7 @@ export default class Registration {
         placeholder: 'username',
         required: 'true',
       }),
-      HTMLCreation.createElement('label', { class: 'label label-surname' }, ['Tsurname']),
+      HTMLCreation.createElement('label', { class: 'label label-surname' }, ['Surname']),
       HTMLCreation.createElement('input', {
         type: 'text',
         class: 'input-surname input',
