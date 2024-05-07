@@ -1,8 +1,14 @@
 class FormValidate {
   private form: HTMLFormElement;
 
+  private inputs: NodeListOf<HTMLInputElement>;
+
   constructor() {
     this.form = document.querySelector('.form-registration') as HTMLFormElement;
+    this.inputs = document.querySelectorAll('.input');
+    this.inputs.forEach((input) => {
+      input.setCustomValidity('required field');
+    });
   }
 
   checkValidate(): void {
