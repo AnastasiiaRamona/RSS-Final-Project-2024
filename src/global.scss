@@ -1,0 +1,7 @@
+@import './style/utilities/mixins.scss';
+
+body {
+  @include image("./assets/background-image.jpg", $position: top, $size: cover, $repeat: no-repeat, $width: auto, $height: auto);
+  background-attachment: fixed;
+  margin: 0;
+}

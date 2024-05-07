@@ -1,0 +1,83 @@
+@import '../../style/utilities/variables.scss';
+@import '../../style/utilities/mixins.scss';
+@import '../../style/components/buttons.scss';
+@import '../../style/base/base.scss';
+
+.heading-and-image {
+  @include flexbox(row, normal, flex-end);
+}
+
+.title {
+  @include font($secondary-font-family, 44px, $font-weight-bold, normal, $primary-color);
+  text-shadow: 0 4px 6px rgba(232, 232, 232, 0.848);
+}
+
+.subtitle {
+  @include font($secondary-font-family, medium, normal, normal, $white);
+  text-shadow: 0 4px 2px rgba(61, 58, 58, 0.915);
+}
+
+.cat-image {
+  @include size(auto, 12vh);
+}
+
+.upper-dashboard {
+  @include flexbox(row, space-around, center);
+  background: $bca-gradient;
+  @include size(100vw, 15vh);
+  border-bottom: 1px solid $white;
+}
+
+.upper-dashboard__buttons {
+  @include flexbox(row, space-around);
+  gap: 10px;
+}
+
+.upper-dashboard__image {
+  @include size(auto, 15vh);
+}
+
+.main-field {
+  @include flexbox(row, space-between)
+}
+
+.left-dashboard {
+  @include flexbox(column, center, stretch);
+  gap: 5vh;
+  padding: 3vh;
+  background: $bca-gradient-second;
+  border-left: 1px solid $white;
+}
+
+.footer-dashboard {
+  @include image("./assets/background-image-2.jpg", 100vw, 13vh);
+  border-top: 1px solid $white;
+  @include flexbox(row, space-between, center);
+  color: $white;
+  @include font($third-font-family, medium, normal, normal, $white);
+  padding: 0 20px;
+}
+
+.footer-dashboard__links {
+  @include flexbox(column, center, flex-start);
+}
+
+.main-area {
+  @include size(80vw, auto);
+  @include flexbox(column, center, center);
+}
+
+.main-area__text {
+  @include size(50vw, auto);
+  @include font($third-font-family, xx-large, normal, normal, $primary-color);
+  text-align: center;
+  background-color: $white;
+  padding: 10px 0;
+  border-radius: 20px;
+  box-shadow: 0 4px 2px rgba(61, 58, 58, 0.915);
+  transition: transform 0.2s ease-in-out;
+}
+
+.main-area__text:hover {
+  transform: translateY(-5px);
+}

@@ -1,17 +1,19 @@
-$bca-gradient: linear-gradient(135deg, #00a2ff, #3bd1d6, #04abec);
-$form-bca-color: rgba(117, 81, 114, 0.8);
-$primary-color: #007bff;
-$secondary-color: #6c757d;
+$bca-gradient: linear-gradient(135deg, #0ba6ff71, #2e6e42ae, #096330a4);
+$bca-gradient-second: linear-gradient(20deg, #0ba6ff71, #2e6e42ae, #096330a4);
+$form-bca-color: #0b6748b0;
+$primary-color: #04340c;
+$secondary-color: #034b89;
 $success-color: #28a745;
 $error-color: #dc3545;
 $warning-color: #ffc107;
 $info-color: #17a2b8;
-$btn-bca-color: #a3e5e7;
+$btn-bca-color: linear-gradient(20deg, #185d57a5, #397e4fae, #9ee8a5a4);
 $black: #000;
 $white: #fff;
 
-$primary-font-family: 'Times New Roman', Times, serif;
-$secondary-font-family: Arial, sans-serif;
+$primary-font-family: 'Roboto', sans-serif;
+$secondary-font-family: 'Kaushan Script', cursive;
+$third-font-family: 'Helvetica';
 $font-size-base: 16px;
 $font-weight-normal: normal;
 $font-weight-bold: bold;

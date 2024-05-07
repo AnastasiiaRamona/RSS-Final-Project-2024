@@ -1,4 +1,6 @@
 /* eslint-disable class-methods-use-this */
+import CommerceToolsAPI from '../commerceToolsAPI';
+
 export default class LoginModel {
   validateEmail(email: string) {
     return /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.+.[A-Za-z]{1,}$/i.test(email);
@@ -32,5 +34,15 @@ export default class LoginModel {
     if (!/[a-z]/.test(password)) return 'Password should contain at least one lowercase English letter.';
     if (!/[A-Z]/.test(password)) return 'Password should contain at least one uppercase English letter.';
     return '';
+  }
+
+  async login(email: string, password: string) {
+    try {
+      const commerceToolsAPI = new CommerceToolsAPI();
+      const response = await commerceToolsAPI.login(email, password);
+      return response;
+    } catch (error) {
+      return new Error('Unsuccessful login');
+    }
   }
 }

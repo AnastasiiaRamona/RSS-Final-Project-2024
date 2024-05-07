@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import LoginModel from './loginModel';
 
 export default class LoginController {
@@ -68,5 +67,10 @@ export default class LoginController {
     if (input.classList.contains('login__password-hide')) {
       passwordInput.setAttribute('type', 'password');
     } else passwordInput.setAttribute('type', 'text');
+  }
+
+  async login(email: string, password: string) {
+    const result = await this.model.login(email, password);
+    return result;
   }
 }
