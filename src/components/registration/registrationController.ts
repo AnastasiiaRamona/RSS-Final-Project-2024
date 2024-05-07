@@ -1,9 +1,14 @@
+import RegistrationModel from './registrationModel';
+
 class FormValidate {
+  model: RegistrationModel;
+
   private form: HTMLFormElement;
 
   private inputs: NodeListOf<HTMLInputElement>;
 
   constructor() {
+    this.model = new RegistrationModel();
     this.form = document.querySelector('.form-registration') as HTMLFormElement;
     this.inputs = document.querySelectorAll('.input');
     this.inputs.forEach((input) => {

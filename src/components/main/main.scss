@@ -50,7 +50,7 @@
 }
 
 .footer-dashboard {
-  @include image("../../assets/background-image-2.jpg", 100vw, 13vh);
+  @include image("./assets/background-image-2.jpg", 100vw, 13vh);
   border-top: 1px solid $white;
   @include flexbox(row, space-between, center);
   color: $white;
