@@ -6,9 +6,9 @@
 .title-registration {
   @include font('Arial', clamp(32px, 8vw, 70px), bold, 1.5, $white);
 }
-.registration-bca {
+.registration-main {
   background: $bca-gradient;
-  height: 100vh;
+  height: 100%;
   @include flexbox(column, center, center);
 }
 .container {
@@ -16,7 +16,8 @@
   @include flexbox(column, center, center);
 }
 
-.fieldset-registration {
+.fieldset-users,
+.fieldset-address {
   @include flexbox(column, center, center);
 }
 
