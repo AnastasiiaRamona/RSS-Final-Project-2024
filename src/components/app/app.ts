@@ -36,14 +36,14 @@ export default class App {
 
   renderStartPage() {
     document.body.appendChild(this.header.renderHeader(this.isLoggedIn));
-    this.header.addEventListeners();
     document.body.appendChild(this.main.renderPage());
     document.body.appendChild(this.footer.renderFooter());
+    this.header.addEventListeners();
     this.setupEventListeners();
   }
 
   setupEventListeners() {
-    document.addEventListener('loginEvent', () => {
+    window.addEventListener('loginEvent', () => {
       this.isLoggedIn = true;
       this.router.navigateTo('/login');
     });
