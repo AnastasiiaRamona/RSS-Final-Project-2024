@@ -35,7 +35,7 @@ export default class Header {
         if (loginButton.textContent === 'Log out') {
           const logOutEvent = new Event('logOutEvent');
           loginButton.dispatchEvent(logOutEvent);
-        } else if (loginButton.textContent === 'Login') {
+        } else {
           const loginEvent = new Event('loginEvent');
           loginButton.dispatchEvent(loginEvent);
         }
