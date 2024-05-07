@@ -53,7 +53,7 @@ export default class Registration {
   }
 
   renderFieldsetRegistrationAdress() {
-    const fieldsetRegistrationAdress = HTMLCreation.createElement('fieldset', { class: 'fieldset-address' }, [
+    const fieldsetRegistrationAddress = HTMLCreation.createElement('fieldset', { class: 'fieldset-address' }, [
       HTMLCreation.createElement('legend', { class: 'legend-registration' }, ['Form Registration Address']),
       HTMLCreation.createElement('label', { class: 'label label-street' }, ['Street:']),
       HTMLCreation.createElement('input', {
@@ -89,7 +89,7 @@ export default class Registration {
         [this.renderDatalist()]
       ),
     ]);
-    return fieldsetRegistrationAdress;
+    return fieldsetRegistrationAddress;
   }
 
   renderForm() {
