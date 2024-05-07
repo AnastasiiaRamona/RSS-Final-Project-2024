@@ -9,9 +9,8 @@ export default class Login {
   }
 
   renderPage() {
-    HTMLCreation.createElement('h1', { class: 'title' }, ['Online-shop']); // For example
-    const a = this.controller; // For example
-    return a;
+    const main = HTMLCreation.createElement('main', { class: 'title' }, ['Online-shop']); // For example
+    return main;
   }
 
   addEventListeners() {

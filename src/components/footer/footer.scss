@@ -1,0 +1,17 @@
+@import '../../style/utilities/variables.scss';
+@import '../../style/utilities/mixins.scss';
+@import '../../style/components/buttons.scss';
+@import '../../style/base/base.scss';
+
+.footer-dashboard {
+  @include image("../../assets/background-image-2.jpg", 100vw, 13vh);
+  border-top: 1px solid $white;
+  @include flexbox(row, space-between, center);
+  color: $white;
+  @include font($third-font-family, medium, normal, normal, $white);
+  padding: 0 20px;
+}
+
+.footer-dashboard__links {
+  @include flexbox(column, center, flex-start);
+}
