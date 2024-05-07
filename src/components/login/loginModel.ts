@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 export default class LoginModel {
   validateEmail(email: string) {
-    return /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.+.[A-Za-z]{1,2}$/i.test(email);
+    return /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.+.[A-Za-z]{1,}$/i.test(email);
   }
 
   createEmailValidationMessage(email: string) {
@@ -11,7 +11,7 @@ export default class LoginModel {
     if (!/@/.test(email)) return 'The email address must contain @.';
     if (!/^[^@]/.test(email)) return 'The email address cannot start with @.';
     if (/@[.]/.test(email)) return 'The use of a dot in this location is unacceptable';
-    if (!/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) return 'Email address is not complete, enter domain';
+    if (!/^[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$/.test(email)) return 'Email address is not complete, enter domain';
     return '';
   }
 
