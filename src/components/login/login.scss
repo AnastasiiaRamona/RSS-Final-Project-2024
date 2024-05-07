@@ -39,3 +39,15 @@
     left: 200px;
   }
 }
+
+.login__button-active {
+  color: $success-color;
+}
+
+.login__input-invalid {
+  border-color: $error-color;
+}
+
+.login__password-hide {
+  fill: $secondary-color;
+}

@@ -8,8 +8,8 @@ export default class LoginController {
     this.model = new LoginModel();
   }
 
-  validateForm(nameInput: HTMLInputElement, passwordInput: HTMLInputElement) {
-    const firstNameValid = this.model.validateEmail(nameInput.value);
+  validateForm(emailInput: HTMLInputElement, passwordInput: HTMLInputElement) {
+    const firstNameValid = this.model.validateEmail(emailInput.value);
     const lastNameValid = this.model.validatePassword(passwordInput.value);
     return firstNameValid && lastNameValid;
   }
@@ -44,9 +44,9 @@ export default class LoginController {
 
   updateInputValidity(input: HTMLInputElement, isValid: boolean) {
     if (!isValid) {
-      input.classList.add('input-invalid');
+      input.classList.add('login__input-invalid');
     } else {
-      input.classList.remove('input-invalid');
+      input.classList.remove('login__input-invalid');
     }
   }
 
@@ -58,6 +58,15 @@ export default class LoginController {
     if (!button || !nameInput || !passwordInput) {
       return;
     }
-    button?.classList.toggle('active', this.validateForm(nameInput, passwordInput));
+    button.classList.toggle('login__button-active', this.validateForm(nameInput, passwordInput));
+  }
+
+  controlPassword(event: Event, passwordInput: HTMLElement) {
+    event.preventDefault();
+    const input = event.currentTarget as HTMLInputElement;
+    input.classList.toggle('login__password-hide');
+    if (input.classList.contains('login__password-hide')) {
+      passwordInput.setAttribute('type', 'password');
+    } else passwordInput.setAttribute('type', 'text');
   }
 }
