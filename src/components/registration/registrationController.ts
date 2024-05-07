@@ -93,6 +93,11 @@ class FormValidate {
       }
     });
   }
+
+  async getRegistration(email: string, password: string) {
+    const result = await this.model.register(email, password);
+    return result;
+  }
 }
 
 export default FormValidate;
