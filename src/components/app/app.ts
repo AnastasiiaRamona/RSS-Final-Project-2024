@@ -32,41 +32,41 @@ export default class App {
   render() {
     this.renderStartPage();
     this.changePageAlongThePath();
+    this.setupEventListeners();
   }
 
   renderStartPage() {
     document.body.appendChild(this.header.renderHeader(this.isLoggedIn));
     document.body.appendChild(this.main.renderPage());
     document.body.appendChild(this.footer.renderFooter());
-    this.header.addEventListeners();
-    this.setupEventListeners();
   }
 
   setupEventListeners() {
-    window.addEventListener('loginEvent', () => {
-      this.isLoggedIn = true;
+    document.body.addEventListener('loginEvent', () => {
       this.router.navigateTo('/login');
+    });
+    document.body.addEventListener('registrationEvent', () => {
+      this.router.navigateTo('/registration');
+    });
+    document.body.addEventListener('backEvent', () => {
+      const previousPath = sessionStorage.getItem('previousPath');
+      if (previousPath) {
+        this.router.navigateTo(previousPath);
+      } else {
+        this.router.navigateTo('/main');
+      }
+    });
+    document.body.addEventListener('mainPageEvent', () => {
+      this.router.navigateTo('/main');
     });
   }
 
-  // rerenderPage() {
-  //   switch (true) {
-  //     case this.login.isLoginButtonClicked:
-  //       this.router.navigateTo('/main');
-  //       this.login.isLoginButtonClicked = false;
-  //       break;
-  //     case this.main.logOutButtonClicked:
-  //       this.router.navigateTo('/login');
-  //       this.main.logOutButtonClicked = false;
-  //       break;
-  //     case this.main.registerButtonClicked:
-  //       this.router.navigateTo('/registration');
-  //       this.main.registerButtonClicked = false;
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
+  changeHeaderElement(element: HTMLElement) {
+    const header = document.querySelector('header');
+    if (header) {
+      header.innerHTML = element.innerHTML;
+    }
+  }
 
   changeMainElement(element: HTMLElement) {
     const main = document.querySelector('main');
@@ -76,17 +76,34 @@ export default class App {
   }
 
   private setupRouter() {
-    this.router.addRoute('/main', () => {
+    const renderRoute = (path: string, renderFunction: () => void) => {
+      this.router.addRoute(path, () => {
+        const previousPath = sessionStorage.getItem('currentPath');
+        sessionStorage.setItem('previousPath', previousPath || '/main');
+        sessionStorage.setItem('currentPath', path);
+
+        this.changeHeaderElement(this.header.renderHeader(this.isLoggedIn));
+        this.header.addEventListeners();
+        renderFunction();
+      });
+    };
+
+    renderRoute('/main', () => {
       this.changeMainElement(this.main.renderPage());
-      // this.main.addEventListeners();
     });
-    this.router.addRoute('/login', () => {
+
+    renderRoute('/login', () => {
       this.changeMainElement(this.login.renderPage());
-      // this.login.addEventListeners();
+      this.header.changeLoginButtonToBackButton();
+      this.header.addMainPageButton();
+      this.login.addEventListeners();
     });
-    this.router.addRoute('/registration', () => {
+
+    renderRoute('/registration', () => {
       this.changeMainElement(this.registration.renderPage());
-      // this.registration.addEventListeners();
+      this.header.changeRegistrationButtonToBackButton();
+      this.header.addMainPageButton();
+      this.registration.addEventListeners();
     });
   }
 

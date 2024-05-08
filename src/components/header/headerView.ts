@@ -4,6 +4,8 @@ import catPath from '../../assets/cat.png';
 import './header.scss';
 
 export default class Header {
+  isButtonLoginClicked: boolean = false;
+
   renderHeader(isLoggedIn: boolean) {
     const textButton = isLoggedIn ? 'Log out' : 'Login';
 
@@ -28,16 +30,57 @@ export default class Header {
     return header;
   }
 
+  changeLoginButtonToBackButton() {
+    const loginButton = document.querySelector('.upper-dashboard__logout-button');
+    if (loginButton) {
+      loginButton.textContent = '⬅ Back';
+    }
+  }
+
+  changeRegistrationButtonToBackButton() {
+    const registrationButton = document.querySelector('.upper-dashboard__register-button');
+    if (registrationButton) {
+      registrationButton.textContent = '⬅ Back';
+    }
+  }
+
+  addMainPageButton() {
+    const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
+    const mainPageButton = HTMLCreation.createElement('button', { class: 'main-page-button' }, ['Main page 🏠']);
+    buttonsDiv?.appendChild(mainPageButton);
+
+    mainPageButton.addEventListener('click', () => {
+      const mainPageEvent = new CustomEvent('mainPageEvent');
+      document.body.dispatchEvent(mainPageEvent);
+    });
+  }
+
   addEventListeners() {
     const loginButton = document.querySelector('.upper-dashboard__logout-button');
     if (loginButton) {
       loginButton.addEventListener('click', () => {
         if (loginButton.textContent === 'Log out') {
-          const logOutEvent = new Event('logOutEvent');
-          loginButton.dispatchEvent(logOutEvent);
+          const logOutEvent = new CustomEvent('logOutEvent');
+          document.body.dispatchEvent(logOutEvent);
+        } else if (loginButton.textContent === 'Login') {
+          const loginEvent = new CustomEvent('loginEvent');
+          document.body.dispatchEvent(loginEvent);
         } else {
-          const loginEvent = new Event('loginEvent');
-          loginButton.dispatchEvent(loginEvent);
+          const backEvent = new CustomEvent('backEvent');
+          document.body.dispatchEvent(backEvent);
+        }
+      });
+    }
+
+    const registrationButton = document.querySelector('.upper-dashboard__register-button');
+    if (registrationButton) {
+      registrationButton.addEventListener('click', () => {
+        if (registrationButton.textContent === 'Register') {
+          const registrationEvent = new CustomEvent('registrationEvent');
+          document.body.dispatchEvent(registrationEvent);
+        } else {
+          const backEvent = new CustomEvent('backEvent');
+          document.body.dispatchEvent(backEvent);
         }
       });
     }

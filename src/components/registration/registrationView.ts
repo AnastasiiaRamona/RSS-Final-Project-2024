@@ -1,8 +1,13 @@
 import HTMLCreation from '../HTMLCreation';
-// import RegistrationElements from './typeRegistration';
-import FormValidate from './registrationController';
+import RegistrationController from './registrationController';
 
 export default class Registration {
+  controller: RegistrationController;
+
+  constructor() {
+    this.controller = new RegistrationController();
+  }
+
   renderDatalist() {
     const countries = ['United States', 'Germany', 'Italy'];
     const options = countries.map((country) => HTMLCreation.createElement('option', { value: country }));
@@ -52,7 +57,7 @@ export default class Registration {
     return fieldsetRegistrationUsers;
   }
 
-  renderFieldsetRegistrationAdress() {
+  renderFieldsetRegistrationAddress() {
     const fieldsetRegistrationAddress = HTMLCreation.createElement('fieldset', { class: 'fieldset-address' }, [
       HTMLCreation.createElement('legend', { class: 'legend-registration' }, ['Form Registration Address']),
       HTMLCreation.createElement('label', { class: 'label label-street' }, ['Street:']),
@@ -95,7 +100,7 @@ export default class Registration {
   renderForm() {
     const form = HTMLCreation.createElement('form', { class: 'form  form-registration', action: '/' }, [
       this.renderFieldsetRegistrationUsers(),
-      this.renderFieldsetRegistrationAdress(),
+      this.renderFieldsetRegistrationAddress(),
       HTMLCreation.createElement('button', { class: 'button button-registration' }, ['registration']),
     ]);
     return form;
@@ -108,13 +113,10 @@ export default class Registration {
         this.renderForm(),
       ]),
     ]);
-    document.body.appendChild(registrationMain);
     return registrationMain;
   }
+
+  addEventListeners() {
+    this.controller.checkValidate();
+  }
 }
-
-const registrationPage = new Registration();
-registrationPage.renderPage();
-
-const formValidate = new FormValidate();
-formValidate.checkValidate();

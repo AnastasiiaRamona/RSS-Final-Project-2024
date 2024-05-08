@@ -15,19 +15,6 @@
   border-left: 1px solid $white;
 }
 
-.footer-dashboard {
-  @include image("./assets/background-image-2.jpg", 100vw, 13vh);
-  border-top: 1px solid $white;
-  @include flexbox(row, space-between, center);
-  color: $white;
-  @include font($third-font-family, medium, normal, normal, $white);
-  padding: 0 20px;
-}
-
-.footer-dashboard__links {
-  @include flexbox(column, center, flex-start);
-}
-
 .main-area {
   @include size(80vw, auto);
   @include flexbox(column, center, center);

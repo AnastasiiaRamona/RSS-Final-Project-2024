@@ -1,23 +1,20 @@
 import RegistrationModel from './registrationModel';
 
-class FormValidate {
+export default class RegistrationController {
   model: RegistrationModel;
-
-  private form: HTMLFormElement;
-
-  private inputs: NodeListOf<HTMLInputElement>;
 
   constructor() {
     this.model = new RegistrationModel();
-    this.form = document.querySelector('.form-registration') as HTMLFormElement;
-    this.inputs = document.querySelectorAll('.input');
-    this.inputs.forEach((input) => {
-      input.setCustomValidity('required field');
-    });
   }
 
   checkValidate(): void {
-    this.form.addEventListener('input', (event: Event) => {
+    const form = document.querySelector('.form-registration') as HTMLFormElement;
+    const inputs = document.querySelectorAll('.input') as NodeListOf<HTMLInputElement>;
+    inputs.forEach((input) => {
+      input.setCustomValidity('required field');
+    });
+
+    form.addEventListener('input', (event: Event) => {
       const element: HTMLInputElement = event.target as HTMLInputElement;
       const { value } = element;
       if (element.classList.contains('input-mail')) {
@@ -104,5 +101,3 @@ class FormValidate {
     return result;
   }
 }
-
-export default FormValidate;
