@@ -62,4 +62,20 @@ export default class CommerceToolsAPI {
       .execute();
     return response;
   }
+
+  async emailCheck(email: string) {
+    const ctpClient = this.createClient();
+    this.apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey });
+
+    const response = await this.apiRoot
+      .customers()
+      .get({
+        queryArgs: {
+          where: `email="${email}"`,
+        },
+      })
+      .execute();
+    console.log(response);
+    return response;
+  }
 }

@@ -51,13 +51,20 @@ export default class LoginController {
 
   updateButtonValidity(
     button: HTMLInputElement | null,
-    nameInput: HTMLInputElement | null,
-    passwordInput: HTMLInputElement | null
+    emailInput: HTMLInputElement | null,
+    passwordInput: HTMLInputElement | null,
+    errorText: HTMLInputElement | null
   ) {
-    if (!button || !nameInput || !passwordInput) {
+    if (!button || !emailInput || !passwordInput) {
       return;
     }
-    button.classList.toggle('login__button-active', this.validateForm(nameInput, passwordInput));
+    button.classList.toggle('login__button-active', this.validateForm(emailInput, passwordInput));
+    errorText?.classList.add('login__error-hide');
+    if (this.validateForm(emailInput, passwordInput)) {
+      button.removeAttribute('disabled');
+    } else {
+      button.setAttribute('disabled', 'true');
+    }
   }
 
   controlPassword(event: Event, passwordInput: HTMLElement) {
@@ -71,8 +78,18 @@ export default class LoginController {
 
   async login(event: Event, email: string, password: string) {
     event.preventDefault();
-    const result = await this.model.login(email, password);
-    console.log(result);
+    let result: string;
+    const response = await this.model.login(email, password);
+    if (response) {
+      result = 'loginSucsess';
+    } else {
+      const emailStatus = await this.model.emailCheck(email);
+      if (emailStatus) {
+        result = 'errorPassword';
+      } else {
+        result = 'errorEmail';
+      }
+    }
     return result;
   }
 }

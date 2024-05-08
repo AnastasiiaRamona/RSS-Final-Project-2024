@@ -40,9 +40,25 @@ export default class LoginModel {
     try {
       const commerceToolsAPI = new CommerceToolsAPI();
       const response = await commerceToolsAPI.login(email, password);
-      return response;
+      if (response) {
+        return true;
+      }
+      return false;
     } catch (error) {
-      return new Error('Unsuccessful login');
+      return false;
+    }
+  }
+
+  async emailCheck(email: string) {
+    try {
+      const commerceToolsAPI = new CommerceToolsAPI();
+      const response = await commerceToolsAPI.emailCheck(email);
+      if (response.body.results.length) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      return false;
     }
   }
 }

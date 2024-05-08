@@ -19,6 +19,9 @@ export default class Login {
         },
         [
           HTMLCreation.createElement('input', { type: 'text', placeholder: 'Email', class: 'login__email input' }),
+          HTMLCreation.createElement('p', { class: 'login__email-error login__error-hide' }, [
+            `There are no registered users with this email address. Check your email address or register.`,
+          ]),
           HTMLCreation.createElement('div', { class: 'login__password-wrapper' }, [
             HTMLCreation.createElement('input', {
               type: 'password',
@@ -27,9 +30,12 @@ export default class Login {
             }),
             HTMLCreation.createElement('button', { class: 'login__password-control login__password-hide' }),
           ]),
+          HTMLCreation.createElement('p', { class: 'login__password-error login__error-hide' }, [
+            `The password is incorrect, please check the password is correct. The password is case sensitive, please check your caps lock.`,
+          ]),
           HTMLCreation.createElement(
             'button',
-            { type: 'submit', form: 'loginform', class: 'login__submit-button button' },
+            { type: 'submit', form: 'loginform', class: 'login__submit-button button', disabled: 'true' },
             [`LOGIN`]
           ),
           HTMLCreation.createElement('button', { class: 'login__registration-button button' }, ['Registration']),
@@ -47,18 +53,20 @@ export default class Login {
   }
 
   addEventListeners() {
-    const nameInput = document.querySelector('.login__email') as HTMLInputElement;
+    const emailInput = document.querySelector('.login__email') as HTMLInputElement;
     const passwordInput = document.querySelector('.login__password-input') as HTMLInputElement;
     const submitButtonInput = document.querySelector('.login__submit-button') as HTMLInputElement;
     const passwordButtonControl = document.querySelector('.login__password-control') as HTMLInputElement;
+    const emailError = document.querySelector('.login__email-error') as HTMLInputElement;
+    const passwordError = document.querySelector('.login__password-error') as HTMLInputElement;
 
-    nameInput.addEventListener('input', (event) => {
-      this.controller.updateButtonValidity(submitButtonInput, nameInput, passwordInput);
+    emailInput.addEventListener('input', (event) => {
+      this.controller.updateButtonValidity(submitButtonInput, emailInput, passwordInput, emailError);
       this.controller.validateEmailInput(event);
     });
 
     passwordInput.addEventListener('input', (event) => {
-      this.controller.updateButtonValidity(submitButtonInput, nameInput, passwordInput);
+      this.controller.updateButtonValidity(submitButtonInput, emailInput, passwordInput, passwordError);
       this.controller.validatePasswordInput(event);
     });
 
@@ -66,8 +74,29 @@ export default class Login {
       this.controller.controlPassword(event, passwordInput);
     });
 
-    submitButtonInput.addEventListener('click', (event) => {
-      this.controller.login(event, nameInput.value, passwordInput.value);
+    submitButtonInput.addEventListener('click', async (event) => {
+      const resultLogin = await this.controller.login(event, emailInput.value, passwordInput.value);
+      this.checkLogin(resultLogin);
     });
+  }
+
+  checkLogin(resultLogin: string) {
+    const emailInput = document.querySelector('.login__email') as HTMLInputElement;
+    const passwordInput = document.querySelector('.login__password-input') as HTMLInputElement;
+    const emailError = document.querySelector('.login__email-error') as HTMLInputElement;
+    const passwordError = document.querySelector('.login__password-error') as HTMLInputElement;
+    switch (resultLogin) {
+      case 'loginSucsess':
+        break;
+      case 'errorEmail':
+        emailInput.classList.add('login__input-invalid');
+        emailError.classList.remove('login__error-hide');
+        break;
+      case 'errorPassword':
+        passwordInput.classList.add('login__input-invalid');
+        passwordError.classList.remove('login__error-hide');
+        break;
+      default:
+    }
   }
 }
