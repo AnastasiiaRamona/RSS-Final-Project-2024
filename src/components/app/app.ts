@@ -20,6 +20,8 @@ export default class App {
 
   private router = router;
 
+  private body = document.body;
+
   constructor() {
     this.header = new Header();
     this.footer = new Footer();
@@ -36,27 +38,22 @@ export default class App {
   }
 
   renderStartPage() {
-    document.body.appendChild(this.header.renderHeader(this.isLoggedIn));
-    document.body.appendChild(this.main.renderPage());
-    document.body.appendChild(this.footer.renderFooter());
+    this.body.appendChild(this.header.renderHeader(this.isLoggedIn));
+    this.body.appendChild(this.main.renderPage());
+    this.body.appendChild(this.footer.renderFooter());
   }
 
   setupEventListeners() {
-    document.body.addEventListener('loginEvent', () => {
+    this.body.addEventListener('loginEvent', () => {
       this.router.navigateTo('/login');
     });
-    document.body.addEventListener('registrationEvent', () => {
+    this.body.addEventListener('registrationEvent', () => {
       this.router.navigateTo('/registration');
     });
-    document.body.addEventListener('backEvent', () => {
-      const previousPath = sessionStorage.getItem('previousPath');
-      if (previousPath) {
-        this.router.navigateTo(previousPath);
-      } else {
-        this.router.navigateTo('/main');
-      }
+    this.body.addEventListener('backEvent', () => {
+      window.history.back();
     });
-    document.body.addEventListener('mainPageEvent', () => {
+    this.body.addEventListener('mainPageEvent', () => {
       this.router.navigateTo('/main');
     });
   }
@@ -78,10 +75,6 @@ export default class App {
   private setupRouter() {
     const renderRoute = (path: string, renderFunction: () => void) => {
       this.router.addRoute(path, () => {
-        const previousPath = sessionStorage.getItem('currentPath');
-        sessionStorage.setItem('previousPath', previousPath || '/main');
-        sessionStorage.setItem('currentPath', path);
-
         this.changeHeaderElement(this.header.renderHeader(this.isLoggedIn));
         this.header.addEventListeners();
         renderFunction();
