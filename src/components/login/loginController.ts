@@ -69,8 +69,10 @@ export default class LoginController {
     } else passwordInput.setAttribute('type', 'text');
   }
 
-  async login(email: string, password: string) {
+  async login(event: Event, email: string, password: string) {
+    event.preventDefault();
     const result = await this.model.login(email, password);
+    console.log(result);
     return result;
   }
 }
