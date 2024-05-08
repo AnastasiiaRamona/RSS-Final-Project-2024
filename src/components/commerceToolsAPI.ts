@@ -75,7 +75,6 @@ export default class CommerceToolsAPI {
         },
       })
       .execute();
-    console.log(response);
     return response;
   }
 }

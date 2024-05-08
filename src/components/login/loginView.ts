@@ -20,7 +20,7 @@ export default class Login {
         [
           HTMLCreation.createElement('input', { type: 'text', placeholder: 'Email', class: 'login__email input' }),
           HTMLCreation.createElement('p', { class: 'login__email-error login__error-hide' }, [
-            `There are no registered users with this email address. Check your email address or register.`,
+            `\u26A0\uFE0F There are no registered users with this email address. Check your email address or register.`,
           ]),
           HTMLCreation.createElement('div', { class: 'login__password-wrapper' }, [
             HTMLCreation.createElement('input', {
@@ -31,7 +31,7 @@ export default class Login {
             HTMLCreation.createElement('button', { class: 'login__password-control login__password-hide' }),
           ]),
           HTMLCreation.createElement('p', { class: 'login__password-error login__error-hide' }, [
-            `The password is incorrect, please check the password is correct. The password is case sensitive, please check your caps lock.`,
+            `\u26A0\uFE0F The password is incorrect, please check the password is correct. The password is case sensitive, please check your caps lock.`,
           ]),
           HTMLCreation.createElement(
             'button',
@@ -85,8 +85,10 @@ export default class Login {
     const passwordInput = document.querySelector('.login__password-input') as HTMLInputElement;
     const emailError = document.querySelector('.login__email-error') as HTMLInputElement;
     const passwordError = document.querySelector('.login__password-error') as HTMLInputElement;
+    const loginSucsessEvent = new CustomEvent('loginSucsessEvent');
     switch (resultLogin) {
       case 'loginSucsess':
+        document.body.dispatchEvent(loginSucsessEvent);
         break;
       case 'errorEmail':
         emailInput.classList.add('login__input-invalid');
