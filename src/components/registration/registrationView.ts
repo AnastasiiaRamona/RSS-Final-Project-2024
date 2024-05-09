@@ -51,7 +51,6 @@ export default class Registration {
         this.renderForm(),
       ]),
     ]);
-    document.body.appendChild(registrationMain);
     return registrationMain;
   }
 

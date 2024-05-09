@@ -1,0 +1,53 @@
+
+@import '../../style/components/buttons';
+@import '../../style/components/form';
+@import '../../style/components/input';
+
+
+.login__wrapper {
+  @include flexbox();
+  margin-top: 20svh;
+}
+
+.login__form {
+  @include flexbox(column);
+  gap: 7px;
+}
+
+.login__registration-button {
+  font-size: clamp(15px, 7vw, 22px);
+}
+.login__password-wrapper {
+  @include flexbox();
+  position: relative;
+  
+}
+.login__password-control {
+  position: absolute;
+  left: 290px;
+  width: 50px;
+}
+
+@media (max-width: 620px) {
+  .login__password-control {
+    left: 45svw;
+  }
+}
+
+@media (max-width: 440px) {
+  .login__password-control {
+    left: 200px;
+  }
+}
+
+.login__button-active {
+  color: $success-color;
+}
+
+.login__input-invalid {
+  border-color: $error-color;
+}
+
+.login__password-hide {
+  fill: $secondary-color;
+}
