@@ -1,101 +1,44 @@
 import HTMLCreation from '../HTMLCreation';
-// import RegistrationElements from './typeRegistration';
-import FormValidate from './registrationController';
+
+import RegistrationController from './registrationController';
+
+import FieldsetRegistrationAddress from './componentsUI/fieldsetElement';
 
 export default class Registration {
-  renderDatalist() {
-    const countries = ['United States', 'Germany', 'Italy'];
-    const options = countries.map((country) => HTMLCreation.createElement('option', { value: country }));
-    return HTMLCreation.createElement('datalist', { id: 'countryList' }, options);
-  }
+  controller: RegistrationController;
 
-  renderFieldsetRegistrationUsers() {
-    const fieldsetRegistrationUsers = HTMLCreation.createElement('fieldset', { class: 'fieldset-users' }, [
-      HTMLCreation.createElement('legend', { class: 'legend-registration' }, ['Form Registration Users']),
-      HTMLCreation.createElement('label', { class: 'label label-mail' }, ['Mail:']),
-      HTMLCreation.createElement('input', {
-        type: 'email',
-        class: 'input-mail input',
-        placeholder: 'example@email.com',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-password' }, ['Password:']),
-      HTMLCreation.createElement('input', {
-        type: 'password',
-        class: 'input-password input',
-        placeholder: 'password',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-username' }, ['Username:']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-username input',
-        placeholder: 'username',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-surname' }, ['Surname']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-surname input',
-        placeholder: 'surname',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-date' }, ['Date of birth:']),
+  billingFieldset: FieldsetRegistrationAddress;
 
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-date input',
-        placeholder: 'DD.MM.YYYY',
-        required: 'true',
-      }),
-    ]);
-    return fieldsetRegistrationUsers;
-  }
+  shippingFieldset: FieldsetRegistrationAddress;
 
-  renderFieldsetRegistrationAdress() {
-    const fieldsetRegistrationAddress = HTMLCreation.createElement('fieldset', { class: 'fieldset-address' }, [
-      HTMLCreation.createElement('legend', { class: 'legend-registration' }, ['Form Registration Address']),
-      HTMLCreation.createElement('label', { class: 'label label-street' }, ['Street:']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-street input',
-        placeholder: 'street',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-city' }, ['City:']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-city input',
-        placeholder: 'city',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-code' }, ['Postal code:']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-code input',
-        placeholder: 'postal code',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-country' }, ['Country']),
-      HTMLCreation.createElement(
-        'input',
-        {
-          type: 'text',
-          class: 'input-country input',
-          placeholder: 'select one country',
-          required: 'true',
-          list: 'countryList',
-        },
-        [this.renderDatalist()]
-      ),
-    ]);
-    return fieldsetRegistrationAddress;
+  addressesFieldset: FieldsetRegistrationAddress;
+
+  registrationUsersFieldset: FieldsetRegistrationAddress;
+
+  constructor() {
+    this.controller = new RegistrationController();
+    this.billingFieldset = new FieldsetRegistrationAddress('__billing', 'Billing address form');
+    this.shippingFieldset = new FieldsetRegistrationAddress('__shipping', 'Shipping address form');
+    this.addressesFieldset = new FieldsetRegistrationAddress('__addresses', 'Addresses form');
+    this.registrationUsersFieldset = new FieldsetRegistrationAddress('', '');
   }
 
   renderForm() {
     const form = HTMLCreation.createElement('form', { class: 'form  form-registration', action: '/' }, [
-      this.renderFieldsetRegistrationUsers(),
-      this.renderFieldsetRegistrationAdress(),
+      this.registrationUsersFieldset.renderFieldsetRegistrationUsers(),
+      HTMLCreation.createElement('label', { class: 'label label-delivery__criterion' }, [
+        'Set as billing and shipping address',
+      ]),
+      HTMLCreation.createElement('input', {
+        type: 'checkbox',
+        class: 'input input-checkbox__adress',
+      }),
+
+      HTMLCreation.createElement('div', { class: 'form-inner' }, [
+        this.billingFieldset.renderFieldsetRegistrationAddress(),
+        this.addressesFieldset.renderFieldsetRegistrationAddress(),
+        this.shippingFieldset.renderFieldsetRegistrationAddress(),
+      ]),
       HTMLCreation.createElement('button', { class: 'button button-registration' }, ['registration']),
     ]);
     return form;
@@ -111,10 +54,11 @@ export default class Registration {
     document.body.appendChild(registrationMain);
     return registrationMain;
   }
+
+  addEventListeners() {
+    this.controller.checkValidate();
+  }
 }
 
 const registrationPage = new Registration();
 registrationPage.renderPage();
-
-const formValidate = new FormValidate();
-formValidate.checkValidate();
