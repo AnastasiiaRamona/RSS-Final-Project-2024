@@ -28,6 +28,7 @@ export default class FieldsetRegistrationAddress {
           class: `input-street${this.className} input input-street `,
           placeholder: 'street',
           required: 'true',
+          name: 'street',
         }),
         HTMLCreation.createElement('label', { class: `label label-city${this.className}` }, ['City:']),
         HTMLCreation.createElement('input', {
@@ -35,6 +36,7 @@ export default class FieldsetRegistrationAddress {
           class: `input-city${this.className} input input-city`,
           placeholder: 'city',
           required: 'true',
+          name: 'city',
         }),
         HTMLCreation.createElement('label', { class: `label label-code${this.className}` }, ['Postal code:']),
         HTMLCreation.createElement('input', {
@@ -42,25 +44,25 @@ export default class FieldsetRegistrationAddress {
           class: `input-code${this.className} input input-code`,
           placeholder: 'postal code',
           required: 'true',
+          name: 'postal code',
         }),
         HTMLCreation.createElement('label', { class: `label label-country${this.className}` }, ['Country']),
-        HTMLCreation.createElement(
-          'input',
-          {
-            type: 'text',
-            class: `input-country${this.className} input input-country`,
-            placeholder: 'select one country',
-            required: 'true',
-            list: 'countryList',
-          },
-          [this.renderDatalist()]
-        ),
+        HTMLCreation.createElement('input', {
+          type: 'text',
+          class: `input-country${this.className} input input-country`,
+          placeholder: 'select one country',
+          required: 'true',
+          list: 'countryList',
+          name: 'country',
+        }),
+        this.renderDatalist(),
         HTMLCreation.createElement('label', { class: `label label-name${this.className}` }, [
           'Default delivery address',
         ]),
         HTMLCreation.createElement('input', {
           type: 'checkbox',
           class: `check-default${this.className} input`,
+          name: 'address',
         }),
       ]
     );

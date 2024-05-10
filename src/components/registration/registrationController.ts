@@ -11,7 +11,7 @@ export default class RegistrationController {
     const form = document.querySelector('.form-registration') as HTMLFormElement;
     const inputs = document.querySelectorAll('.input') as NodeListOf<HTMLInputElement>;
     inputs.forEach((input) => {
-      input.setCustomValidity('required field');
+      if (!(input.type === 'checkbox')) input.setCustomValidity('required field');
     });
 
     form.addEventListener('input', (event: Event) => {
@@ -94,6 +94,21 @@ export default class RegistrationController {
         }
       }
     });
+  }
+
+  changeFormAddresses(billing: HTMLElement, shipping: HTMLElement, addresses: HTMLElement) {
+    const inner = document.querySelector('.form-inner');
+    const checkboxAddresses = document.querySelector('.input-checkbox__address') as HTMLInputElement;
+    if (checkboxAddresses.checked) {
+      if (inner) {
+        inner.innerHTML = '';
+        inner.appendChild(addresses);
+      }
+    } else if (inner) {
+      inner.innerHTML = '';
+      inner.appendChild(billing);
+      inner.appendChild(shipping);
+    }
   }
 
   async getRegistration(email: string, password: string) {

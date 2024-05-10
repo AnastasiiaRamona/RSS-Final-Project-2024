@@ -18,7 +18,6 @@
 
 .fieldset-users {
   @include flexbox(column, center, center);
- 
 }
 
 .legend-registration {
@@ -33,6 +32,14 @@
   width: 100%;
 }
 
+// .input-checkbox__adress:checked + .form-inner .fieldset__billing,
+// .input-checkbox__adress:checked + .form-inner .fieldset__shipping {
+//   display: none;
+// }
+// .input-checkbox__adress:checked + .form-inner .fieldset__addresses {
+//   display: flex;
+// }
+
 .form-inner {
   display: flex;
   margin-top: 5px;
@@ -42,24 +49,11 @@
 .fieldset {
   @include flexbox(column, center, center);
   margin-top: 5px;
- 
 }
 
 .fieldset__addresses {
-  display: none;
   width: 100%;
 }
-
-
-.input-checkbox__adress:checked + .form-inner .fieldset__billing,
-.input-checkbox__adress:checked + .form-inner .fieldset__shipping {
-  display: none;
-}
-.input-checkbox__adress:checked + .form-inner .fieldset__addresses {
-  display: flex;
-}
-
-
 
 input[type='checkbox'] {
   height: 40px;
