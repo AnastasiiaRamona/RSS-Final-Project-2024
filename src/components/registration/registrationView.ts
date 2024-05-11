@@ -64,11 +64,21 @@ export default class Registration {
       this.controller.changeFormAddresses(billingAddress, shippingAddress, allAddresses);
     });
 
-    document.querySelector('.form')?.addEventListener('submit', (event: Event) => {
+    document.querySelector('.form')?.addEventListener('submit', async (event: Event) => {
       event.preventDefault();
+      const inputDateValue = (document.querySelector('.input-date') as HTMLInputElement).value;
+      const dateOfBirth = this.controller.parseDateString(inputDateValue);
       const inputMailValue = (document.querySelector('.input-mail') as HTMLInputElement).value;
       const inputPasswordValue = (document.querySelector('.input-password') as HTMLInputElement).value;
-      this.controller.getRegistration(inputMailValue, inputPasswordValue);
+      const inputUsernameValue = (document.querySelector('.input-username') as HTMLInputElement).value;
+      const inputSurnameValue = (document.querySelector('.input-surname') as HTMLInputElement).value;
+      this.controller.getRegistration(
+        inputMailValue,
+        inputPasswordValue,
+        inputUsernameValue,
+        inputSurnameValue,
+        dateOfBirth
+      );
     });
   }
 }

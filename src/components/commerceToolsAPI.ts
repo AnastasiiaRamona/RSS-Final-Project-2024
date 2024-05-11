@@ -47,7 +47,7 @@ export default class CommerceToolsAPI {
     return response;
   }
 
-  async register(email: string, password: string) {
+  async register(email: string, password: string, firstName: string, lastName: string, dateOfBirth: string) {
     const ctpClient = this.createClient();
     this.apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey });
 
@@ -57,6 +57,9 @@ export default class CommerceToolsAPI {
         body: {
           email,
           password,
+          firstName,
+          lastName,
+          dateOfBirth,
         },
       })
       .execute();

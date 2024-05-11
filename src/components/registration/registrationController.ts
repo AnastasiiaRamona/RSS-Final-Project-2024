@@ -111,8 +111,14 @@ export default class RegistrationController {
     }
   }
 
-  async getRegistration(email: string, password: string) {
-    const result = await this.model.register(email, password);
+  parseDateString(dateString: string): string {
+    const [day, month, year] = dateString.split('.');
+    const date = `${year}-${month}-${day}`;
+    return date;
+  }
+
+  async getRegistration(email: string, password: string, firstName: string, lastName: string, dateOfBirth: string) {
+    const result = await this.model.register(email, password, firstName, lastName, dateOfBirth);
     return result;
   }
 }
