@@ -1,3 +1,4 @@
+import iso3166 from 'iso-3166-1';
 import HTMLCreation from '../HTMLCreation';
 
 import RegistrationController from './registrationController';
@@ -45,10 +46,7 @@ export default class Registration {
 
   renderPage() {
     const registrationMain = HTMLCreation.createElement('main', { class: 'registration-main' }, [
-      HTMLCreation.createElement('div', { class: 'container container-registration' }, [
-        HTMLCreation.createElement('h1', { class: 'title title-registration' }, ['Registration']),
-        this.renderForm(),
-      ]),
+      HTMLCreation.createElement('div', { class: 'container container-registration' }, [this.renderForm()]),
     ]);
     return registrationMain;
   }
@@ -72,13 +70,69 @@ export default class Registration {
       const inputPasswordValue = (document.querySelector('.input-password') as HTMLInputElement).value;
       const inputUsernameValue = (document.querySelector('.input-username') as HTMLInputElement).value;
       const inputSurnameValue = (document.querySelector('.input-surname') as HTMLInputElement).value;
+
+      const billingAddressResult = document.querySelector('.input-street__billing')
+        ? this.getBillingAddress()
+        : this.getGeneralAddress();
+
+      const shippingAddressResult = document.querySelector('.input-street__billing')
+        ? this.getShippingAddress()
+        : this.getGeneralAddress();
+
       this.controller.getRegistration(
         inputMailValue,
         inputPasswordValue,
         inputUsernameValue,
         inputSurnameValue,
-        dateOfBirth
+        dateOfBirth,
+        billingAddressResult,
+        shippingAddressResult
       );
+
+      const mainPageEvent = new CustomEvent('mainPageEvent');
+      document.body.dispatchEvent(mainPageEvent);
     });
+  }
+
+  getBillingAddress() {
+    const inputStreet = (document.querySelector('.input-street__billing') as HTMLInputElement).value;
+    const inputCity = (document.querySelector('.input-city__billing') as HTMLInputElement).value;
+    const inputPostalCode = (document.querySelector('.input-code__billing') as HTMLInputElement).value;
+    const inputCountry = (document.querySelector('.input-country__billing') as HTMLInputElement).value;
+    const inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    return {
+      country: inputCountryCode,
+      streetName: inputStreet,
+      postalCode: inputPostalCode,
+      city: inputCity,
+    };
+  }
+
+  getShippingAddress() {
+    const inputStreet = (document.querySelector('.input-street__shipping') as HTMLInputElement).value;
+    const inputCity = (document.querySelector('.input-city__shipping') as HTMLInputElement).value;
+    const inputPostalCode = (document.querySelector('.input-code__shipping') as HTMLInputElement).value;
+    const inputCountry = (document.querySelector('.input-country__shipping') as HTMLInputElement).value;
+    const inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    return {
+      country: inputCountryCode,
+      streetName: inputStreet,
+      postalCode: inputPostalCode,
+      city: inputCity,
+    };
+  }
+
+  getGeneralAddress() {
+    const inputStreet = (document.querySelector('.input-street__addresses') as HTMLInputElement).value;
+    const inputCity = (document.querySelector('.input-city__addresses') as HTMLInputElement).value;
+    const inputPostalCode = (document.querySelector('.input-code__addresses') as HTMLInputElement).value;
+    const inputCountry = (document.querySelector('.input-country__addresses') as HTMLInputElement).value;
+    const inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    return {
+      country: inputCountryCode,
+      streetName: inputStreet,
+      postalCode: inputPostalCode,
+      city: inputCity,
+    };
   }
 }

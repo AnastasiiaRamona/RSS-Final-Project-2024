@@ -1,3 +1,4 @@
+import { BaseAddress } from '@commercetools/platform-sdk';
 import RegistrationModel from './registrationModel';
 
 export default class RegistrationController {
@@ -117,8 +118,24 @@ export default class RegistrationController {
     return date;
   }
 
-  async getRegistration(email: string, password: string, firstName: string, lastName: string, dateOfBirth: string) {
-    const result = await this.model.register(email, password, firstName, lastName, dateOfBirth);
+  async getRegistration(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    dateOfBirth: string,
+    billingAddress: BaseAddress,
+    shippingAddress: BaseAddress
+  ) {
+    const result = await this.model.register(
+      email,
+      password,
+      firstName,
+      lastName,
+      dateOfBirth,
+      billingAddress,
+      shippingAddress
+    );
     return result;
   }
 }
