@@ -1,3 +1,4 @@
+import { BaseAddress } from '@commercetools/platform-sdk';
 import RegistrationModel from './registrationModel';
 
 export default class RegistrationController {
@@ -11,7 +12,7 @@ export default class RegistrationController {
     const form = document.querySelector('.form-registration') as HTMLFormElement;
     const inputs = document.querySelectorAll('.input') as NodeListOf<HTMLInputElement>;
     inputs.forEach((input) => {
-      input.setCustomValidity('required field');
+      if (!(input.type === 'checkbox')) input.setCustomValidity('required field');
     });
 
     form.addEventListener('input', (event: Event) => {
@@ -96,8 +97,49 @@ export default class RegistrationController {
     });
   }
 
-  async getRegistration(email: string, password: string) {
-    const result = await this.model.register(email, password);
+  changeFormAddresses(billing: HTMLElement, shipping: HTMLElement, addresses: HTMLElement) {
+    const inner = document.querySelector('.form-inner');
+    const checkboxAddresses = document.querySelector('.input-checkbox__address') as HTMLInputElement;
+    if (checkboxAddresses.checked) {
+      if (inner) {
+        inner.innerHTML = '';
+        inner.appendChild(addresses);
+      }
+    } else if (inner) {
+      inner.innerHTML = '';
+      inner.appendChild(billing);
+      inner.appendChild(shipping);
+    }
+  }
+
+  parseDateString(dateString: string): string {
+    const [day, month, year] = dateString.split('.');
+    const date = `${year}-${month}-${day}`;
+    return date;
+  }
+
+  async getRegistration(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    dateOfBirth: string,
+    billingAddress: BaseAddress,
+    shippingAddress: BaseAddress,
+    isBillingAddressDefault: boolean,
+    isShippingAddressDefault: boolean
+  ) {
+    const result = await this.model.register(
+      email,
+      password,
+      firstName,
+      lastName,
+      dateOfBirth,
+      billingAddress,
+      shippingAddress,
+      isBillingAddressDefault,
+      isShippingAddressDefault
+    );
     return result;
   }
 }

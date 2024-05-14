@@ -1,106 +1,45 @@
+import iso3166 from 'iso-3166-1';
+import { BaseAddress } from '@commercetools/platform-sdk';
 import HTMLCreation from '../HTMLCreation';
+
 import RegistrationController from './registrationController';
+
+import FieldsetRegistrationAddress from './componentsUI/fieldsetElement';
 
 export default class Registration {
   controller: RegistrationController;
 
+  billingFieldset: FieldsetRegistrationAddress;
+
+  shippingFieldset: FieldsetRegistrationAddress;
+
+  addressesFieldset: FieldsetRegistrationAddress;
+
+  registrationUsersFieldset: FieldsetRegistrationAddress;
+
   constructor() {
     this.controller = new RegistrationController();
-  }
-
-  renderDatalist() {
-    const countries = ['United States', 'Germany', 'Italy'];
-    const options = countries.map((country) => HTMLCreation.createElement('option', { value: country }));
-    return HTMLCreation.createElement('datalist', { id: 'countryList' }, options);
-  }
-
-  renderFieldsetRegistrationUsers() {
-    const fieldsetRegistrationUsers = HTMLCreation.createElement('fieldset', { class: 'fieldset-users' }, [
-      HTMLCreation.createElement('legend', { class: 'legend-registration' }, ['Form Registration Users']),
-      HTMLCreation.createElement('label', { class: 'label label-mail' }, ['Mail:']),
-      HTMLCreation.createElement('input', {
-        type: 'email',
-        class: 'input-mail input',
-        placeholder: 'example@email.com',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-password' }, ['Password:']),
-      HTMLCreation.createElement('input', {
-        type: 'password',
-        class: 'input-password input',
-        placeholder: 'password',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-username' }, ['Username:']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-username input',
-        placeholder: 'username',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-surname' }, ['Surname']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-surname input',
-        placeholder: 'surname',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-date' }, ['Date of birth:']),
-
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-date input',
-        placeholder: 'DD.MM.YYYY',
-        required: 'true',
-      }),
-    ]);
-    return fieldsetRegistrationUsers;
-  }
-
-  renderFieldsetRegistrationAddress() {
-    const fieldsetRegistrationAddress = HTMLCreation.createElement('fieldset', { class: 'fieldset-address' }, [
-      HTMLCreation.createElement('legend', { class: 'legend-registration' }, ['Form Registration Address']),
-      HTMLCreation.createElement('label', { class: 'label label-street' }, ['Street:']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-street input',
-        placeholder: 'street',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-city' }, ['City:']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-city input',
-        placeholder: 'city',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-code' }, ['Postal code:']),
-      HTMLCreation.createElement('input', {
-        type: 'text',
-        class: 'input-code input',
-        placeholder: 'postal code',
-        required: 'true',
-      }),
-      HTMLCreation.createElement('label', { class: 'label label-country' }, ['Country']),
-      HTMLCreation.createElement(
-        'input',
-        {
-          type: 'text',
-          class: 'input-country input',
-          placeholder: 'select one country',
-          required: 'true',
-          list: 'countryList',
-        },
-        [this.renderDatalist()]
-      ),
-    ]);
-    return fieldsetRegistrationAddress;
+    this.billingFieldset = new FieldsetRegistrationAddress('__billing', 'Billing address form');
+    this.shippingFieldset = new FieldsetRegistrationAddress('__shipping', 'Shipping address form');
+    this.addressesFieldset = new FieldsetRegistrationAddress('__addresses', 'Addresses form');
+    this.registrationUsersFieldset = new FieldsetRegistrationAddress('', '');
   }
 
   renderForm() {
     const form = HTMLCreation.createElement('form', { class: 'form  form-registration', action: '/' }, [
-      this.renderFieldsetRegistrationUsers(),
-      this.renderFieldsetRegistrationAddress(),
+      this.registrationUsersFieldset.renderFieldsetRegistrationUsers(),
+      HTMLCreation.createElement('label', { class: 'label label-delivery__criterion' }, [
+        'Set as billing and shipping address',
+      ]),
+      HTMLCreation.createElement('input', {
+        type: 'checkbox',
+        class: 'input input-checkbox__address',
+      }),
+
+      HTMLCreation.createElement('div', { class: 'form-inner' }, [
+        this.billingFieldset.renderFieldsetRegistrationAddress(),
+        this.shippingFieldset.renderFieldsetRegistrationAddress(),
+      ]),
       HTMLCreation.createElement('button', { class: 'button button-registration' }, ['registration']),
     ]);
     return form;
@@ -108,15 +47,114 @@ export default class Registration {
 
   renderPage() {
     const registrationMain = HTMLCreation.createElement('main', { class: 'registration-main' }, [
-      HTMLCreation.createElement('div', { class: 'container container-registration' }, [
-        HTMLCreation.createElement('h1', { class: 'title title-registration' }, ['Registration']),
-        this.renderForm(),
-      ]),
+      HTMLCreation.createElement('div', { class: 'container container-registration' }, [this.renderForm()]),
     ]);
     return registrationMain;
   }
 
   addEventListeners() {
+    const billingAddress = this.billingFieldset.renderFieldsetRegistrationAddress();
+    const shippingAddress = this.shippingFieldset.renderFieldsetRegistrationAddress();
+    const allAddresses = this.addressesFieldset.renderFieldsetRegistrationAddress();
+    const checkboxAddresses = document.querySelector('.input-checkbox__address') as HTMLInputElement;
     this.controller.checkValidate();
+    checkboxAddresses?.addEventListener('change', (event: Event) => {
+      event.preventDefault();
+      this.controller.changeFormAddresses(billingAddress, shippingAddress, allAddresses);
+    });
+
+    document.querySelector('.form')?.addEventListener('submit', async (event: Event) => {
+      event.preventDefault();
+      const inputDateValue = (document.querySelector('.input-date') as HTMLInputElement).value;
+      const dateOfBirth = this.controller.parseDateString(inputDateValue);
+      const inputMailValue = (document.querySelector('.input-mail') as HTMLInputElement).value;
+      const inputPasswordValue = (document.querySelector('.input-password') as HTMLInputElement).value;
+      const inputUsernameValue = (document.querySelector('.input-username') as HTMLInputElement).value;
+      const inputSurnameValue = (document.querySelector('.input-surname') as HTMLInputElement).value;
+
+      let isBillingAddressDefault: boolean;
+      let isShippingAddressDefault: boolean;
+      let billingAddressResult: BaseAddress;
+      let shippingAddressResult: BaseAddress;
+
+      const billingAddressInput = document.querySelector('.input-street__billing');
+      if (billingAddressInput) {
+        billingAddressResult = this.getBillingAddress();
+        shippingAddressResult = this.getShippingAddress();
+        isBillingAddressDefault = (document.querySelector('.check-default__billing') as HTMLInputElement).checked;
+        isShippingAddressDefault = (document.querySelector('.check-default__shipping') as HTMLInputElement).checked;
+      } else {
+        billingAddressResult = this.getGeneralAddress();
+        shippingAddressResult = this.getGeneralAddress();
+        isBillingAddressDefault = (document.querySelector('.check-default__addresses') as HTMLInputElement).checked;
+        isShippingAddressDefault = (document.querySelector('.check-default__addresses') as HTMLInputElement).checked;
+      }
+
+      this.controller.getRegistration(
+        inputMailValue,
+        inputPasswordValue,
+        inputUsernameValue,
+        inputSurnameValue,
+        dateOfBirth,
+        billingAddressResult,
+        shippingAddressResult,
+        isBillingAddressDefault,
+        isShippingAddressDefault
+      );
+
+      const mainPageEvent = new CustomEvent('mainPageEvent');
+      document.body.dispatchEvent(mainPageEvent);
+    });
+  }
+
+  getBillingAddress() {
+    const inputStreet = (document.querySelector('.input-street__billing') as HTMLInputElement).value;
+    const inputCity = (document.querySelector('.input-city__billing') as HTMLInputElement).value;
+    const inputPostalCode = (document.querySelector('.input-code__billing') as HTMLInputElement).value;
+    const inputCountry = (document.querySelector('.input-country__billing') as HTMLInputElement).value;
+    let inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    if (inputCountry === 'United States') {
+      inputCountryCode = 'US';
+    }
+    return {
+      country: inputCountryCode,
+      streetName: inputStreet,
+      postalCode: inputPostalCode,
+      city: inputCity,
+    };
+  }
+
+  getShippingAddress() {
+    const inputStreet = (document.querySelector('.input-street__shipping') as HTMLInputElement).value;
+    const inputCity = (document.querySelector('.input-city__shipping') as HTMLInputElement).value;
+    const inputPostalCode = (document.querySelector('.input-code__shipping') as HTMLInputElement).value;
+    const inputCountry = (document.querySelector('.input-country__shipping') as HTMLInputElement).value;
+    let inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    if (inputCountry === 'United States') {
+      inputCountryCode = 'US';
+    }
+    return {
+      country: inputCountryCode,
+      streetName: inputStreet,
+      postalCode: inputPostalCode,
+      city: inputCity,
+    };
+  }
+
+  getGeneralAddress() {
+    const inputStreet = (document.querySelector('.input-street__addresses') as HTMLInputElement).value;
+    const inputCity = (document.querySelector('.input-city__addresses') as HTMLInputElement).value;
+    const inputPostalCode = (document.querySelector('.input-code__addresses') as HTMLInputElement).value;
+    const inputCountry = (document.querySelector('.input-country__addresses') as HTMLInputElement).value;
+    let inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    if (inputCountry === 'United States') {
+      inputCountryCode = 'US';
+    }
+    return {
+      country: inputCountryCode,
+      streetName: inputStreet,
+      postalCode: inputPostalCode,
+      city: inputCity,
+    };
   }
 }
