@@ -1,23 +1,21 @@
+import { BaseAddress } from '@commercetools/platform-sdk';
 import RegistrationModel from './registrationModel';
 
-class FormValidate {
+export default class RegistrationController {
   model: RegistrationModel;
-
-  private form: HTMLFormElement;
-
-  private inputs: NodeListOf<HTMLInputElement>;
 
   constructor() {
     this.model = new RegistrationModel();
-    this.form = document.querySelector('.form-registration') as HTMLFormElement;
-    this.inputs = document.querySelectorAll('.input');
-    this.inputs.forEach((input) => {
-      input.setCustomValidity('required field');
-    });
   }
 
   checkValidate(): void {
-    this.form.addEventListener('input', (event: Event) => {
+    const form = document.querySelector('.form-registration') as HTMLFormElement;
+    const inputs = document.querySelectorAll('.input') as NodeListOf<HTMLInputElement>;
+    inputs.forEach((input) => {
+      if (!(input.type === 'checkbox')) input.setCustomValidity('required field');
+    });
+
+    form.addEventListener('input', (event: Event) => {
       const element: HTMLInputElement = event.target as HTMLInputElement;
       const { value } = element;
       if (element.classList.contains('input-mail')) {
@@ -99,10 +97,49 @@ class FormValidate {
     });
   }
 
-  async getRegistration(email: string, password: string) {
-    const result = await this.model.register(email, password);
+  changeFormAddresses(billing: HTMLElement, shipping: HTMLElement, addresses: HTMLElement) {
+    const inner = document.querySelector('.form-inner');
+    const checkboxAddresses = document.querySelector('.input-checkbox__address') as HTMLInputElement;
+    if (checkboxAddresses.checked) {
+      if (inner) {
+        inner.innerHTML = '';
+        inner.appendChild(addresses);
+      }
+    } else if (inner) {
+      inner.innerHTML = '';
+      inner.appendChild(billing);
+      inner.appendChild(shipping);
+    }
+  }
+
+  parseDateString(dateString: string): string {
+    const [day, month, year] = dateString.split('.');
+    const date = `${year}-${month}-${day}`;
+    return date;
+  }
+
+  async getRegistration(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    dateOfBirth: string,
+    billingAddress: BaseAddress,
+    shippingAddress: BaseAddress,
+    isBillingAddressDefault: boolean,
+    isShippingAddressDefault: boolean
+  ) {
+    const result = await this.model.register(
+      email,
+      password,
+      firstName,
+      lastName,
+      dateOfBirth,
+      billingAddress,
+      shippingAddress,
+      isBillingAddressDefault,
+      isShippingAddressDefault
+    );
     return result;
   }
 }
-
-export default FormValidate;

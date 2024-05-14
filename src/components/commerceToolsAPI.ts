@@ -4,7 +4,7 @@ import {
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { BaseAddress, CustomerDraft, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { clientId, clientSecret, projectKey, authHostUrl, apiHostUrl, defaultCustomerScope } from './data';
 
@@ -60,17 +60,48 @@ export default class CommerceToolsAPI {
     return response;
   }
 
-  async register(email: string, password: string) {
+  async register(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    dateOfBirth: string,
+    billingAddress: BaseAddress,
+    shippingAddress: BaseAddress,
+    isBillingAddressDefault: boolean,
+    isShippingAddressDefault: boolean
+  ) {
     const ctpClient = this.createClient();
     this.apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey });
+
+    const addresses: BaseAddress[] = [billingAddress, shippingAddress];
+
+    let defaultBillingIndex: number | undefined;
+    let defaultShippingIndex: number | undefined;
+    if (isBillingAddressDefault) {
+      defaultBillingIndex = addresses.indexOf(billingAddress);
+    }
+    if (isShippingAddressDefault) {
+      defaultShippingIndex = addresses.indexOf(shippingAddress);
+    }
+
+    const customerDraft: CustomerDraft = {
+      email,
+      password,
+      firstName,
+      lastName,
+      dateOfBirth,
+      addresses,
+      billingAddresses: [addresses.indexOf(billingAddress)],
+      shippingAddresses: [addresses.indexOf(shippingAddress)],
+      defaultBillingAddress: defaultBillingIndex !== undefined ? defaultBillingIndex : undefined,
+      defaultShippingAddress: defaultShippingIndex !== undefined ? defaultShippingIndex : undefined,
+    };
 
     const response = await this.apiRoot
       .customers()
       .post({
-        body: {
-          email,
-          password,
-        },
+        body: customerDraft,
       })
       .execute();
     return response;

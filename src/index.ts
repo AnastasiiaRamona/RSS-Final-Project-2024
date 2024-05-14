@@ -1,6 +1,6 @@
+import App from './components/app/app';
 import './style.scss';
-import Login from './components/login/loginView';
+import './global.scss';
 
-const test = new Login();
-test.renderPage();
-test.addEventListeners();
+const app = new App();
+app.render();
