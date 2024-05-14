@@ -53,7 +53,7 @@ export default class LoginModel {
     try {
       const commerceToolsAPI = new CommerceToolsAPI();
       const response = await commerceToolsAPI.emailCheck(email);
-      if (response.body.results.length) {
+      if (response?.body.results.length) {
         return true;
       }
       return false;
