@@ -17,8 +17,7 @@
   @include flexbox(column, center, center);
 }
 
-.fieldset-users,
-.fieldset-address {
+.fieldset-users {
   @include flexbox(column, center, center);
 }
 
@@ -30,6 +29,56 @@
   background-color: red;
 }
 
-.form-registration{
+.form-registration {
+  max-width: 1000px;
+  width: 100%;
   position: relative;
+}
+
+.form-inner {
+  display: flex;
+  margin-top: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.fieldset {
+  @include flexbox(column, center, center);
+  margin-top: 5px;
+}
+
+.fieldset__addresses {
+  width: 100%;
+}
+
+input[type='checkbox'] {
+  height: 40px;
+  width: 100px;
+  appearance: none;
+  outline: none;
+  position: relative;
+  background: #c6c6c6;
+  border-radius: 20px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  transition: 0.5s;
+  cursor: pointer;
+}
+input[type='checkbox']:checked {
+  background: #40e551;
+}
+input[type='checkbox']:before {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 25px;
+  background: #fff;
+  top: -2px;
+  left: -5px;
+  transform: scale(1.1);
+  transition: 0.5s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+input:checked[type='checkbox']:before {
+  background: blue;
+  left: 70px;
 }
