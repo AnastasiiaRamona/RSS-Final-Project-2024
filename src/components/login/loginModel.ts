@@ -2,6 +2,12 @@
 import CommerceToolsAPI from '../commerceToolsAPI';
 
 export default class LoginModel {
+  commerceToolsAPI: CommerceToolsAPI;
+
+  constructor() {
+    this.commerceToolsAPI = new CommerceToolsAPI();
+  }
+
   validateEmail(email: string) {
     return /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.+.[A-Za-z]{1,}$/i.test(email);
   }
@@ -38,11 +44,25 @@ export default class LoginModel {
 
   async login(email: string, password: string) {
     try {
-      const commerceToolsAPI = new CommerceToolsAPI();
-      const response = await commerceToolsAPI.login(email, password);
-      return response;
+      const response = await this.commerceToolsAPI.login(email, password);
+      if (response) {
+        return true;
+      }
+      return false;
     } catch (error) {
-      return new Error('Unsuccessful login');
+      return false;
+    }
+  }
+
+  async emailCheck(email: string) {
+    try {
+      const response = await this.commerceToolsAPI.emailCheck(email);
+      if (response?.body.results.length) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      return false;
     }
   }
 }

@@ -51,3 +51,12 @@
 .login__password-hide {
   fill: $secondary-color;
 }
+
+.login__error-hide {
+  display: none;
+}
+
+.login__password-error,
+.login__email-error {
+  color: $error-color;
+}

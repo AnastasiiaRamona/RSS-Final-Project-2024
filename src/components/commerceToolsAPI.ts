@@ -1,10 +1,17 @@
-import { ClientBuilder, type AuthMiddlewareOptions, type HttpMiddlewareOptions } from '@commercetools/sdk-client-v2';
+import {
+  Client,
+  ClientBuilder,
+  type AuthMiddlewareOptions,
+  type HttpMiddlewareOptions,
+} from '@commercetools/sdk-client-v2';
 import { BaseAddress, CustomerDraft, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { clientId, clientSecret, projectKey, authHostUrl, apiHostUrl, defaultCustomerScope } from './data';
 
 export default class CommerceToolsAPI {
   apiRoot: ByProjectKeyRequestBuilder | null = null;
+
+  ctpClient: Client;
 
   authMiddlewareOptions: AuthMiddlewareOptions = {
     host: authHostUrl,
@@ -22,6 +29,11 @@ export default class CommerceToolsAPI {
     fetch,
   };
 
+  constructor() {
+    this.ctpClient = this.createClient();
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+  }
+
   createClient() {
     return new ClientBuilder()
       .withProjectKey(projectKey)
@@ -32,18 +44,19 @@ export default class CommerceToolsAPI {
   }
 
   async login(email: string, password: string) {
-    const ctpClient = this.createClient();
-    this.apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey });
-
-    const response = await this.apiRoot
-      .login()
-      .post({
-        body: {
-          email,
-          password,
-        },
-      })
-      .execute();
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .me()
+        .login()
+        .post({
+          body: {
+            email,
+            password,
+          },
+        })
+        .execute();
+    }
     return response;
   }
 
@@ -91,6 +104,21 @@ export default class CommerceToolsAPI {
         body: customerDraft,
       })
       .execute();
+    return response;
+  }
+
+  async emailCheck(email: string) {
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .customers()
+        .get({
+          queryArgs: {
+            where: `email="${email}"`,
+          },
+        })
+        .execute();
+    }
     return response;
   }
 }
