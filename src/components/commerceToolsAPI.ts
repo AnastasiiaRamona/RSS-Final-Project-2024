@@ -1,6 +1,7 @@
 import {
   Client,
   ClientBuilder,
+  ClientResponse,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
@@ -10,6 +11,7 @@ import { clientId, clientSecret, projectKey, authHostUrl, apiHostUrl, defaultCus
 
 export default class CommerceToolsAPI {
   apiRoot: ByProjectKeyRequestBuilder | null = null;
+
   ctpClient: Client;
 
   authMiddlewareOptions: AuthMiddlewareOptions = {
@@ -43,8 +45,9 @@ export default class CommerceToolsAPI {
   }
 
   async login(email: string, password: string) {
+    let response;
     if (this.apiRoot) {
-      const response = await this.apiRoot
+      response = await this.apiRoot
         .login()
         .post({
           body: {
@@ -53,8 +56,8 @@ export default class CommerceToolsAPI {
           },
         })
         .execute();
-      return response;
     }
+    return response;
   }
 
   async register(email: string, password: string) {
@@ -74,8 +77,9 @@ export default class CommerceToolsAPI {
   }
 
   async emailCheck(email: string) {
+    let response;
     if (this.apiRoot) {
-      const response = await this.apiRoot
+      response = await this.apiRoot
         .customers()
         .get({
           queryArgs: {
@@ -83,7 +87,7 @@ export default class CommerceToolsAPI {
           },
         })
         .execute();
-      return response;
     }
+    return response;
   }
 }
