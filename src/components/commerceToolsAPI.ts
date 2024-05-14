@@ -1,7 +1,6 @@
 import {
   Client,
   ClientBuilder,
-  ClientResponse,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
