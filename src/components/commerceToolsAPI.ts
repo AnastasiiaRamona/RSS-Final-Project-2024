@@ -47,6 +47,7 @@ export default class CommerceToolsAPI {
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot
+        .me()
         .login()
         .post({
           body: {
@@ -56,6 +57,7 @@ export default class CommerceToolsAPI {
         })
         .execute();
     }
+    console.log(this.ctpClient);
     return response;
   }
 
@@ -86,6 +88,15 @@ export default class CommerceToolsAPI {
           },
         })
         .execute();
+    }
+    return response;
+  }
+
+  async log() {
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.customers().emailToken();
+      console.log('hhh', response);
     }
     return response;
   }
