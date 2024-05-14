@@ -1,0 +1,14 @@
+.info {
+  position: fixed;
+  padding: 15px;
+  @include font('Arial', clamp(12px, 5vw, 14px), bold, 1, $white);
+  text-transform: uppercase;
+}
+.toast-close {
+  padding: 0;
+  width: 0;
+  height: 0;
+  background-color: none;
+  margin: 0;
+  margin-left: 10px;
+}

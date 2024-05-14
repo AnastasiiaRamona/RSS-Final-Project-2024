@@ -1,3 +1,5 @@
+import Toastify from 'toastify-js';
+
 import RegistrationModel from './registrationModel';
 
 export default class RegistrationController {
@@ -5,6 +7,27 @@ export default class RegistrationController {
 
   constructor() {
     this.model = new RegistrationModel();
+  }
+
+  getErrorMessage(text: string) {
+    Toastify({
+      text,
+      newWindow: true,
+      className: 'info',
+      close: true,
+      selector: document.querySelector('.form-registration'),
+      stopOnFocus: true, // Prevents dismissing of toast on hover
+      offset: {
+        x: 0, // horizontal axis - can be a number or a string indicating unity. eg: '2em'
+        y: 350, // vertical axis - can be a number or a string indicating unity. eg: '2em'
+      },
+
+      style: {
+        background: 'linear-gradient(to right, #00b09b, #96c93d)',
+      },
+
+      duration: 300000,
+    }).showToast();
   }
 
   checkValidate(): void {
@@ -15,6 +38,7 @@ export default class RegistrationController {
     });
 
     form.addEventListener('input', (event: Event) => {
+      this.getErrorMessage('huydddddddddddddddddddddddddddddddddddddddddddddddddd');
       const element: HTMLInputElement = event.target as HTMLInputElement;
       const { value } = element;
       if (element.classList.contains('input-mail')) {
