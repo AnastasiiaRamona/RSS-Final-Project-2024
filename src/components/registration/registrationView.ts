@@ -1,4 +1,5 @@
 import iso3166 from 'iso-3166-1';
+import { BaseAddress } from '@commercetools/platform-sdk';
 import HTMLCreation from '../HTMLCreation';
 
 import RegistrationController from './registrationController';
@@ -71,13 +72,23 @@ export default class Registration {
       const inputUsernameValue = (document.querySelector('.input-username') as HTMLInputElement).value;
       const inputSurnameValue = (document.querySelector('.input-surname') as HTMLInputElement).value;
 
-      const billingAddressResult = document.querySelector('.input-street__billing')
-        ? this.getBillingAddress()
-        : this.getGeneralAddress();
+      let isBillingAddressDefault: boolean;
+      let isShippingAddressDefault: boolean;
+      let billingAddressResult: BaseAddress;
+      let shippingAddressResult: BaseAddress;
 
-      const shippingAddressResult = document.querySelector('.input-street__billing')
-        ? this.getShippingAddress()
-        : this.getGeneralAddress();
+      const billingAddressInput = document.querySelector('.input-street__billing');
+      if (billingAddressInput) {
+        billingAddressResult = this.getBillingAddress();
+        shippingAddressResult = this.getShippingAddress();
+        isBillingAddressDefault = (document.querySelector('.check-default__billing') as HTMLInputElement).checked;
+        isShippingAddressDefault = (document.querySelector('.check-default__shipping') as HTMLInputElement).checked;
+      } else {
+        billingAddressResult = this.getGeneralAddress();
+        shippingAddressResult = this.getGeneralAddress();
+        isBillingAddressDefault = (document.querySelector('.check-default__addresses') as HTMLInputElement).checked;
+        isShippingAddressDefault = (document.querySelector('.check-default__addresses') as HTMLInputElement).checked;
+      }
 
       this.controller.getRegistration(
         inputMailValue,
@@ -86,7 +97,9 @@ export default class Registration {
         inputSurnameValue,
         dateOfBirth,
         billingAddressResult,
-        shippingAddressResult
+        shippingAddressResult,
+        isBillingAddressDefault,
+        isShippingAddressDefault
       );
 
       const mainPageEvent = new CustomEvent('mainPageEvent');
@@ -99,7 +112,10 @@ export default class Registration {
     const inputCity = (document.querySelector('.input-city__billing') as HTMLInputElement).value;
     const inputPostalCode = (document.querySelector('.input-code__billing') as HTMLInputElement).value;
     const inputCountry = (document.querySelector('.input-country__billing') as HTMLInputElement).value;
-    const inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    let inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    if (inputCountry === 'United States') {
+      inputCountryCode = 'US';
+    }
     return {
       country: inputCountryCode,
       streetName: inputStreet,
@@ -113,7 +129,10 @@ export default class Registration {
     const inputCity = (document.querySelector('.input-city__shipping') as HTMLInputElement).value;
     const inputPostalCode = (document.querySelector('.input-code__shipping') as HTMLInputElement).value;
     const inputCountry = (document.querySelector('.input-country__shipping') as HTMLInputElement).value;
-    const inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    let inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    if (inputCountry === 'United States') {
+      inputCountryCode = 'US';
+    }
     return {
       country: inputCountryCode,
       streetName: inputStreet,
@@ -127,7 +146,10 @@ export default class Registration {
     const inputCity = (document.querySelector('.input-city__addresses') as HTMLInputElement).value;
     const inputPostalCode = (document.querySelector('.input-code__addresses') as HTMLInputElement).value;
     const inputCountry = (document.querySelector('.input-country__addresses') as HTMLInputElement).value;
-    const inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    let inputCountryCode = iso3166.whereCountry(inputCountry)?.alpha2 || 'UNDEFINED';
+    if (inputCountry === 'United States') {
+      inputCountryCode = 'US';
+    }
     return {
       country: inputCountryCode,
       streetName: inputStreet,

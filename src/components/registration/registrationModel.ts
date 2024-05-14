@@ -9,7 +9,9 @@ export default class RegistrationModel {
     lastName: string,
     dateOfBirth: string,
     billingAddress: BaseAddress,
-    shippingAddress: BaseAddress
+    shippingAddress: BaseAddress,
+    isBillingAddressDefault: boolean,
+    isShippingAddressDefault: boolean
   ) {
     try {
       const commerceToolsAPI = new CommerceToolsAPI();
@@ -20,7 +22,9 @@ export default class RegistrationModel {
         lastName,
         dateOfBirth,
         billingAddress,
-        shippingAddress
+        shippingAddress,
+        isBillingAddressDefault,
+        isShippingAddressDefault
       );
       return response;
     } catch (error) {

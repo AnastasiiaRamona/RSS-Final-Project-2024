@@ -55,19 +55,21 @@ export default class CommerceToolsAPI {
     dateOfBirth: string,
     billingAddress: BaseAddress,
     shippingAddress: BaseAddress,
-    defaultBillingAddress?: BaseAddress,
-    defaultShippingAddress?: BaseAddress
+    isBillingAddressDefault: boolean,
+    isShippingAddressDefault: boolean
   ) {
     const ctpClient = this.createClient();
     this.apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey });
 
     const addresses: BaseAddress[] = [billingAddress, shippingAddress];
 
-    if (defaultBillingAddress) {
-      addresses.push(defaultBillingAddress);
+    let defaultBillingIndex: number | undefined;
+    let defaultShippingIndex: number | undefined;
+    if (isBillingAddressDefault) {
+      defaultBillingIndex = addresses.indexOf(billingAddress);
     }
-    if (defaultShippingAddress) {
-      addresses.push(defaultShippingAddress);
+    if (isShippingAddressDefault) {
+      defaultShippingIndex = addresses.indexOf(shippingAddress);
     }
 
     const customerDraft: CustomerDraft = {
@@ -77,6 +79,10 @@ export default class CommerceToolsAPI {
       lastName,
       dateOfBirth,
       addresses,
+      billingAddresses: [addresses.indexOf(billingAddress)],
+      shippingAddresses: [addresses.indexOf(shippingAddress)],
+      defaultBillingAddress: defaultBillingIndex !== undefined ? defaultBillingIndex : undefined,
+      defaultShippingAddress: defaultShippingIndex !== undefined ? defaultShippingIndex : undefined,
     };
 
     const response = await this.apiRoot

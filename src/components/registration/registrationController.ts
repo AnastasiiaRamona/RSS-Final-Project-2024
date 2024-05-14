@@ -125,7 +125,9 @@ export default class RegistrationController {
     lastName: string,
     dateOfBirth: string,
     billingAddress: BaseAddress,
-    shippingAddress: BaseAddress
+    shippingAddress: BaseAddress,
+    isBillingAddressDefault: boolean,
+    isShippingAddressDefault: boolean
   ) {
     const result = await this.model.register(
       email,
@@ -134,7 +136,9 @@ export default class RegistrationController {
       lastName,
       dateOfBirth,
       billingAddress,
-      shippingAddress
+      shippingAddress,
+      isBillingAddressDefault,
+      isShippingAddressDefault
     );
     return result;
   }
