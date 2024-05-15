@@ -71,8 +71,7 @@ export default class CommerceToolsAPI {
     isBillingAddressDefault: boolean,
     isShippingAddressDefault: boolean
   ) {
-    const ctpClient = this.createClient();
-    this.apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey });
+    let response;
 
     const addresses: BaseAddress[] = [billingAddress, shippingAddress];
 
@@ -97,13 +96,14 @@ export default class CommerceToolsAPI {
       defaultBillingAddress: defaultBillingIndex !== undefined ? defaultBillingIndex : undefined,
       defaultShippingAddress: defaultShippingIndex !== undefined ? defaultShippingIndex : undefined,
     };
-
-    const response = await this.apiRoot
-      .customers()
-      .post({
-        body: customerDraft,
-      })
-      .execute();
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .customers()
+        .post({
+          body: customerDraft,
+        })
+        .execute();
+    }
     return response;
   }
 

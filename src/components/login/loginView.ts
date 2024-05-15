@@ -13,7 +13,7 @@ export default class Login {
       HTMLCreation.createElement(
         'form',
         {
-          id: 'loginform',
+          id: 'loginForm',
           class: 'login__form form',
         },
         [
@@ -34,10 +34,9 @@ export default class Login {
           ]),
           HTMLCreation.createElement(
             'button',
-            { type: 'submit', form: 'loginform', class: 'login__submit-button button', disabled: 'true' },
+            { type: 'submit', form: 'loginForm', class: 'login__submit-button button', disabled: 'true' },
             [`LOGIN`]
           ),
-          // HTMLCreation.createElement('button', { class: 'login__registration-button button' }, ['Registration']),
         ]
       ),
     ]);
@@ -82,10 +81,10 @@ export default class Login {
     const passwordInput = document.querySelector('.login__password-input') as HTMLInputElement;
     const emailError = document.querySelector('.login__email-error') as HTMLInputElement;
     const passwordError = document.querySelector('.login__password-error') as HTMLInputElement;
-    const loginSucсessEvent = new CustomEvent('loginSucсessEvent');
+    const loginSuccessEvent = new CustomEvent('loginSuccessEvent');
     switch (resultLogin) {
-      case 'loginSucсess':
-        document.body.dispatchEvent(loginSucсessEvent);
+      case 'loginSuccess':
+        document.body.dispatchEvent(loginSuccessEvent);
         break;
       case 'errorEmail':
         emailInput.classList.add('login__input-invalid');
