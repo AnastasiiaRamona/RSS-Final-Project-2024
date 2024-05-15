@@ -101,9 +101,6 @@ export default class Registration {
         isBillingAddressDefault,
         isShippingAddressDefault
       );
-
-      const mainPageEvent = new CustomEvent('mainPageEvent');
-      document.body.dispatchEvent(mainPageEvent);
     });
   }
 

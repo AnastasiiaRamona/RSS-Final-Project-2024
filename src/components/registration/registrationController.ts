@@ -1,4 +1,5 @@
 import { BaseAddress } from '@commercetools/platform-sdk';
+
 import RegistrationModel from './registrationModel';
 
 export default class RegistrationController {
