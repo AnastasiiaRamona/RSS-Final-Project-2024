@@ -27,9 +27,11 @@ export default class RegistrationModel {
   handleError(errorMessage: string, code: number) {
     console.log(code);
     if (errorMessage === 'There is already an existing customer with the provided email.') {
-      this.showErrorMessage('Mail exists, create another or log in');
+      this.showErrorMessage(
+        'A user with the specified email already exists. Enter a different email or try to log in.'
+      );
     } else if (code === 500 || code === 502 || code === 504 || code === 503) {
-      this.showErrorMessage(`${errorMessage},try later`);
+      this.showErrorMessage(`${errorMessage}, try again later`);
     } else this.showErrorMessage(errorMessage);
   }
 
@@ -57,6 +59,7 @@ export default class RegistrationModel {
         isBillingAddressDefault,
         isShippingAddressDefault
       );
+
       const mainPageEvent = new CustomEvent('mainPageEvent');
       document.body.dispatchEvent(mainPageEvent);
 
