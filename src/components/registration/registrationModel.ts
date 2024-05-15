@@ -3,6 +3,12 @@ import Toastify from 'toastify-js';
 import CommerceToolsAPI from '../commerceToolsAPI';
 
 export default class RegistrationModel {
+  commerceToolsAPI: CommerceToolsAPI;
+
+  constructor() {
+    this.commerceToolsAPI = new CommerceToolsAPI();
+  }
+
   showErrorMessage(text: string) {
     Toastify({
       text,
@@ -47,8 +53,7 @@ export default class RegistrationModel {
     isShippingAddressDefault: boolean
   ) {
     try {
-      const commerceToolsAPI = new CommerceToolsAPI();
-      const response = await commerceToolsAPI.register(
+      const response = await this.commerceToolsAPI.register(
         email,
         password,
         firstName,
