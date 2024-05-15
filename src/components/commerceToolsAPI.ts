@@ -1,17 +1,26 @@
 import {
   Client,
   ClientBuilder,
+  PasswordAuthMiddlewareOptions,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
 import { BaseAddress, CustomerDraft, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import { clientId, clientSecret, projectKey, authHostUrl, apiHostUrl, defaultCustomerScope } from './data';
+import {
+  clientId,
+  clientSecret,
+  projectKey,
+  authHostUrl,
+  apiHostUrl,
+  defaultCustomerScope,
+  userTokenCache,
+} from './data';
 
 export default class CommerceToolsAPI {
   apiRoot: ByProjectKeyRequestBuilder | null = null;
 
-  ctpClient: Client;
+  ctpClient: Client | null = null;
 
   authMiddlewareOptions: AuthMiddlewareOptions = {
     host: authHostUrl,
@@ -24,17 +33,30 @@ export default class CommerceToolsAPI {
     fetch,
   };
 
+  createPasswordFlowOptions(username: string, password: string): PasswordAuthMiddlewareOptions {
+    return {
+      host: authHostUrl,
+      projectKey,
+      credentials: {
+        clientId,
+        clientSecret,
+        user: {
+          username,
+          password,
+        },
+      },
+      scopes: defaultCustomerScope,
+      fetch,
+      tokenCache: userTokenCache,
+    };
+  }
+
   httpMiddlewareOptions: HttpMiddlewareOptions = {
     host: apiHostUrl,
     fetch,
   };
 
-  constructor() {
-    this.ctpClient = this.createClient();
-    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
-  }
-
-  createClient() {
+  createCredentialsClient() {
     return new ClientBuilder()
       .withProjectKey(projectKey)
       .withClientCredentialsFlow(this.authMiddlewareOptions)
@@ -43,7 +65,19 @@ export default class CommerceToolsAPI {
       .build();
   }
 
+  createPasswordClient(options: PasswordAuthMiddlewareOptions) {
+    return new ClientBuilder()
+      .withProjectKey(projectKey)
+      .withPasswordFlow(options)
+      .withHttpMiddleware(this.httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build();
+  }
+
   async login(email: string, password: string) {
+    const options = this.createPasswordFlowOptions(email, password);
+    this.ctpClient = this.createPasswordClient(options);
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot
@@ -57,6 +91,8 @@ export default class CommerceToolsAPI {
         })
         .execute();
     }
+
+    localStorage.setItem('userToken', userTokenCache.get().token);
     return response;
   }
 
@@ -71,6 +107,9 @@ export default class CommerceToolsAPI {
     isBillingAddressDefault: boolean,
     isShippingAddressDefault: boolean
   ) {
+    this.ctpClient = this.createCredentialsClient();
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+
     let response;
 
     const addresses: BaseAddress[] = [billingAddress, shippingAddress];
@@ -104,6 +143,9 @@ export default class CommerceToolsAPI {
         })
         .execute();
     }
+
+    this.login(email, password);
+
     return response;
   }
 
