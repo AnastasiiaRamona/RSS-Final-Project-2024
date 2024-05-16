@@ -1,9 +1,9 @@
-import CommerceToolsAPI from './components/commerceToolsAPI';
-import LoginModel from './components/login/loginModel';
+import CommerceToolsAPI from '../components/commerceToolsAPI';
+import LoginModel from '../components/login/loginModel';
 
-jest.mock('./components/commerceToolsAPI');
+jest.mock('../components/commerceToolsAPI');
 
-describe('Test class Login Model', () => {
+describe('Test class LoginModel', () => {
   beforeAll(() => {
     (CommerceToolsAPI as jest.Mock).mockImplementation(() => null);
   });
