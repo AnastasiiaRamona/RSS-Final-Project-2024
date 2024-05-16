@@ -144,7 +144,7 @@ export default class CommerceToolsAPI {
         .execute();
     }
 
-    this.login(email, password);
+    await this.login(email, password);
 
     return response;
   }

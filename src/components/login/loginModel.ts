@@ -45,6 +45,8 @@ export default class LoginModel {
     try {
       const response = await this.commerceToolsAPI.login(email, password);
       if (response) {
+        const mainPageEvent = new CustomEvent('mainPageEvent');
+        document.body.dispatchEvent(mainPageEvent);
         return true;
       }
       return false;
