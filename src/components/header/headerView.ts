@@ -71,8 +71,9 @@ export default class Header {
     if (loginButton) {
       loginButton.addEventListener('click', () => {
         if (loginButton.textContent === 'Log out') {
-          const logOutEvent = new CustomEvent('logOutEvent');
-          document.body.dispatchEvent(logOutEvent);
+          const loginEvent = new CustomEvent('loginEvent');
+          document.body.dispatchEvent(loginEvent);
+          localStorage.clear();
         } else if (loginButton.textContent === 'Login') {
           const loginEvent = new CustomEvent('loginEvent');
           document.body.dispatchEvent(loginEvent);

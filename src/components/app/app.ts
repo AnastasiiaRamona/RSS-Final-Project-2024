@@ -17,7 +17,7 @@ export default class App {
 
   private main: Main;
 
-  private isLoggedIn: boolean = false;
+  private isLoggedIn: boolean = !!localStorage.getItem('userToken');
 
   private router = router;
 
@@ -79,6 +79,7 @@ export default class App {
   private setupRouter() {
     const renderRoute = (path: string, renderFunction: () => void) => {
       this.router.addRoute(path, () => {
+        this.isLoggedIn = !!localStorage.getItem('userToken');
         this.changeHeaderElement(this.header.renderHeader(this.isLoggedIn));
         this.header.addEventListeners();
         renderFunction();
@@ -110,6 +111,12 @@ export default class App {
 
     if (startingRoute === '') {
       this.renderPageByRoute('main');
+    } else if (startingRoute === 'login') {
+      if (this.isLoggedIn) {
+        this.renderPageByRoute('main');
+      } else {
+        this.renderPageByRoute('login');
+      }
     } else if (routes[startingRoute]) {
       this.renderPageByRoute(startingRoute);
     } else {
