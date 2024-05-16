@@ -9,7 +9,7 @@ export default class LoginModel {
   }
 
   validateEmail(email: string) {
-    return /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+\.+.[A-Za-z]{1,}$/i.test(email);
+    return /^[A-Za-z0-9._+-]+@[A-Za-z0-9-.]+\.+.[A-Za-z]{1,}$/i.test(email);
   }
 
   createEmailValidationMessage(email: string) {
@@ -18,8 +18,8 @@ export default class LoginModel {
     if (!/^[a-zA-Z-._+-@]+$/.test(email)) return 'You can only use hyphens underscores and English letters.';
     if (!/@/.test(email)) return 'The email address must contain @.';
     if (!/^[^@]/.test(email)) return 'The email address cannot start with @.';
-    if (/@[.]/.test(email)) return 'The use of a dot in this location is unacceptable';
-    if (!/^[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$/.test(email)) return 'Email address is not complete, enter domain';
+    if (!/^[a-zA-Z0-9.-]+@[A-Za-z0-9-.]+\.[a-zA-Z]{1,}$/.test(email))
+      return 'Email address is not complete, enter domain';
     return '';
   }
 
