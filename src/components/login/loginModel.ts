@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import CommerceToolsAPI from '../commerceToolsAPI';
 
 export default class LoginModel {

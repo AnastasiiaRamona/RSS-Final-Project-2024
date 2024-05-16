@@ -81,10 +81,10 @@ export default class Login {
     const passwordInput = document.querySelector('.login__password-input') as HTMLInputElement;
     const emailError = document.querySelector('.login__email-error') as HTMLInputElement;
     const passwordError = document.querySelector('.login__password-error') as HTMLInputElement;
-    const loginSuccessEvent = new CustomEvent('loginSuccessEvent');
+    const mainPageEvent = new CustomEvent('mainPageEvent');
     switch (resultLogin) {
       case 'loginSuccess':
-        document.body.dispatchEvent(loginSuccessEvent);
+        document.body.dispatchEvent(mainPageEvent);
         break;
       case 'errorEmail':
         emailInput.classList.add('login__input-invalid');
