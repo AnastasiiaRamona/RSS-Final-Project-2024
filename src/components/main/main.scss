@@ -4,7 +4,8 @@
 @import '../../style/base/base.scss';
 
 .main-field {
-  @include flexbox(row, space-between)
+  @include flexbox(row, space-between);
+  @include size(100vw, auto);
 }
 
 .left-dashboard {

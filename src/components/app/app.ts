@@ -4,6 +4,7 @@ import Login from '../login/loginView';
 import Main from '../main/mainView';
 import Registration from '../registration/registrationView';
 import router from '../router';
+import MissingPage from '../missingPage/missingPageView';
 
 export default class App {
   private header: Header;
@@ -20,6 +21,8 @@ export default class App {
 
   private router = router;
 
+  private missingPage: MissingPage;
+
   private body = document.body;
 
   constructor() {
@@ -28,6 +31,7 @@ export default class App {
     this.login = new Login();
     this.registration = new Registration();
     this.main = new Main();
+    this.missingPage = new MissingPage();
     this.setupRouter();
   }
 
@@ -98,17 +102,23 @@ export default class App {
       this.header.addMainPageButton();
       this.registration.addEventListeners();
     });
+
+    renderRoute('/404page', () => {
+      this.changeMainElement(this.missingPage.renderPage());
+      this.header.addMainPageButton();
+    });
   }
 
   changePageAlongThePath() {
     const startingRoute = window.location.pathname.slice(1);
     const { routes } = this.router;
 
-    if (routes[startingRoute]) {
+    if (startingRoute === '') {
+      this.renderPageByRoute('main');
+    } else if (routes[startingRoute]) {
       this.renderPageByRoute(startingRoute);
     } else {
-      const defaultRoute = startingRoute === 'login' || startingRoute === 'registration' ? startingRoute : 'main';
-      this.renderPageByRoute(defaultRoute);
+      this.renderPageByRoute('404page');
     }
   }
 
