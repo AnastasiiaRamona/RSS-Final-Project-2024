@@ -102,11 +102,6 @@ export default class App {
       this.header.addMainPageButton();
       this.registration.addEventListeners();
     });
-
-    renderRoute('/404page', () => {
-      this.changeMainElement(this.missingPage.renderPage());
-      this.header.addMainPageButton();
-    });
   }
 
   changePageAlongThePath() {
@@ -118,11 +113,26 @@ export default class App {
     } else if (routes[startingRoute]) {
       this.renderPageByRoute(startingRoute);
     } else {
-      this.renderPageByRoute('404page');
+      this.renderPageByRoute('404page', true);
     }
   }
 
-  renderPageByRoute(route: string) {
-    this.router.navigateTo(`/${route}`);
+  renderPageByRoute(route: string, keepURL: boolean = false) {
+    if (!keepURL) {
+      this.router.navigateTo(`/${route}`);
+    } else {
+      this.changeHeaderElement(this.header.renderHeader(this.isLoggedIn));
+      this.header.addEventListeners();
+      this.header.addMainPageButton();
+      this.header.addBackButton();
+      if (route === '404page') {
+        this.changeMainElement(this.missingPage.renderPage());
+      } else {
+        const { routes } = this.router;
+        if (routes[`/${route}`]) {
+          routes[`/${route}`]();
+        }
+      }
+    }
   }
 }

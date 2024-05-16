@@ -55,16 +55,16 @@ export default class Header {
     });
   }
 
-  // addBackButton() {
-  //   const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
-  //   const backButton = HTMLCreation.createElement('button', { class: 'back-button' }, ['⬅ Back']);
-  //   buttonsDiv?.appendChild(backButton);
+  addBackButton() {
+    const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
+    const backButton = HTMLCreation.createElement('button', { class: 'back-button' }, ['⬅ Back']);
+    buttonsDiv?.appendChild(backButton);
 
-  //   backButton.addEventListener('click', () => {
-  //     const backEvent = new CustomEvent('backEvent');
-  //     document.body.dispatchEvent(backEvent);
-  //   });
-  // }
+    backButton.addEventListener('click', () => {
+      const backEvent = new CustomEvent('backEvent');
+      document.body.dispatchEvent(backEvent);
+    });
+  }
 
   addEventListeners() {
     const loginButton = document.querySelector('.upper-dashboard__logout-button');
