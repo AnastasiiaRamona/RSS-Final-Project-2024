@@ -1,5 +1,5 @@
-import { BaseAddress } from '@commercetools/platform-sdk';
 import Toastify from 'toastify-js';
+import { BaseAddress } from '@commercetools/platform-sdk';
 import CommerceToolsAPI from '../commerceToolsAPI';
 
 export default class RegistrationModel {
@@ -20,7 +20,6 @@ export default class RegistrationModel {
         y: 200,
         x: 0,
       },
-
       style: {
         background: 'linear-gradient(to right, #00b09b, #96c93d)',
       },
