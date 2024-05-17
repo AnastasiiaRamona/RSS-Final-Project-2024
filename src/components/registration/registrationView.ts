@@ -25,7 +25,7 @@ export default class Registration {
     this.registrationUsersFieldset = new FieldsetRegistrationAddress('', '');
   }
 
-  renderForm() {
+  private renderForm() {
     const form = HTMLCreation.createElement('form', { class: 'form  form-registration', action: '/' }, [
       this.registrationUsersFieldset.renderFieldsetRegistrationUsers(),
       HTMLCreation.createElement('label', { class: 'label label-delivery__criterion' }, [
@@ -104,7 +104,7 @@ export default class Registration {
     });
   }
 
-  getBillingAddress() {
+  private getBillingAddress() {
     const inputStreet = (document.querySelector('.input-street__billing') as HTMLInputElement).value;
     const inputCity = (document.querySelector('.input-city__billing') as HTMLInputElement).value;
     const inputPostalCode = (document.querySelector('.input-code__billing') as HTMLInputElement).value;
@@ -121,7 +121,7 @@ export default class Registration {
     };
   }
 
-  getShippingAddress() {
+  private getShippingAddress() {
     const inputStreet = (document.querySelector('.input-street__shipping') as HTMLInputElement).value;
     const inputCity = (document.querySelector('.input-city__shipping') as HTMLInputElement).value;
     const inputPostalCode = (document.querySelector('.input-code__shipping') as HTMLInputElement).value;
@@ -138,7 +138,7 @@ export default class Registration {
     };
   }
 
-  getGeneralAddress() {
+  private getGeneralAddress() {
     const inputStreet = (document.querySelector('.input-street__addresses') as HTMLInputElement).value;
     const inputCity = (document.querySelector('.input-city__addresses') as HTMLInputElement).value;
     const inputPostalCode = (document.querySelector('.input-code__addresses') as HTMLInputElement).value;

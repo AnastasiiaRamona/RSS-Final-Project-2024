@@ -9,7 +9,7 @@ export default class RegistrationModel {
     this.commerceToolsAPI = new CommerceToolsAPI();
   }
 
-  showErrorMessage(text: string) {
+  private showErrorMessage(text: string) {
     Toastify({
       text,
       newWindow: true,
@@ -30,8 +30,7 @@ export default class RegistrationModel {
     }).showToast();
   }
 
-  handleError(errorMessage: string, code: number) {
-    console.log(code);
+  private handleError(errorMessage: string, code: number) {
     if (errorMessage === 'There is already an existing customer with the provided email.') {
       this.showErrorMessage(
         'A user with the specified email already exists. Enter a different email or try to log in.'

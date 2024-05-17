@@ -10,7 +10,7 @@ export default class FieldsetRegistrationAddress {
     this.title = title;
   }
 
-  renderDatalist() {
+  private renderDatalist() {
     const countries = ['United States', 'Germany', 'Italy'];
     const options = countries.map((country) => HTMLCreation.createElement('option', { value: country }));
     return HTMLCreation.createElement('datalist', { id: 'countryList' }, options);
