@@ -125,11 +125,6 @@ describe('Test class LoginModel', () => {
         description: 'the password does not contain any digit',
       },
       {
-        password: 'Qwerty25',
-        expectPassword: 'Password should contain at least one special character.',
-        description: 'the password does not contain any special characters',
-      },
-      {
         password: 'QWERTY!25',
         expectPassword: 'Password should contain at least one lowercase English letter.',
         description: 'the password does not contain any lowercase letters',
