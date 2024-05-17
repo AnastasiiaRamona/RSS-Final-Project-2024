@@ -4,6 +4,7 @@
   @include font('Arial', clamp(12px, 5vw, 14px), bold, 1, $white);
   text-transform: uppercase;
   z-index: 1000;
+
 }
 .toast-close {
   padding: 0;
