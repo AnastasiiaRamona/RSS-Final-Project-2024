@@ -56,6 +56,4 @@ describe('FieldsetRegistrationAddress', () => {
     expect(dateInput.placeholder).toBe('DD.MM.YYYY');
     expect(dateInput.required).toBe(true);
   });
-
-  // Add similar tests for other input fields
 });
