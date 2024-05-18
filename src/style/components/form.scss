@@ -1,8 +1,8 @@
 .form {
-  @include flexbox(column);
-  padding: 20px 40px;
-  background-color: $form-bca-color;
-  max-width: 400px;
-  border-radius: 25px;
-  border: $primary-color 2px solid;
+  @include flexbox(column, flex-start);
+  padding: 40px 40px 20px;
+  background: $bca-gradient-second;
+  max-width: 80vw;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.622);
 }
