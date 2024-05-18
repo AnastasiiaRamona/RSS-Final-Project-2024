@@ -1,4 +1,4 @@
-import FieldsetRegistrationAddress from '../componentsUI/fieldsetElement';
+import FieldsetRegistrationAddress from '../components/registration/componentsUI/fieldsetElement';
 
 describe('FieldsetRegistrationAddress', () => {
   let fieldset: FieldsetRegistrationAddress;

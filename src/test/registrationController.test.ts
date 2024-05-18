@@ -1,6 +1,6 @@
 import fetchMock from 'jest-fetch-mock';
 
-import RegistrationController from '../registrationController';
+import RegistrationController from '../components/registration/registrationController';
 
 fetchMock.enableMocks();
 

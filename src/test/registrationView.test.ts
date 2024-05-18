@@ -1,13 +1,13 @@
-import HTMLCreation from '../../HTMLCreation';
+import HTMLCreation from '../components/HTMLCreation';
 
-import Registration from '../registrationView';
+import Registration from '../components/registration/registrationView';
 
-jest.mock('../../HTMLCreation', () => ({
+jest.mock('../components/HTMLCreation', () => ({
   createElement: jest.fn(),
 }));
 
-jest.mock('../registrationController');
-jest.mock('../componentsUI/fieldsetElement');
+jest.mock('../components/registration/registrationController');
+jest.mock('../components/registration/componentsUI/fieldsetElement');
 
 describe('Registration', () => {
   let registration: Registration;

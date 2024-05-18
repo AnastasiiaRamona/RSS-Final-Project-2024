@@ -1,7 +1,7 @@
 import Toastify from 'toastify-js';
 import { BaseAddress } from '@commercetools/platform-sdk';
 
-import RegistrationModel from '../registrationModel';
+import RegistrationModel from '../components/registration/registrationModel';
 
 jest.mock('toastify-js', () => ({
   __esModule: true,
@@ -10,7 +10,7 @@ jest.mock('toastify-js', () => ({
   }),
 }));
 
-jest.mock('../../commerceToolsAPI', () => ({
+jest.mock('../components/commerceToolsAPI', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
     register: jest.fn(),
