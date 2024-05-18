@@ -28,9 +28,9 @@ export default class RegistrationController {
       }
 
       if (element.classList.contains('input-password')) {
-        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value)) {
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(value)) {
           element.setCustomValidity(
-            'Enter a minimum of 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number'
+            'Enter a minimum of 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number. Only English letters and digits are allowed.'
           );
         } else {
           element.setCustomValidity('');

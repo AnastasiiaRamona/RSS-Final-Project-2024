@@ -10,6 +10,20 @@
 .title {
   @include font($secondary-font-family, 44px, $font-weight-bold, normal, $primary-color);
   text-shadow: 0 4px 6px rgba(232, 232, 232, 0.848);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  @include flexbox(row, space-around, center);
+  gap: 10px;
+}
+
+.title:hover {
+  transform: translateY(-5px);
+  color: $white;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.76);
+}
+
+.paw__image {
+  @include size(auto, 4vh);
 }
 
 .subtitle {

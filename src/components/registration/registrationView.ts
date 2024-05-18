@@ -40,7 +40,7 @@ export default class Registration {
         this.billingFieldset.renderFieldsetRegistrationAddress(),
         this.shippingFieldset.renderFieldsetRegistrationAddress(),
       ]),
-      HTMLCreation.createElement('button', { class: 'button button-registration' }, ['registration']),
+      HTMLCreation.createElement('button', { class: 'button button-registration' }, ['Sign up']),
     ]);
     return form;
   }

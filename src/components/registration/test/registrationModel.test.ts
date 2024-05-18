@@ -140,16 +140,12 @@ describe('RegistrationModel', () => {
       newWindow: true,
       className: 'info',
       close: true,
-      selector: document.querySelector('.form-registration'),
       stopOnFocus: true,
       offset: {
-        y: 350,
+        y: 200,
         x: 0,
       },
-      style: {
-        background: 'linear-gradient(to right, #00b09b, #96c93d)',
-      },
-      duration: 3000,
+      duration: 5000,
     });
     expect(result).toBe(false);
   });

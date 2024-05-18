@@ -1,10 +1,12 @@
 import HTMLCreation from '../HTMLCreation';
 import dogPath from '../../assets/dog.png';
 import catPath from '../../assets/cat.png';
-import './header.scss';
+import pawPath from '../../assets/paw.png';
 
 export default class Header {
   isButtonLoginClicked: boolean = false;
+
+  backButtonTextContent: string = '⬅ Back';
 
   renderHeader(isLoggedIn: boolean) {
     const textButton = isLoggedIn ? 'Log out' : 'Login';
@@ -13,7 +15,14 @@ export default class Header {
       HTMLCreation.createElement('div', { class: 'heading-and-image' }, [
         HTMLCreation.createElement('img', { class: 'cat-image', src: catPath, alt: 'cat' }),
         HTMLCreation.createElement('div', { class: 'heading' }, [
-          HTMLCreation.createElement('h1', { class: 'title' }, ['Paws & Claws 🐾']),
+          HTMLCreation.createElement('h1', { class: 'title' }, [
+            'Paws & Claws',
+            HTMLCreation.createElement('img', {
+              class: 'paw__image',
+              src: pawPath,
+              alt: 'paw',
+            }),
+          ]),
           HTMLCreation.createElement('h2', { class: 'subtitle' }, ['Online Pet Shop']),
         ]),
       ]),
@@ -33,14 +42,14 @@ export default class Header {
   changeLoginButtonToBackButton() {
     const loginButton = document.querySelector('.upper-dashboard__logout-button');
     if (loginButton) {
-      loginButton.textContent = '⬅ Back';
+      loginButton.textContent = this.backButtonTextContent;
     }
   }
 
   changeRegistrationButtonToBackButton() {
     const registrationButton = document.querySelector('.upper-dashboard__register-button');
     if (registrationButton) {
-      registrationButton.textContent = '⬅ Back';
+      registrationButton.textContent = this.backButtonTextContent;
     }
   }
 
@@ -57,7 +66,7 @@ export default class Header {
 
   addBackButton() {
     const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
-    const backButton = HTMLCreation.createElement('button', { class: 'back-button' }, ['⬅ Back']);
+    const backButton = HTMLCreation.createElement('button', { class: 'back-button' }, [this.backButtonTextContent]);
     buttonsDiv?.appendChild(backButton);
 
     backButton.addEventListener('click', () => {
@@ -94,6 +103,14 @@ export default class Header {
           const backEvent = new CustomEvent('backEvent');
           document.body.dispatchEvent(backEvent);
         }
+      });
+    }
+
+    const title = document.querySelector('.title');
+    if (title) {
+      title.addEventListener('click', () => {
+        const mainPageEvent = new CustomEvent('mainPageEvent');
+        document.body.dispatchEvent(mainPageEvent);
       });
     }
   }
