@@ -1,5 +1,4 @@
 import HTMLCreation from '../HTMLCreation';
-import './footer.scss';
 import rsSchoolLogo from '../../assets/logoRSSchool.png';
 
 export default class Footer {

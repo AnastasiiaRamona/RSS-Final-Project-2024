@@ -1,7 +1,6 @@
 import HTMLCreation from '../HTMLCreation';
 import petPath from '../../assets/dogs.png';
 import errorPath from '../../assets/404Error.png';
-import './missingPage.scss';
 
 export default class MissingPage {
   renderPage() {

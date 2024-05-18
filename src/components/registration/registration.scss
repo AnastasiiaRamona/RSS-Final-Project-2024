@@ -37,6 +37,7 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
 .fieldset {
   @include flexbox(column, center, center);
   margin-top: 5px;
@@ -57,9 +58,11 @@ input[type='checkbox'] {
   transition: 0.5s;
   cursor: pointer;
 }
+
 input[type='checkbox']:checked {
   background: $warning-color;
 }
+
 input[type='checkbox']:before {
   content: '';
   position: absolute;
@@ -73,6 +76,7 @@ input[type='checkbox']:before {
   transition: 0.5s;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
 input:checked[type='checkbox']:before {
   left: 35px;
 }

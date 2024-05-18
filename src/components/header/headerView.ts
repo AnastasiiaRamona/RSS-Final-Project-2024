@@ -2,7 +2,6 @@ import HTMLCreation from '../HTMLCreation';
 import dogPath from '../../assets/dog.png';
 import catPath from '../../assets/cat.png';
 import pawPath from '../../assets/paw.png';
-import './header.scss';
 
 export default class Header {
   isButtonLoginClicked: boolean = false;

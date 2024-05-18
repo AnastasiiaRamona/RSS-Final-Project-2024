@@ -4,7 +4,7 @@
 @import '../../style/base/base.scss';
 
 .footer-dashboard {
-  @include image("../../assets/background-image-2.jpg", 100vw, 13%);
+  @include image('./assets/background-image-2.jpg', 100vw, 13%);
   border-top: 1px solid $white;
   @include flexbox(row, space-between, center);
   color: $white;
