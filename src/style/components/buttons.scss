@@ -21,3 +21,14 @@ button:hover,
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.622);
 }
 
+@media (max-width: 1160px) {
+  button {
+    font-size: small;
+  }
+}
+
+@media (max-width: 800px) {
+  button {
+    font-size: small;
+  }
+}
