@@ -36,3 +36,20 @@
 .main-area__text:hover {
   transform: translateY(-5px);
 }
+
+@media (max-width: 1160px) {
+  .main-area__text {
+    font-size: medium;
+  }
+}
+
+@media (max-width: 800px) {
+  .left-dashboard.active {
+    transform: translateX(0%);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .main-field {
+    overflow: hidden;
+  }
+}
