@@ -16,7 +16,7 @@
 .login__form {
   @include flexbox(column);
   gap: 7px;
-  @include size(35vw, auto);
+  @include size(470px, auto);
   transition: transform 0.2s ease-in-out;
 }
 
@@ -34,18 +34,6 @@
   position: absolute;
   left: 300px;
   width: 50px;
-}
-
-@media (max-width: 620px) {
-  .login__password-control {
-    left: 45svw;
-  }
-}
-
-@media (max-width: 440px) {
-  .login__password-control {
-    left: 200px;
-  }
 }
 
 .login__button-active {
@@ -80,4 +68,34 @@
   left: 20%;
   transform: rotate(10deg);
   transition: transform 0.2s ease-in-out;
+}
+
+
+@media (max-width: 620px) {
+  .login__password-control {
+    left: 48svw;
+  }
+}
+
+@media (max-width: 512px) {
+  button.login__password-control svg {
+    @include size(2vw, 2vh);
+  }
+
+  button.login__password-control {
+    padding: 0px;
+    @include size(8vw, 5vh);
+  }
+}
+
+@media (max-width: 450px) {
+  button.login__password-control {
+    left: 220px;
+  }
+}
+
+@media (max-width: 409px) {
+  button.login__password-control {
+    left: 220px;
+  }
 }

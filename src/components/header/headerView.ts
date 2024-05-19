@@ -4,8 +4,6 @@ import catPath from '../../assets/cat.png';
 import pawPath from '../../assets/paw.png';
 
 export default class Header {
-  isButtonLoginClicked: boolean = false;
-
   backButtonTextContent: string = '⬅ Back';
 
   renderHeader(isLoggedIn: boolean) {
@@ -51,6 +49,42 @@ export default class Header {
     if (registrationButton) {
       registrationButton.textContent = this.backButtonTextContent;
     }
+  }
+
+  addBurgerButton() {
+    const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
+    const burgerButton = HTMLCreation.createElement('button', { class: 'upper-dashboard__burger-menu' }, [
+      HTMLCreation.createElement('div', { class: 'upper-dashboard__burger-menu__first-part' }),
+      HTMLCreation.createElement('div', { class: 'upper-dashboard__burger-menu__second-part' }),
+    ]);
+    buttonsDiv?.appendChild(burgerButton);
+
+    const firstPart = document.querySelector('.upper-dashboard__burger-menu__first-part') as HTMLElement;
+    const secondPart = document.querySelector('.upper-dashboard__burger-menu__second-part') as HTMLElement;
+    const leftDashboard = document.querySelector('.left-dashboard') as HTMLElement;
+
+    burgerButton.addEventListener('click', () => {
+      if (firstPart.classList.contains('active')) {
+        firstPart.classList.remove('active');
+        secondPart.classList.remove('active');
+        leftDashboard.classList.remove('active');
+      } else {
+        firstPart.classList.add('active');
+        secondPart.classList.add('active');
+        leftDashboard.classList.add('active');
+      }
+    });
+  }
+
+  addLoginButton() {
+    const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
+    const loginButton = HTMLCreation.createElement('button', { class: 'button-for-check' }, ['Login']);
+    buttonsDiv?.appendChild(loginButton);
+
+    loginButton.addEventListener('click', () => {
+      const mainPageEvent = new CustomEvent('mainPageEvent');
+      document.body.dispatchEvent(mainPageEvent);
+    });
   }
 
   addMainPageButton() {

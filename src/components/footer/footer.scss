@@ -4,6 +4,7 @@
 @import '../../style/base/base.scss';
 
 .footer-dashboard {
+  z-index: 100;
   @include image('./assets/background-image-2.jpg', 100vw, 13%);
   border-top: 1px solid $white;
   @include flexbox(row, space-between, center);
@@ -23,4 +24,14 @@
 
 .footer__icon {
   @include size(auto, 8vh);
+}
+
+@media (max-width: 540px) {
+  .footer__icon {
+    height: 4vh;
+  }
+
+  .footer-dashboard {
+    font-size: xx-small;
+  }
 }

@@ -41,7 +41,7 @@ export default class LoginController {
     this.updateInputValidity(input, false);
   }
 
-  updateInputValidity(input: HTMLInputElement, isValid: boolean) {
+  private updateInputValidity(input: HTMLInputElement, isValid: boolean) {
     if (!isValid) {
       input.classList.add('login__input-invalid');
     } else {
