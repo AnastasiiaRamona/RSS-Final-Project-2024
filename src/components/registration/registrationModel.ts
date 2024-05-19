@@ -20,7 +20,6 @@ export default class RegistrationModel {
         y: 200,
         x: 0,
       },
-
       duration: 5000,
     }).showToast();
   }
