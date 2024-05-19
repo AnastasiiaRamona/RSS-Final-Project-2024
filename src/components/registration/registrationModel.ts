@@ -1,5 +1,5 @@
-import { BaseAddress } from '@commercetools/platform-sdk';
 import Toastify from 'toastify-js';
+import { BaseAddress } from '@commercetools/platform-sdk';
 import CommerceToolsAPI from '../commerceToolsAPI';
 
 export default class RegistrationModel {
@@ -9,36 +9,34 @@ export default class RegistrationModel {
     this.commerceToolsAPI = new CommerceToolsAPI();
   }
 
-  showErrorMessage(text: string) {
+  showResponseMessage(text: string) {
     Toastify({
       text,
       newWindow: true,
       className: 'info',
       close: true,
-      selector: document.querySelector('.form-registration'),
-      stopOnFocus: true, // Prevents dismissing of toast on hover
+      stopOnFocus: true,
       offset: {
-        y: 350,
+        y: 200,
         x: 0,
       },
 
-      style: {
-        background: 'linear-gradient(to right, #00b09b, #96c93d)',
-      },
-
-      duration: 3000,
+      duration: 5000,
     }).showToast();
   }
 
-  handleError(errorMessage: string, code: number) {
-    console.log(code);
-    if (errorMessage === 'There is already an existing customer with the provided email.') {
-      this.showErrorMessage(
-        'A user with the specified email already exists. Enter a different email or try to log in.'
-      );
-    } else if (code === 500 || code === 502 || code === 504 || code === 503) {
-      this.showErrorMessage(`${errorMessage}, try again later`);
-    } else this.showErrorMessage(errorMessage);
+  handleResponse(message: string, code: number) {
+    if (message) {
+      if (message === 'There is already an existing customer with the provided email.') {
+        this.showResponseMessage(
+          'A user with the specified email already exists. Enter a different email or try to log in.'
+        );
+      } else if (code === 201) {
+        this.showResponseMessage(message);
+      } else if (code === 500 || code === 502 || code === 504 || code === 503) {
+        this.showResponseMessage(`${message}, try again later`);
+      } else this.showResponseMessage(message);
+    }
   }
 
   async register(
@@ -67,12 +65,17 @@ export default class RegistrationModel {
 
       const mainPageEvent = new CustomEvent('mainPageEvent');
       document.body.dispatchEvent(mainPageEvent);
+      if (response) {
+        if ('statusCode' in response) {
+          this.handleResponse('Welcome Aboard! Your registration was successful.', response.statusCode as number);
+        }
+      }
 
       return response;
     } catch (error) {
       if (error instanceof Error) {
         if ('code' in error) {
-          this.handleError(error.message, error.code as number);
+          this.handleResponse(error.message, error.code as number);
         }
       }
       return false;

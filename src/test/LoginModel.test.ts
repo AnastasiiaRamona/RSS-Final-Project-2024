@@ -31,7 +31,7 @@ describe('Test class LoginModel', () => {
     });
 
     test('Should return true when supplied password is valid', () => {
-      const testPassword = 'qwertyE3$';
+      const testPassword = 'qwertyE3';
       const result = loginModel.validatePassword(testPassword);
       expect(result).toBeTruthy();
     });
@@ -100,42 +100,42 @@ describe('Test class LoginModel', () => {
         description: 'no password is entered',
       },
       {
-        password: 'Qwy!25',
+        password: 'Qwy25',
         expectPassword: 'Password should be at least 8 characters long.',
         description: 'password contains less than 8 characters',
       },
       {
-        password: ' Qwerty!25',
+        password: ' Qwerty25',
         expectPassword: 'Password must not contain leading or trailing whitespace.',
-        description: 'there is a space befor the password',
+        description: 'there is a space before the password',
       },
       {
-        password: 'Qwerty!25 ',
+        password: 'Qwerty25 ',
         expectPassword: 'Password must not contain leading or trailing whitespace.',
         description: 'there is a space after the password',
       },
       {
         password: 'Йцукен!25',
-        expectPassword: 'You can only use English letters,digits and special character.',
+        expectPassword: 'You can only use English letters and digits',
         description: 'the password contains prohibited characters',
       },
       {
-        password: 'Qwertyrr!',
+        password: 'Qwertyrr',
         expectPassword: 'Password should contain at least one digit.',
         description: 'the password does not contain any digit',
       },
       {
-        password: 'QWERTY!25',
+        password: 'QWERTY25',
         expectPassword: 'Password should contain at least one lowercase English letter.',
         description: 'the password does not contain any lowercase letters',
       },
       {
-        password: 'qwerty!25',
+        password: 'qwerty25',
         expectPassword: 'Password should contain at least one uppercase English letter.',
         description: 'the password does not contain any uppercase letters',
       },
       {
-        password: 'Qwerty!25',
+        password: 'Qwerty25',
         expectPassword: '',
         description: 'password entered correctly',
       },

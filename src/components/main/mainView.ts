@@ -1,6 +1,5 @@
 import HTMLCreation from '../HTMLCreation';
 import MainController from './mainController';
-import './main.scss';
 
 export default class Main {
   controller: MainController;

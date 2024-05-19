@@ -1,15 +1,16 @@
-$bca-gradient: linear-gradient(135deg, #0ba6ff71, #2e6e42ae, #096330a4);
+$bca-gradient: linear-gradient(135deg, #0ba6ff71, #2e6e42ae, hsla(146, 83%, 21%, 0.643));
 $bca-gradient-second: linear-gradient(20deg, #0ba6ff71, #2e6e42ae, #096330a4);
 $form-bca-color: #0b6748b0;
 $primary-color: #04340c;
 $secondary-color: #034b89;
-$success-color: #28a745;
-$error-color: #dc3545;
+$success-color: #1b7530;
+$error-color: #ce0317;
 $warning-color: #ffc107;
 $info-color: #17a2b8;
 $btn-bca-color: linear-gradient(20deg, #185d57a5, #397e4fae, #9ee8a5a4);
 $black: #000;
 $white: #fff;
+$light: rgba(211, 246, 210, 0.516);
 
 $primary-font-family: 'Roboto', sans-serif;
 $secondary-font-family: 'Kaushan Script', cursive;

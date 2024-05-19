@@ -81,7 +81,7 @@ export default class LoginController {
     let result: string;
     const response = await this.model.login(email, password);
     if (response) {
-      result = 'loginSucсess';
+      result = 'loginSuccess';
     } else {
       const emailStatus = await this.model.emailCheck(email);
       if (emailStatus) {

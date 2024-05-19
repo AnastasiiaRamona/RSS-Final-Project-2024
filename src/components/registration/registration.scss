@@ -7,14 +7,11 @@
 .title-registration {
   @include font('Arial', clamp(32px, 8vw, 70px), bold, 1.5, $white);
 }
-.registration-main {
-  background: $bca-gradient;
-  height: 100%;
-  @include flexbox(column, center, center);
-}
+
 .container {
   @include container($max-width: 1200px, $padding: 15px, $margin: 0 auto);
   @include flexbox(column, center, center);
+  height: 74vh;
 }
 
 .fieldset-users {
@@ -22,15 +19,14 @@
 }
 
 .legend-registration {
-  @include font('Arial', clamp(16px, 5vw, 24px), bold, 1.5, $success-color);
+  @include font($primary-font-family, clamp(16px, 5vw, 24px), bold, 1.5, $light);
 }
 
 .datalist {
-  background-color: red;
+  background-color: $error-color;
 }
 
 .form-registration {
-  max-width: 1000px;
   width: 100%;
   position: relative;
 }
@@ -41,6 +37,7 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
 .fieldset {
   @include flexbox(column, center, center);
   margin-top: 5px;
@@ -51,8 +48,7 @@
 }
 
 input[type='checkbox'] {
-  height: 40px;
-  width: 100px;
+  width: 60px;
   appearance: none;
   outline: none;
   position: relative;
@@ -62,14 +58,16 @@ input[type='checkbox'] {
   transition: 0.5s;
   cursor: pointer;
 }
+
 input[type='checkbox']:checked {
-  background: #40e551;
+  background: $warning-color;
 }
+
 input[type='checkbox']:before {
   content: '';
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
   border-radius: 25px;
   background: #fff;
   top: -2px;
@@ -78,7 +76,33 @@ input[type='checkbox']:before {
   transition: 0.5s;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
 input:checked[type='checkbox']:before {
-  background: blue;
-  left: 70px;
+  left: 35px;
 }
+
+.form-registration {
+  width: 100%;
+  position: relative;
+  overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $light;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: $primary-color;
+}
+
+@media (max-width: 430px) {
+  form .form .form-registration {
+    width: 350px;
+    max-width: 100vw;
+  }
+} 

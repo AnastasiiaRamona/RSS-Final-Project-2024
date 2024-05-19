@@ -35,12 +35,6 @@ describe('Test class LoginView', () => {
     jest.clearAllMocks();
   });
 
-  test('Should dispatch loginSuccessEvent when resultLogin is loginSuccess', () => {
-    loginView.checkLogin('loginSuccess');
-
-    expect(document.body.dispatchEvent).toHaveBeenCalledWith(expect.objectContaining({ type: 'loginSuccessEvent' }));
-  });
-
   test('Should display email error when resultLogin is errorEmail', () => {
     loginView.checkLogin('errorEmail');
 

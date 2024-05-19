@@ -144,12 +144,14 @@ export default class CommerceToolsAPI {
         .execute();
     }
 
-    this.login(email, password);
+    await this.login(email, password);
 
     return response;
   }
 
   async emailCheck(email: string) {
+    this.ctpClient = this.createCredentialsClient();
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot
