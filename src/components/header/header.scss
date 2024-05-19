@@ -73,6 +73,11 @@
 }
 
 @media (max-width: 800px) {
+  .title,
+  .subtitle {
+    font-size: 9px;
+  }
+
   .upper-dashboard__image {
     display: none;
   }
@@ -129,19 +134,12 @@
   }
 }
 
-@media (max-width: 501px) {
-  .title,
-  .subtitle {
-    font-size: smaller;
-  }
-
+@media (max-width: 583px) {
   .paw__image {
     height: 2vh;
   }
-}
 
-@media (max-width: 416px) {
-  .cat-image {
+  .heading-and-image {
     display: none;
   }
 }

@@ -29,3 +29,19 @@
 .missing-page__heading:hover {
   transform: translateY(-5px);
 }
+
+@media (max-width: 1150px) {
+  .missing-page__image {
+    display: none;
+  }
+
+  .missing-page__heading {
+    width: 80vw;
+  }
+}
+
+@media (max-width: 500px) {
+  .container-missing-page {
+    padding: 0;
+  }
+}
