@@ -1,13 +1,6 @@
 import HTMLCreation from '../HTMLCreation';
-import MainController from './mainController';
 
 export default class Main {
-  controller: MainController;
-
-  constructor() {
-    this.controller = new MainController();
-  }
-
   renderPage() {
     const mainField = HTMLCreation.createElement('main', { class: 'main-field' }, [
       HTMLCreation.createElement('section', { class: 'main-area' }, [
@@ -24,10 +17,5 @@ export default class Main {
       ]),
     ]);
     return mainField;
-  }
-
-  addEventListeners() {
-    const a = this.controller; // For example
-    return a;
   }
 }

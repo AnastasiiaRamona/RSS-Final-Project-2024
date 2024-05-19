@@ -71,7 +71,7 @@ export default class FieldsetRegistrationAddress {
 
   renderFieldsetRegistrationUsers() {
     const fieldsetRegistrationUsers = HTMLCreation.createElement('fieldset', { class: 'fieldset-users' }, [
-      HTMLCreation.createElement('legend', { class: 'legend-registration' }, ['Form Registration Users']),
+      HTMLCreation.createElement('legend', { class: 'legend-registration' }, ['Registration Users form']),
       HTMLCreation.createElement('label', { class: 'label label-mail' }, ['Mail:']),
       HTMLCreation.createElement('input', {
         type: 'email',

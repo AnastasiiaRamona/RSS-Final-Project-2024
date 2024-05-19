@@ -18,11 +18,11 @@ import {
 } from './data';
 
 export default class CommerceToolsAPI {
-  apiRoot: ByProjectKeyRequestBuilder | null = null;
+  private apiRoot: ByProjectKeyRequestBuilder | null = null;
 
-  ctpClient: Client | null = null;
+  private ctpClient: Client | null = null;
 
-  authMiddlewareOptions: AuthMiddlewareOptions = {
+  private authMiddlewareOptions: AuthMiddlewareOptions = {
     host: authHostUrl,
     projectKey,
     credentials: {
@@ -33,7 +33,7 @@ export default class CommerceToolsAPI {
     fetch,
   };
 
-  createPasswordFlowOptions(username: string, password: string): PasswordAuthMiddlewareOptions {
+  private createPasswordFlowOptions(username: string, password: string): PasswordAuthMiddlewareOptions {
     return {
       host: authHostUrl,
       projectKey,
@@ -56,7 +56,7 @@ export default class CommerceToolsAPI {
     fetch,
   };
 
-  createCredentialsClient() {
+  private createCredentialsClient() {
     return new ClientBuilder()
       .withProjectKey(projectKey)
       .withClientCredentialsFlow(this.authMiddlewareOptions)
@@ -65,7 +65,7 @@ export default class CommerceToolsAPI {
       .build();
   }
 
-  createPasswordClient(options: PasswordAuthMiddlewareOptions) {
+  private createPasswordClient(options: PasswordAuthMiddlewareOptions) {
     return new ClientBuilder()
       .withProjectKey(projectKey)
       .withPasswordFlow(options)
