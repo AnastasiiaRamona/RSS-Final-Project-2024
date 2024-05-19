@@ -121,6 +121,8 @@ export default class App {
       } else {
         this.renderPageByRoute('login');
       }
+    } else if (startingRoute === 'registration') {
+      this.renderPageByRoute('registration');
     } else if (routes[startingRoute]) {
       this.renderPageByRoute(startingRoute);
     } else {
