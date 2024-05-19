@@ -4,8 +4,6 @@ import catPath from '../../assets/cat.png';
 import pawPath from '../../assets/paw.png';
 
 export default class Header {
-  isButtonLoginClicked: boolean = false;
-
   backButtonTextContent: string = '⬅ Back';
 
   renderHeader(isLoggedIn: boolean) {
