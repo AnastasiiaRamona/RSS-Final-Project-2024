@@ -1,8 +1,8 @@
 import UserTokenCache from './userTokenCache';
 
-const clientId = 'tSeC8XOLVYwJxSGyKEf9SjVO';
-const clientSecret = 'W5PQ24QOMlKFMispl94cZeh1RXVCyUF3';
-const projectKey = 'final-task';
+const clientId = process.env.CLIENT_ID || '';
+const clientSecret = process.env.CLIENT_SECRET || '';
+const projectKey = process.env.PROJECT_KEY || '';
 const authHostUrl = 'https://auth.eu-central-1.aws.commercetools.com';
 const apiHostUrl = 'https://api.eu-central-1.aws.commercetools.com';
 const defaultCustomerScope = [
