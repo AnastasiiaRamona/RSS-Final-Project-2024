@@ -4,7 +4,7 @@ import catPath from '../../assets/cat.png';
 import pawPath from '../../assets/paw.png';
 
 export default class Header {
-  backButtonTextContent: string = '⬅ Back';
+  private backButtonTextContent: string = '⬅ Back';
 
   renderHeader(isLoggedIn: boolean) {
     const textButton = isLoggedIn ? 'Log out' : 'Login';
