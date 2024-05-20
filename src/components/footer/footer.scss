@@ -1,7 +1,3 @@
-@import '../../style/utilities/variables.scss';
-@import '../../style/utilities/mixins.scss';
-@import '../../style/components/buttons.scss';
-@import '../../style/base/base.scss';
 
 .footer-dashboard {
   z-index: 100;
@@ -10,7 +6,7 @@
   @include flexbox(row, space-between, center);
   color: $white;
   @include font($third-font-family, medium, normal, normal, $white);
-  padding: 0 20px;
+  padding: 5px 20px;
 }
 
 .footer-dashboard__links {

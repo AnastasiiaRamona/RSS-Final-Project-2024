@@ -1,7 +1,3 @@
-@import '../../style/utilities/variables.scss';
-@import '../../style/utilities/mixins.scss';
-@import '../../style/components/buttons.scss';
-@import '../../style/base/base.scss';
 
 .main-field {
   @include flexbox(row, space-between);
@@ -52,5 +48,6 @@
 
   .main-field {
     overflow: hidden;
+    @include flexbox(row, center);
   }
 }

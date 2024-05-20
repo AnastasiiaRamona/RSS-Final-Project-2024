@@ -1,8 +1,4 @@
 
-@import '../../style/components/buttons';
-@import '../../style/components/form';
-@import '../../style/components/input';
-
 .login__main-container {
   @include size(100vw, auto);
   @include flexbox(row, center, center);
