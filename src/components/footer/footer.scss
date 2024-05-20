@@ -5,7 +5,7 @@
 
 .footer-dashboard {
   z-index: 100;
-  @include image('./assets/background-image-2.jpg', 100vw, 13%);
+  @include image('./assets/background-image-2.jpg', 100vw, 110px);
   border-top: 1px solid $white;
   @include flexbox(row, space-between, center);
   color: $white;
