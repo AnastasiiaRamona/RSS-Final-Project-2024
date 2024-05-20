@@ -113,7 +113,7 @@ export default class App {
     const startingRoute = window.location.pathname.slice(1);
     const { routes } = this.router;
 
-    if (startingRoute === '') {
+    if (startingRoute === '' || startingRoute === 'main') {
       this.renderPageByRoute('main');
     } else if (startingRoute === 'login') {
       if (this.isLoggedIn) {
