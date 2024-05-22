@@ -1,0 +1,30 @@
+@import '../../style/components/buttons';
+@import '../../style/components/form';
+@import '../../style/components/input';
+
+.catalog__main {
+  @include flexbox();
+}
+
+.catalog__gallery {
+  @include flexbox();
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.product-card {
+  height: 500px;
+  border-radius: 10px;
+}
+
+.product-card__box {
+  max-width: 310px;
+  max-height: 310px;
+}
+
+.product-card__title {
+  max-width: 270px;
+  max-height: 270px;
+}
+

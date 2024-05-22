@@ -165,4 +165,33 @@ export default class CommerceToolsAPI {
     }
     return response;
   }
+
+  async getProducts() {
+    this.ctpClient = this.createCredentialsClient();
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    let result;
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .products()
+        .get()
+        .execute()
+        .then((response) => {
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.masterData.current.name['en-GB'],
+              description: product.masterData.current.description?.['en-GB'],
+              imageUrl: product.masterData.current.masterVariant.images?.[0]?.url,
+              price: product.masterData.current.masterVariant.prices?.[0]?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
 }
