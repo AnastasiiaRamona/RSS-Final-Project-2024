@@ -188,7 +188,7 @@ export default class CommerceToolsAPI {
               description: product.masterData.current.description?.['en-US'],
               imageUrl: product.masterData.current.masterVariant.images?.[0]?.url,
               price: product.masterData.current.masterVariant.prices?.[0]?.value.centAmount,
-              discontedPrice: product.masterData.current.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+              discountedPrice: product.masterData.current.masterVariant.prices?.[0]?.discounted?.value.centAmount,
             };
             return productData;
           });

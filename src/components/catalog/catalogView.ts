@@ -42,21 +42,21 @@ export default class Catalog {
           product.description,
           product.imageUrl,
           product.price,
-          product.discontedPrice
+          product.discountedPrice
         )
       );
     });
   }
 
-  productCard(id: string, name: string, description: string, img: string, price: number, discontedPrice?: number) {
+  productCard(id: string, name: string, description: string, img: string, price: number, discountedPrice?: number) {
     const priceClasses =
-      discontedPrice != null ? 'product-card__price product-card__price--discounted' : 'product-card__price';
+      discountedPrice != null ? 'product-card__price product-card__price-discounted' : 'product-card__price';
     const prices = [HTMLCreation.createElement('div', { class: priceClasses }, [`${(price / 100).toFixed(2)} €`])];
 
-    if (discontedPrice != null) {
+    if (discountedPrice != null) {
       prices.push(
         HTMLCreation.createElement('div', { class: 'product-card__price-discount' }, [
-          `${(discontedPrice / 100).toFixed(2)} €`,
+          `${(discountedPrice / 100).toFixed(2)} €`,
         ])
       );
     }

@@ -15,7 +15,7 @@ export default class CatalogModel {
         description: string;
         imageUrl: string;
         price: number;
-        discontedPrice: number;
+        discountedPrice: number;
       },
     ];
     return products;

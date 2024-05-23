@@ -72,11 +72,11 @@
   display: inline-block;
 }
 
-.product-card__price--discounted {
+.product-card__price-discounted {
   font-size: 16px;
 }
 
-.product-card__price--discounted::after {
+.product-card__price-discounted::after {
   content: '';
   position: absolute;
   top: 45%;
