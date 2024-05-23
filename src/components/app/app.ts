@@ -5,6 +5,7 @@ import Main from '../main/mainView';
 import Registration from '../registration/registrationView';
 import router from '../router';
 import MissingPage from '../missingPage/missingPageView';
+import DetailedProduct from '../detailedProduct/detailedProductView';
 
 export default class App {
   private header: Header;
@@ -16,6 +17,10 @@ export default class App {
   private registration: Registration;
 
   private main: Main;
+
+  private detailedProduct: DetailedProduct;
+
+  private currentProductUrl: string | null = null;
 
   private isLoggedIn: boolean = !!localStorage.getItem('userToken');
 
@@ -32,6 +37,7 @@ export default class App {
     this.registration = new Registration();
     this.main = new Main();
     this.missingPage = new MissingPage();
+    this.detailedProduct = new DetailedProduct();
     this.setupRouter();
   }
 
@@ -113,20 +119,24 @@ export default class App {
     const startingRoute = window.location.pathname.slice(1);
     const { routes } = this.router;
 
-    if (startingRoute === '' || startingRoute === 'main') {
-      this.renderPageByRoute('main');
-    } else if (startingRoute === 'login') {
-      if (this.isLoggedIn) {
+    switch (startingRoute) {
+      case '':
+      case 'main':
         this.renderPageByRoute('main');
-      } else {
-        this.renderPageByRoute('login');
-      }
-    } else if (startingRoute === 'registration') {
-      this.renderPageByRoute('registration');
-    } else if (routes[startingRoute]) {
-      this.renderPageByRoute(startingRoute);
-    } else {
-      this.renderPageByRoute('404page', true);
+        break;
+      case 'login':
+        this.renderPageByRoute(this.isLoggedIn ? 'main' : 'login');
+        break;
+      case 'registration':
+        this.renderPageByRoute('registration');
+        break;
+      default:
+        if (routes[startingRoute]) {
+          this.renderPageByRoute(startingRoute);
+        } else {
+          this.renderPageByRoute('404page', true);
+        }
+        break;
     }
   }
 
