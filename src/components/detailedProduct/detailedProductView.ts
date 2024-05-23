@@ -11,7 +11,7 @@ import slider4 from '../../assets/slider-4.jpg';
 import slider5 from '../../assets/slider-5.jpg';
 import slider6 from '../../assets/slider-6.jpg';
 
-export default class DetailedProductPage {
+export default class DetailedProduct {
   header = new Header().renderHeader(false);
 
   main = new Main().renderPage();
@@ -27,15 +27,10 @@ export default class DetailedProductPage {
   descriptionOfProduct: string = 'Description';
 
   renderMain() {
-    const { body } = document;
+    const detailedProductWrapper = HTMLCreation.createElement('div', { class: 'detailed__product-wrapper' });
     const main = HTMLCreation.createElement('main', { class: 'detailed__product' }, [
-      HTMLCreation.createElement('div', { class: 'detailed__product-container' }, [
-        HTMLCreation.createElement('div', { class: 'detailed__product-wrapper' }),
-      ]),
+      HTMLCreation.createElement('div', { class: 'detailed__product-container' }, [detailedProductWrapper]),
     ]);
-    body.appendChild(this.header);
-    body.appendChild(main);
-    body.appendChild(this.footer);
 
     const createSwiperSlide = (src: 'string') =>
       HTMLCreation.createElement('picture', { class: 'swiper-slide', lazy: 'true' }, [
@@ -66,10 +61,9 @@ export default class DetailedProductPage {
       HTMLCreation.createElement('button', { class: 'detailed__product-basket' }, ['Add to Basket']),
     ]);
 
-    document.querySelector('.detailed__product-wrapper')?.insertAdjacentElement('afterbegin', swiper);
-    document.querySelector('.detailed__product-wrapper')?.insertAdjacentElement('beforeend', productContent);
+    detailedProductWrapper.insertAdjacentElement('afterbegin', swiper);
+    detailedProductWrapper.insertAdjacentElement('beforeend', productContent);
+
+    return main;
   }
 }
-
-const test = new DetailedProductPage();
-test.renderMain();

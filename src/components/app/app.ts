@@ -6,6 +6,7 @@ import Registration from '../registration/registrationView';
 import router from '../router';
 import MissingPage from '../missingPage/missingPageView';
 import DetailedProduct from '../detailedProduct/detailedProductView';
+import Catalog from '../catalog/catalogView';
 
 export default class App {
   private header: Header;
@@ -18,9 +19,9 @@ export default class App {
 
   private main: Main;
 
-  private detailedProduct: DetailedProduct;
+  private catalog: Catalog;
 
-  private currentProductUrl: string | null = null;
+  private product: DetailedProduct;
 
   private isLoggedIn: boolean = !!localStorage.getItem('userToken');
 
@@ -37,7 +38,8 @@ export default class App {
     this.registration = new Registration();
     this.main = new Main();
     this.missingPage = new MissingPage();
-    this.detailedProduct = new DetailedProduct();
+    this.catalog = new Catalog();
+    this.product = new DetailedProduct();
     this.setupRouter();
   }
 
@@ -65,6 +67,9 @@ export default class App {
     });
     this.body.addEventListener('mainPageEvent', () => {
       this.router.navigateTo('/main');
+    });
+    this.body.addEventListener('catalogEvent', () => {
+      this.router.navigateTo('/catalog');
     });
   }
 
@@ -98,6 +103,7 @@ export default class App {
       if (this.isLoggedIn) {
         this.header.addLoginButton();
       }
+      this.main.addEventListeners();
     });
 
     renderRoute('/login', () => {
@@ -112,6 +118,15 @@ export default class App {
       this.header.changeRegistrationButtonToBackButton();
       this.header.addMainPageButton();
       this.registration.addEventListeners();
+    });
+
+    renderRoute('/catalog', async () => {
+      this.changeMainElement(await this.catalog.renderPage());
+      this.header.addMainPageButton();
+    });
+
+    renderRoute('/product', () => {
+      this.changeMainElement(this.product.renderMain());
     });
   }
 
@@ -129,6 +144,12 @@ export default class App {
         break;
       case 'registration':
         this.renderPageByRoute('registration');
+        break;
+      case 'catalog':
+        this.renderPageByRoute('catalog');
+        break;
+      case 'product':
+        this.renderPageByRoute('product');
         break;
       default:
         if (routes[startingRoute]) {
