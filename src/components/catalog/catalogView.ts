@@ -8,7 +8,8 @@ export default class Catalog {
     this.controller = new CatalogController();
   }
 
-  renderPage() {
+  async renderPage() {
+    let catalog: HTMLElement | null = null;
     const loginWrapper = HTMLCreation.createElement('main', { class: 'catalog__main' }, [
       HTMLCreation.createElement('aside', { class: 'catalog__aside' }, [
         HTMLCreation.createElement(
@@ -19,23 +20,20 @@ export default class Catalog {
           ['Filter']
         ),
       ]),
-      HTMLCreation.createElement('section', {
+      (catalog = HTMLCreation.createElement('section', {
         class: 'catalog__gallery',
-      }),
+      })),
     ]);
-    const body = document.querySelector('body');
-    body?.append(loginWrapper);
-    this.productView();
+    await this.productView(catalog);
     return loginWrapper;
   }
 
   addEventListeners() {}
 
-  async productView() {
-    const catalog = document.querySelector('.catalog__gallery');
+  async productView(catalog: HTMLElement) {
     const products = await this.controller.getProducts();
     products.forEach((product) => {
-      catalog?.append(
+      catalog.append(
         this.productCard(
           product.id,
           product.name,

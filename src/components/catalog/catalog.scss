@@ -1,19 +1,16 @@
-@import '../../style/components/buttons';
-@import '../../style/components/form';
-@import '../../style/components/input';
-
 .catalog__main {
   @include flexbox();
 }
 
 .catalog__gallery {
+  padding-top: 20px;
   @include flexbox();
   flex-wrap: wrap;
   gap: 10px;
+  @include size(auto, 74vh);
   align-items: start;
-  width: 100vw;
-  height: 100vh;
-  overflow: scroll;
+  position: relative;
+  overflow-y: auto;
 }
 
 .product-card {

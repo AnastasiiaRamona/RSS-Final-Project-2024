@@ -64,6 +64,9 @@ export default class App {
     this.body.addEventListener('mainPageEvent', () => {
       this.router.navigateTo('/main');
     });
+    this.body.addEventListener('catalogEvent', () => {
+      this.router.navigateTo('/catalog');
+    });
   }
 
   changeHeaderElement(element: HTMLElement) {
@@ -96,6 +99,7 @@ export default class App {
       if (this.isLoggedIn) {
         this.header.addLoginButton();
       }
+      this.main.addEventListeners();
     });
 
     renderRoute('/login', () => {
@@ -111,13 +115,18 @@ export default class App {
       this.header.addMainPageButton();
       this.registration.addEventListeners();
     });
+
+    renderRoute('/catalog', async () => {
+      this.changeMainElement(await this.catalog.renderPage());
+      this.header.addMainPageButton();
+    });
   }
 
   changePageAlongThePath() {
     const startingRoute = window.location.pathname.slice(1);
     const { routes } = this.router;
 
-    if (startingRoute === '') {
+    if (startingRoute === '' || startingRoute === 'main') {
       this.renderPageByRoute('main');
     } else if (startingRoute === 'login') {
       if (this.isLoggedIn) {
@@ -127,6 +136,8 @@ export default class App {
       }
     } else if (startingRoute === 'registration') {
       this.renderPageByRoute('registration');
+    } else if (startingRoute === 'catalog') {
+      this.renderPageByRoute('catalog');
     } else if (routes[startingRoute]) {
       this.renderPageByRoute(startingRoute);
     } else {
