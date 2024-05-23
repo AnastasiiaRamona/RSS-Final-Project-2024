@@ -1,4 +1,3 @@
-@import '../utilities/variables.scss';
 
 button {
   @include font('Helvetica', medium, 600, 1.5, $primary-color);

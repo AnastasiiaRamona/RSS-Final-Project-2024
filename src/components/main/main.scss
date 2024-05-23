@@ -1,7 +1,3 @@
-@import '../../style/utilities/variables.scss';
-@import '../../style/utilities/mixins.scss';
-@import '../../style/components/buttons.scss';
-@import '../../style/base/base.scss';
 
 .main-field {
   @include flexbox(row, space-between);
@@ -11,7 +7,7 @@
 .left-dashboard {
   @include flexbox(column, center, stretch);
   gap: 5vh;
-  padding: 3vh;
+  padding: 2vh;
   background: $bca-gradient-second;
   border-left: 1px solid $white;
   @include size(auto, 100%);
@@ -31,6 +27,7 @@
   border-radius: 20px;
   box-shadow: 0 4px 2px rgba(61, 58, 58, 0.915);
   transition: transform 0.2s ease-in-out;
+  padding: 10px;
 }
 
 .main-area__text:hover {
@@ -51,5 +48,6 @@
 
   .main-field {
     overflow: hidden;
+    @include flexbox(row, center);
   }
 }
