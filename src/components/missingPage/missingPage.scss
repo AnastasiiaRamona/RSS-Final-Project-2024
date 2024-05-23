@@ -7,10 +7,12 @@
 .container-missing-page {
   padding-left: 10vw;
 }
-
+.missing-page__image{
+  overflow: hidden;
+}
 .missing-page__image,
 .missing-page__image-error {
-  @include size(auto, 50vh); 
+  @include size(auto, 37vh); 
 }
 
 .missing-page__heading {

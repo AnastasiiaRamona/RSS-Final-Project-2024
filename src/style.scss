@@ -14,3 +14,8 @@
 @import './components/main/main.scss';
 @import './components/missingPage/missingPage.scss';
 @import './global.scss';
+@import 'swiper/scss';
+@import 'swiper/scss/navigation';
+@import 'swiper/scss/pagination';
+@import 'swiper/scss/zoom';
+@import './components/detailedProduct/detailedProduct.scss';
