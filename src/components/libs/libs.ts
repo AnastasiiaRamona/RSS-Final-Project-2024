@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Swiper from 'swiper';
 import { Navigation, Pagination, Zoom } from 'swiper/modules';
 import { Fancybox } from '@fancyapps/ui';
