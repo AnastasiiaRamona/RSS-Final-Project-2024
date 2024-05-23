@@ -47,7 +47,7 @@ export default class Catalog {
       HTMLCreation.createElement('div', { class: 'product-card__title' }, [
         HTMLCreation.createElement('h3', { class: 'product-card__name' }, [name]),
         HTMLCreation.createElement('p', { class: 'product-card__description' }, [description]),
-        HTMLCreation.createElement('p', { class: 'product-card__price' }, [`${price}`]),
+        HTMLCreation.createElement('div', { class: 'product-card__price' }, [`${(price / 100).toFixed(2)} €`]),
       ]),
     ]);
     return productCard;

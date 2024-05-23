@@ -173,14 +173,18 @@ export default class CommerceToolsAPI {
     if (this.apiRoot) {
       result = await this.apiRoot
         .products()
-        .get()
+        .get({
+          queryArgs: {
+            limit: 40,
+          },
+        })
         .execute()
         .then((response) => {
           const products = response.body.results.map((product) => {
             const productData = {
               id: product.id,
-              name: product.masterData.current.name['en-GB'],
-              description: product.masterData.current.description?.['en-GB'],
+              name: product.masterData.current.name['en-US'],
+              description: product.masterData.current.description?.['en-US'],
               imageUrl: product.masterData.current.masterVariant.images?.[0]?.url,
               price: product.masterData.current.masterVariant.prices?.[0]?.value.centAmount,
             };
