@@ -1,8 +1,3 @@
-@import '../../style/utilities/variables.scss';
-@import '../../style/utilities/mixins.scss';
-@import '../../style/components/buttons.scss';
-@import '../../style/base/base.scss';
-
 .heading-and-image {
   @include flexbox(row, normal, flex-end);
 }
@@ -97,7 +92,9 @@
     position: absolute;
     @include size(20px, 3px);
     background-color: $primary-color;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
 
   .upper-dashboard__burger-menu__first-part {
@@ -111,13 +108,17 @@
   .upper-dashboard__burger-menu__first-part.active {
     top: 5.7%;
     transform: rotate(45deg);
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
 
   .upper-dashboard__burger-menu__second-part.active {
     top: 5.7%;
     transform: rotate(-45deg);
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
 
   .main-field {
@@ -130,7 +131,9 @@
     @include size(auto, 78vh);
     right: 0;
     transform: translateX(100%);
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
 }
 

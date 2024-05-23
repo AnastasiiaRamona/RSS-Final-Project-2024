@@ -1,5 +1,3 @@
-@import '../../style/utilities/mixins.scss';
-@import '../../style/utilities/variables.scss';
 
 .missing-page,
 .container-missing-page {
@@ -12,7 +10,8 @@
 
 .missing-page__image,
 .missing-page__image-error {
-  @include size(auto, 50vh); 
+  @include size(auto, 50vh);
+  overflow: hidden;
 }
 
 .missing-page__heading {
@@ -43,5 +42,12 @@
 @media (max-width: 500px) {
   .container-missing-page {
     padding: 0;
+  }
+}
+
+
+@media (min-height: 1115px) {
+  .missing-page__image {
+    height: auto;
   }
 }
