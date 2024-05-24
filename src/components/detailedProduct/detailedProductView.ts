@@ -1,4 +1,4 @@
-import HTMLCreation from '../HTMLCreation';
+import HTMLCreator from '../HTMLCreator';
 import Main from '../main/mainView';
 import Header from '../header/headerView';
 import Footer from '../footer/footerView';
@@ -27,17 +27,17 @@ export default class DetailedProduct {
   descriptionOfProduct: string = 'Description';
 
   renderMain() {
-    const detailedProductWrapper = HTMLCreation.createElement('div', { class: 'detailed__product-wrapper' });
-    const main = HTMLCreation.createElement('main', { class: 'detailed__product' }, [
-      HTMLCreation.createElement('div', { class: 'detailed__product-container' }, [detailedProductWrapper]),
+    const detailedProductWrapper = HTMLCreator.createElement('div', { class: 'detailed__product-wrapper' });
+    const main = HTMLCreator.createElement('main', { class: 'detailed__product' }, [
+      HTMLCreator.createElement('div', { class: 'detailed__product-container' }, [detailedProductWrapper]),
     ]);
 
     const createSwiperSlide = (src: 'string') =>
-      HTMLCreation.createElement('picture', { class: 'swiper-slide', lazy: 'true' }, [
-        HTMLCreation.createElement('img', { src, alt: 'img', loading: 'lazy', 'data-fancybox': 'gallery' }),
+      HTMLCreator.createElement('picture', { class: 'swiper-slide', lazy: 'true' }, [
+        HTMLCreator.createElement('img', { src, alt: 'img', loading: 'lazy', 'data-fancybox': 'gallery' }),
       ]);
 
-    const swiperWrapper = HTMLCreation.createElement('div', { class: 'swiper-wrapper' }, [
+    const swiperWrapper = HTMLCreator.createElement('div', { class: 'swiper-wrapper' }, [
       createSwiperSlide(slider1),
       createSwiperSlide(slider2),
       createSwiperSlide(slider3),
@@ -46,19 +46,19 @@ export default class DetailedProduct {
       createSwiperSlide(slider6),
     ]);
 
-    const swiper = HTMLCreation.createElement('div', { class: 'swiper' }, [
+    const swiper = HTMLCreator.createElement('div', { class: 'swiper' }, [
       swiperWrapper,
-      HTMLCreation.createElement('div', { class: 'swiper-pagination' }),
-      HTMLCreation.createElement('div', { class: 'swiper-button-prev' }),
-      HTMLCreation.createElement('div', { class: 'swiper-button-next' }),
+      HTMLCreator.createElement('div', { class: 'swiper-pagination' }),
+      HTMLCreator.createElement('div', { class: 'swiper-button-prev' }),
+      HTMLCreator.createElement('div', { class: 'swiper-button-next' }),
     ]);
 
-    const productContent = HTMLCreation.createElement('div', { class: 'detailed__product-content' }, [
-      HTMLCreation.createElement('h1', { class: 'detailed__product-title' }, [this.name]),
-      HTMLCreation.createElement('p', { class: 'detailed__product-description' }, [this.descriptionOfProduct]),
-      HTMLCreation.createElement('div', { class: 'detailed__product-price' }, [this.price]),
-      HTMLCreation.createElement('div', { class: 'detailed__product-discount' }, [this.discountPrice]),
-      HTMLCreation.createElement('button', { class: 'detailed__product-basket' }, ['Add to Basket']),
+    const productContent = HTMLCreator.createElement('div', { class: 'detailed__product-content' }, [
+      HTMLCreator.createElement('h1', { class: 'detailed__product-title' }, [this.name]),
+      HTMLCreator.createElement('p', { class: 'detailed__product-description' }, [this.descriptionOfProduct]),
+      HTMLCreator.createElement('div', { class: 'detailed__product-price' }, [this.price]),
+      HTMLCreator.createElement('div', { class: 'detailed__product-discount' }, [this.discountPrice]),
+      HTMLCreator.createElement('button', { class: 'detailed__product-basket' }, ['Add to Basket']),
     ]);
 
     detailedProductWrapper.insertAdjacentElement('afterbegin', swiper);
