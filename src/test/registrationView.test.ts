@@ -1,8 +1,8 @@
-import HTMLCreation from '../components/HTMLCreation';
+import HTMLCreator from '../components/HTMLCreator';
 
 import Registration from '../components/registration/registrationView';
 
-jest.mock('../components/HTMLCreation', () => ({
+jest.mock('../components/HTMLCreator', () => ({
   createElement: jest.fn(),
 }));
 
@@ -21,24 +21,24 @@ describe('Registration', () => {
   });
 
   it('should render form correctly', () => {
-    (HTMLCreation.createElement as jest.Mock).mockImplementation((tag: string) => {
+    (HTMLCreator.createElement as jest.Mock).mockImplementation((tag: string) => {
       const element = document.createElement(tag);
       return element;
     });
 
     const form = registration.renderForm();
-    expect(HTMLCreation.createElement).toHaveBeenCalled();
+    expect(HTMLCreator.createElement).toHaveBeenCalled();
     expect(form).toBeTruthy();
   });
 
   it('should render page correctly', () => {
-    (HTMLCreation.createElement as jest.Mock).mockImplementation((tag: string) => {
+    (HTMLCreator.createElement as jest.Mock).mockImplementation((tag: string) => {
       const element = document.createElement(tag);
       return element;
     });
 
     const page = registration.renderPage();
-    expect(HTMLCreation.createElement).toHaveBeenCalled();
+    expect(HTMLCreator.createElement).toHaveBeenCalled();
     expect(page).toBeTruthy();
   });
 });

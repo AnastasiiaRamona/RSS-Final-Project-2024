@@ -1,4 +1,4 @@
-import HTMLCreation from '../HTMLCreation';
+import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
 
 export default class Catalog {
@@ -10,9 +10,9 @@ export default class Catalog {
 
   async renderPage() {
     let catalog: HTMLElement | null = null;
-    const loginWrapper = HTMLCreation.createElement('main', { class: 'catalog__main' }, [
-      HTMLCreation.createElement('aside', { class: 'catalog__aside' }, [
-        HTMLCreation.createElement(
+    const loginWrapper = HTMLCreator.createElement('main', { class: 'catalog__main' }, [
+      HTMLCreator.createElement('aside', { class: 'catalog__aside' }, [
+        HTMLCreator.createElement(
           'div',
           {
             class: 'catalog__filter',
@@ -20,7 +20,7 @@ export default class Catalog {
           ['Filter']
         ),
       ]),
-      (catalog = HTMLCreation.createElement('section', {
+      (catalog = HTMLCreator.createElement('section', {
         class: 'catalog__gallery',
       })),
     ]);
@@ -49,23 +49,23 @@ export default class Catalog {
   productCard(id: string, name: string, description: string, img: string, price: number, discountedPrice?: number) {
     const priceClasses =
       discountedPrice != null ? 'product-card__price product-card__price-discounted' : 'product-card__price';
-    const prices = [HTMLCreation.createElement('div', { class: priceClasses }, [`${(price / 100).toFixed(2)} €`])];
+    const prices = [HTMLCreator.createElement('div', { class: priceClasses }, [`${(price / 100).toFixed(2)} €`])];
 
     if (discountedPrice != null) {
       prices.push(
-        HTMLCreation.createElement('div', { class: 'product-card__price-discount' }, [
+        HTMLCreator.createElement('div', { class: 'product-card__price-discount' }, [
           `${(discountedPrice / 100).toFixed(2)} €`,
         ])
       );
     }
-    const productCard = HTMLCreation.createElement('div', { class: 'product-card', id }, [
-      HTMLCreation.createElement('div', { class: 'product-card__box' }, [
-        HTMLCreation.createElement('img', { class: 'product-card__img', src: img, alt: `image ${name} product` }),
+    const productCard = HTMLCreator.createElement('div', { class: 'product-card', id }, [
+      HTMLCreator.createElement('div', { class: 'product-card__box' }, [
+        HTMLCreator.createElement('img', { class: 'product-card__img', src: img, alt: `image ${name} product` }),
       ]),
-      HTMLCreation.createElement('div', { class: 'product-card__title' }, [
-        HTMLCreation.createElement('h3', { class: 'product-card__name' }, [name]),
-        HTMLCreation.createElement('p', { class: 'product-card__description' }, [description]),
-        HTMLCreation.createElement('div', { class: 'product-card__prices' }, prices),
+      HTMLCreator.createElement('div', { class: 'product-card__title' }, [
+        HTMLCreator.createElement('h3', { class: 'product-card__name' }, [name]),
+        HTMLCreator.createElement('p', { class: 'product-card__description' }, [description]),
+        HTMLCreator.createElement('div', { class: 'product-card__prices' }, prices),
       ]),
     ]);
     return productCard;

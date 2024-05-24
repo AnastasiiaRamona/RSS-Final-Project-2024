@@ -1,24 +1,24 @@
-import HTMLCreation from '../HTMLCreation';
+import HTMLCreator from '../HTMLCreator';
 import petPath from '../../assets/dogs.png';
 import errorPath from '../../assets/404Error.png';
 
 export default class MissingPage {
   renderPage() {
-    const mainElement = HTMLCreation.createElement('main', { class: 'missing-page' });
+    const mainElement = HTMLCreator.createElement('main', { class: 'missing-page' });
 
-    const imgElement = HTMLCreation.createElement('img', {
+    const imgElement = HTMLCreator.createElement('img', {
       class: 'missing-page__image',
       src: petPath,
       alt: '404 Image',
     });
 
-    const imgErrorElement = HTMLCreation.createElement('img', {
+    const imgErrorElement = HTMLCreator.createElement('img', {
       class: 'missing-page__image-error',
       src: errorPath,
       alt: '404 Image',
     });
 
-    const headingElement = HTMLCreation.createElement(
+    const headingElement = HTMLCreator.createElement(
       'h2',
       {
         class: 'missing-page__heading',
@@ -26,7 +26,7 @@ export default class MissingPage {
       ['Sorry, the page you requested was not found 😿 Please select a different page or go back.']
     );
 
-    const container = HTMLCreation.createElement('div', { class: 'container-missing-page' }, [
+    const container = HTMLCreator.createElement('div', { class: 'container-missing-page' }, [
       imgErrorElement,
       headingElement,
     ]);
