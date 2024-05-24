@@ -120,7 +120,6 @@ export default class App {
 
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
-      this.header.addMainPageButton();
       this.header.addBackButton();
     });
   }
