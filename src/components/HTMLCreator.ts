@@ -1,4 +1,4 @@
-export default class HTMLCreation {
+export default class HTMLCreator {
   static createElement(
     tagName: string,
     attributes: { [key: string]: string },

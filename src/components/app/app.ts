@@ -7,6 +7,7 @@ import router from '../router';
 import MissingPage from '../missingPage/missingPageView';
 import DetailedProduct from '../detailedProduct/detailedProductView';
 import Catalog from '../catalog/catalogView';
+import HTMLCreator from '../HTMLCreator';
 
 export default class App {
   private header: Header;
@@ -47,11 +48,13 @@ export default class App {
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
+    this.setupRouter();
   }
 
   renderStartPage() {
     this.body.appendChild(this.header.renderHeader(this.isLoggedIn));
-    this.body.appendChild(this.main.renderPage());
+    const main = HTMLCreator.createElement('main', { class: 'main-field' });
+    this.body.appendChild(main);
     this.body.appendChild(this.footer.renderFooter());
   }
 
@@ -100,9 +103,6 @@ export default class App {
     renderRoute('/main', () => {
       this.changeMainElement(this.main.renderPage());
       this.header.addBurgerButton();
-      if (this.isLoggedIn) {
-        this.header.addLoginButton();
-      }
       this.main.addEventListeners();
     });
 
@@ -122,7 +122,7 @@ export default class App {
 
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
-      this.header.addMainPageButton();
+      this.header.addBackButton();
     });
 
     renderRoute('/product', () => {
