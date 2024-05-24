@@ -76,17 +76,6 @@ export default class Header {
     });
   }
 
-  addLoginButton() {
-    const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
-    const loginButton = HTMLCreator.createElement('button', { class: 'button-for-check' }, ['Login']);
-    buttonsDiv?.appendChild(loginButton);
-
-    loginButton.addEventListener('click', () => {
-      const mainPageEvent = new CustomEvent('mainPageEvent');
-      document.body.dispatchEvent(mainPageEvent);
-    });
-  }
-
   addMainPageButton() {
     const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
     const mainPageButton = HTMLCreator.createElement('button', { class: 'main-page-button' }, ['Main page 🏠']);

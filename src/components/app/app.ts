@@ -98,9 +98,6 @@ export default class App {
     renderRoute('/main', () => {
       this.changeMainElement(this.main.renderPage());
       this.header.addBurgerButton();
-      if (this.isLoggedIn) {
-        this.header.addLoginButton();
-      }
       this.main.addEventListeners();
     });
 
