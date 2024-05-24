@@ -25,6 +25,7 @@ export default class Catalog {
       })),
     ]);
     await this.productView(catalog);
+    await this.attributesView();
     return loginWrapper;
   }
 
@@ -69,5 +70,10 @@ export default class Catalog {
       ]),
     ]);
     return productCard;
+  }
+
+  async attributesView() {
+    const attributes = await this.controller.getAttributes();
+    console.log(attributes);
   }
 }

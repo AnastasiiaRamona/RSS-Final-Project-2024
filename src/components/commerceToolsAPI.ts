@@ -180,7 +180,6 @@ export default class CommerceToolsAPI {
         })
         .execute()
         .then((response) => {
-          console.log(response.body.results);
           const products = response.body.results.map((product) => {
             const productData = {
               id: product.id,
@@ -201,28 +200,36 @@ export default class CommerceToolsAPI {
     return result;
   }
 
-  async getAtributs() {
+  async getAttributes() {
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
     let result;
+    const attributesObject: { [key: string]: (string | number)[] } = {};
     if (this.apiRoot) {
-      result = await this.apiRoot
-        .products()
-        .get()
-        .execute()
-        .then((response) => {
-          const productTypes = response.body.results;
-          console.log(productTypes);
-          productTypes.forEach((productType) => {
-            productType.masterData.current.masterVariant.attributes?.forEach((attribute) => {
-              console.log(`Attribute Name: ${attribute.name}: ${attribute.value[0]['en-US']}`);
-            });
+      try {
+        const response = await this.apiRoot.products().get().execute();
+        const productTypes = response.body.results;
+        productTypes.forEach((productType) => {
+          productType.masterData.current.masterVariant.attributes?.forEach((attribute) => {
+            const attributeName = attribute.name;
+            const attributeValue =
+              Array.isArray(attribute.value) && typeof attribute.value[0] === 'object'
+                ? attribute.value[0]['en-US']
+                : attribute.value[0];
+
+            if (attributesObject[attributeName]) {
+              attributesObject[attributeName].push(attributeValue);
+            } else {
+              attributesObject[attributeName] = [attributeValue];
+            }
           });
-        })
-        .catch((error) => {
-          result = error;
         });
+      } catch (error) {
+        result = error;
+        console.error(error);
+      }
     }
+    result = attributesObject;
     return result;
   }
 }

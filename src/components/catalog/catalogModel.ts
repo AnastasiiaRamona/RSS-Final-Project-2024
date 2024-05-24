@@ -20,4 +20,9 @@ export default class CatalogModel {
     ];
     return products;
   }
+
+  async getAttributes() {
+    const attributes = await this.commerceToolsAPI.getAttributes();
+    return attributes;
+  }
 }

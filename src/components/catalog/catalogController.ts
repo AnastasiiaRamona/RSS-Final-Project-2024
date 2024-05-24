@@ -11,4 +11,9 @@ export default class CatalogController {
     const result = await this.model.getProducts();
     return result;
   }
+
+  async getAttributes() {
+    const attribute = await this.model.getAttributes();
+    return attribute;
+  }
 }

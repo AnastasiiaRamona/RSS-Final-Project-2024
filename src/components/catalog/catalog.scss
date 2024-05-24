@@ -93,3 +93,21 @@
   border-radius: 20px;
   display: inline-block;
 }
+
+.catalog__aside {
+  margin-left: 10px;
+  padding-top: 20px;
+  @include flexbox();
+  @include size(auto, 74vh);
+  align-items: start;
+  position: relative;
+}
+
+.catalog__filter {
+  @include size(10vw, 70vh);
+  padding: 30px;
+  background-color: rgb(145, 189, 156, 0.8);
+  border-radius: 40px;
+  border: 2px solid rgb(0, 84, 60);
+  font-size: 30px;
+}

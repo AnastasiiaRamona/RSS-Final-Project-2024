@@ -45,9 +45,9 @@ export default class App {
     this.setupEventListeners();
   }
 
-  renderStartPage() {
+  async renderStartPage() {
     this.body.appendChild(this.header.renderHeader(this.isLoggedIn));
-    this.body.appendChild(this.main.renderPage());
+    this.body.appendChild(await this.catalog.renderPage());
     this.body.appendChild(this.footer.renderFooter());
   }
 
