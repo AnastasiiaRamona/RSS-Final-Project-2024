@@ -200,4 +200,29 @@ export default class CommerceToolsAPI {
     }
     return result;
   }
+
+  async getAtributs() {
+    this.ctpClient = this.createCredentialsClient();
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    let result;
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .products()
+        .get()
+        .execute()
+        .then((response) => {
+          const productTypes = response.body.results;
+          console.log(productTypes);
+          productTypes.forEach((productType) => {
+            productType.masterData.current.masterVariant.attributes?.forEach((attribute) => {
+              console.log(`Attribute Name: ${attribute.name}: ${attribute.value[0]['en-US']}`);
+            });
+          });
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
 }
