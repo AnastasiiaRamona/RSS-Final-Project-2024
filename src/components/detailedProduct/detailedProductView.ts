@@ -1,4 +1,7 @@
 import HTMLCreation from '../HTMLCreation';
+import Main from '../main/mainView';
+import Header from '../header/headerView';
+import Footer from '../footer/footerView';
 
 import '../libs/libs';
 import slider1 from '../../assets/slider-1.jpg';
@@ -9,6 +12,12 @@ import slider5 from '../../assets/slider-5.jpg';
 import slider6 from '../../assets/slider-6.jpg';
 
 export default class DetailedProductPage {
+  header = new Header().renderHeader(false);
+
+  main = new Main().renderPage();
+
+  footer = new Footer().renderFooter();
+
   name: string = 'Product';
 
   price: string = 'Price';
@@ -24,7 +33,9 @@ export default class DetailedProductPage {
         HTMLCreation.createElement('div', { class: 'detailed__product-wrapper' }),
       ]),
     ]);
+    body.appendChild(this.header);
     body.appendChild(main);
+    body.appendChild(this.footer);
 
     const createSwiperSlide = (src: 'string') =>
       HTMLCreation.createElement('picture', { class: 'swiper-slide', lazy: 'true' }, [

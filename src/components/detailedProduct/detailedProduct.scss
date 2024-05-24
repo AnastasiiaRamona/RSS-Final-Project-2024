@@ -1,8 +1,10 @@
-body {
-  display: block;
-}
 .detailed__product {
-  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100vw;
+  height: 100%;
 }
 .detailed__product-container {
   height: inherit;
@@ -16,7 +18,7 @@ body {
 }
 
 .swiper {
-  max-width: 1000px;
+  width: clamp(320px, 91vw, 1000px);
   height: 600px;
 }
 
@@ -24,7 +26,7 @@ body {
   width: 100%;
   height: inherit;
   object-fit: cover;
-  border-radius: 12px;
+
 }
 .swiper-pagination {
   position: absolute;
