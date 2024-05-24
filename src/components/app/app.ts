@@ -6,6 +6,7 @@ import Registration from '../registration/registrationView';
 import router from '../router';
 import MissingPage from '../missingPage/missingPageView';
 import Catalog from '../catalog/catalogView';
+import HTMLCreator from '../HTMLCreator';
 
 export default class App {
   private header: Header;
@@ -36,18 +37,19 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
-    this.setupRouter();
   }
 
   render() {
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
+    this.setupRouter();
   }
 
   renderStartPage() {
     this.body.appendChild(this.header.renderHeader(this.isLoggedIn));
-    this.body.appendChild(this.main.renderPage());
+    const main = HTMLCreator.createElement('main', { class: 'main-field' });
+    this.body.appendChild(main);
     this.body.appendChild(this.footer.renderFooter());
   }
 
@@ -119,6 +121,7 @@ export default class App {
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
       this.header.addMainPageButton();
+      this.header.addBackButton();
     });
   }
 
@@ -126,22 +129,27 @@ export default class App {
     const startingRoute = window.location.pathname.slice(1);
     const { routes } = this.router;
 
-    if (startingRoute === '' || startingRoute === 'main') {
-      this.renderPageByRoute('main');
-    } else if (startingRoute === 'login') {
-      if (this.isLoggedIn) {
+    switch (startingRoute) {
+      case '':
+      case 'main':
         this.renderPageByRoute('main');
-      } else {
-        this.renderPageByRoute('login');
-      }
-    } else if (startingRoute === 'registration') {
-      this.renderPageByRoute('registration');
-    } else if (startingRoute === 'catalog') {
-      this.renderPageByRoute('catalog');
-    } else if (routes[startingRoute]) {
-      this.renderPageByRoute(startingRoute);
-    } else {
-      this.renderPageByRoute('404page', true);
+        break;
+      case 'login':
+        this.renderPageByRoute(this.isLoggedIn ? 'main' : 'login');
+        break;
+      case 'registration':
+        this.renderPageByRoute('registration');
+        break;
+      case 'catalog':
+        this.renderPageByRoute('catalog');
+        break;
+      default:
+        if (routes[startingRoute]) {
+          this.renderPageByRoute(startingRoute);
+        } else {
+          this.renderPageByRoute('404page', true);
+        }
+        break;
     }
   }
 
