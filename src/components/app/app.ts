@@ -51,6 +51,7 @@ export default class App {
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
+    this.setupRouter();
   }
 
   renderStartPage() {
