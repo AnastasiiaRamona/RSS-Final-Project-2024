@@ -1,9 +1,4 @@
 import HTMLCreator from '../HTMLCreator';
-import Main from '../main/mainView';
-import Header from '../header/headerView';
-import Footer from '../footer/footerView';
-
-import '../libs/libs';
 import slider1 from '../../assets/slider-1.jpg';
 import slider2 from '../../assets/slider-2.jpg';
 import slider3 from '../../assets/slider-3.jpg';
@@ -12,12 +7,6 @@ import slider5 from '../../assets/slider-5.jpg';
 import slider6 from '../../assets/slider-6.jpg';
 
 export default class DetailedProduct {
-  header = new Header().renderHeader(false);
-
-  main = new Main().renderPage();
-
-  footer = new Footer().renderFooter();
-
   name: string = 'Product';
 
   price: string = 'Price';
@@ -61,8 +50,8 @@ export default class DetailedProduct {
       HTMLCreator.createElement('button', { class: 'detailed__product-basket' }, ['Add to Basket']),
     ]);
 
-    detailedProductWrapper.insertAdjacentElement('afterbegin', swiper);
-    detailedProductWrapper.insertAdjacentElement('beforeend', productContent);
+    detailedProductWrapper.appendChild(swiper);
+    detailedProductWrapper.appendChild(productContent);
 
     return main;
   }

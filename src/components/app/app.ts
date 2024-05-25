@@ -1,3 +1,6 @@
+import { Fancybox } from '@fancyapps/ui';
+import Swiper from 'swiper';
+import { Navigation, Pagination, Zoom } from 'swiper/modules';
 import Footer from '../footer/footerView';
 import Header from '../header/headerView';
 import Login from '../login/loginView';
@@ -41,14 +44,13 @@ export default class App {
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
     this.product = new DetailedProduct();
-    this.setupRouter();
   }
 
   render() {
+    this.setupRouter();
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
-    this.setupRouter();
   }
 
   renderStartPage() {
@@ -127,6 +129,7 @@ export default class App {
 
     renderRoute('/product', () => {
       this.changeMainElement(this.product.renderMain());
+      this.createSwiper();
     });
   }
 
@@ -178,5 +181,30 @@ export default class App {
         }
       }
     }
+  }
+
+  createSwiper() {
+    const swiper = new Swiper('.swiper', {
+      // configure Swiper to use modules
+      modules: [Navigation, Pagination, Zoom],
+      grabCursor: true,
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        type: 'bullets',
+      },
+
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+
+    Fancybox.bind('[data-fancybox]', {
+      // Your custom options
+    });
+
+    return swiper;
   }
 }
