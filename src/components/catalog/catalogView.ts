@@ -10,6 +10,7 @@ export default class Catalog {
 
   async renderPage() {
     let catalog: HTMLElement | null = null;
+    let form: HTMLElement | null = null;
     const loginWrapper = HTMLCreation.createElement('main', { class: 'catalog__main' }, [
       HTMLCreation.createElement('aside', { class: 'catalog__aside' }, [
         HTMLCreation.createElement(
@@ -17,7 +18,7 @@ export default class Catalog {
           {
             class: 'catalog__filter',
           },
-          ['Filter']
+          [(form = HTMLCreation.createElement('form', { id: 'filter__form', class: 'filter__form' }))]
         ),
       ]),
       (catalog = HTMLCreation.createElement('section', {
@@ -25,11 +26,18 @@ export default class Catalog {
       })),
     ]);
     await this.productView(catalog);
-    await this.attributesView();
+    await this.attributesView(form);
     return loginWrapper;
   }
 
-  addEventListeners() {}
+  addEventListeners() {
+    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+    checkboxAll.forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        this.controller.checkbox(checkboxAll);
+      });
+    });
+  }
 
   async productView(catalog: HTMLElement) {
     const products = await this.controller.getProducts();
@@ -72,8 +80,34 @@ export default class Catalog {
     return productCard;
   }
 
-  async attributesView() {
+  async attributesView(form: HTMLElement) {
     const attributes = await this.controller.getAttributes();
-    console.log(attributes);
+    form.append(this.checbox(attributes));
+  }
+
+  checbox(attributes: { [key: string]: string[] }): HTMLElement {
+    const container = HTMLCreation.createElement('div', { class: 'checkbox__container' }) as HTMLElement;
+
+    Object.keys(attributes).forEach((key) => {
+      const div = HTMLCreation.createElement('div', { class: key }) as HTMLElement;
+      const header = HTMLCreation.createElement('h3', { class: key }, [key]) as HTMLElement;
+
+      attributes[key].forEach((value) => {
+        const checkbox = HTMLCreation.createElement('input', {
+          type: 'checkbox',
+          class: 'checkbox__input',
+          id: `${key}`,
+          value,
+        }) as HTMLInputElement;
+        const label = HTMLCreation.createElement('label', {}, [value]) as HTMLElement;
+        const checkboxContainer = HTMLCreation.createElement('div', {}, [checkbox, label]) as HTMLElement;
+        div.appendChild(checkboxContainer);
+      });
+
+      div.insertBefore(header, div.firstChild); // Insert the header as the first child of the div
+      container.appendChild(div);
+    });
+
+    return container;
   }
 }

@@ -16,4 +16,18 @@ export default class CatalogController {
     const attribute = await this.model.getAttributes();
     return attribute;
   }
+
+  checkbox(checkboxAll: NodeListOf<HTMLInputElement>) {
+    const checkboxChecked: { [key: string]: string[] } = {};
+    checkboxAll.forEach((checkbox) => {
+      if (checkbox.checked) {
+        if (checkboxChecked[checkbox.id]) {
+          checkboxChecked[checkbox.id].push(checkbox.value);
+        } else {
+          checkboxChecked[checkbox.id] = [checkbox.value];
+        }
+      }
+    });
+    return checkboxChecked;
+  }
 }

@@ -48,6 +48,7 @@ export default class App {
   async renderStartPage() {
     this.body.appendChild(this.header.renderHeader(this.isLoggedIn));
     this.body.appendChild(await this.catalog.renderPage());
+    this.catalog.addEventListeners();
     this.body.appendChild(this.footer.renderFooter());
   }
 
@@ -119,6 +120,7 @@ export default class App {
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
       this.header.addMainPageButton();
+      this.catalog.addEventListeners();
     });
   }
 

@@ -226,7 +226,6 @@ export default class CommerceToolsAPI {
         });
       } catch (error) {
         result = error;
-        console.error(error);
       }
     }
     result = attributesObject;
