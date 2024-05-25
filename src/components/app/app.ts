@@ -131,6 +131,7 @@ export default class App {
     renderRoute('/product', () => {
       this.changeMainElement(this.product.renderMain());
       this.createSwiper();
+      this.product.getProductInformation();
     });
   }
 

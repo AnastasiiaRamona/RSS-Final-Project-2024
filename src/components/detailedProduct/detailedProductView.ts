@@ -5,15 +5,22 @@ import slider3 from '../../assets/slider-3.jpg';
 import slider4 from '../../assets/slider-4.jpg';
 import slider5 from '../../assets/slider-5.jpg';
 import slider6 from '../../assets/slider-6.jpg';
+import DetailedProductController from './detailedProductController';
 
 export default class DetailedProduct {
-  name: string = 'Product';
+  controller: DetailedProductController;
 
-  price: string = 'Price';
+  name: string | null = null;
 
-  discountPrice: string = 'Discount Price';
+  price: string | null = null;
 
-  descriptionOfProduct: string = 'Description';
+  discountPrice: string | null = null;
+
+  descriptionOfProduct: string | null = null;
+
+  constructor() {
+    this.controller = new DetailedProductController();
+  }
 
   renderMain() {
     const detailedProductWrapper = HTMLCreator.createElement('div', { class: 'detailed__product-wrapper' });
@@ -54,5 +61,19 @@ export default class DetailedProduct {
     detailedProductWrapper.appendChild(productContent);
 
     return main;
+  }
+
+  async getProductInformation() {
+    const result = await this.controller.getProductByID('c4734136-b505-4157-b12f-ee1e1fcfe9a0');
+    if (result) {
+      const productData = {
+        name: result.body.masterData.current.name['en-US'],
+        description: result.body.masterData.current.description?.['en-US'],
+        images: result.body.masterData.current.masterVariant.images?.map((image) => image.url),
+        price: result.body.masterData.current.masterVariant.prices?.[0]?.value.centAmount,
+        discountedPrice: result.body.masterData.current.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+      };
+      console.log(productData);
+    }
   }
 }

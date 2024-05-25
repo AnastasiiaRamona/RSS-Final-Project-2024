@@ -1,3 +1,14 @@
+import DetailedProductModel from './detailedProductModel';
+
 export default class DetailedProductController {
-  lol: string = 'fff';
+  model: DetailedProductModel;
+
+  constructor() {
+    this.model = new DetailedProductModel();
+  }
+
+  async getProductByID(id: string) {
+    const result = await this.model.getProductByID(id);
+    return result;
+  }
 }

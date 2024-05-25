@@ -228,4 +228,13 @@ export default class CommerceToolsAPI {
     }
     return result;
   }
+
+  async getProductByID(id: string) {
+    this.createClient();
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.products().withId({ ID: id }).get().execute();
+    }
+    return response;
+  }
 }
