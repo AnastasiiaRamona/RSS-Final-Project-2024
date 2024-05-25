@@ -1,6 +1,7 @@
 import {
   Client,
   ClientBuilder,
+  ExistingTokenMiddlewareOptions,
   PasswordAuthMiddlewareOptions,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
@@ -21,6 +22,8 @@ export default class CommerceToolsAPI {
   private apiRoot: ByProjectKeyRequestBuilder | null = null;
 
   private ctpClient: Client | null = null;
+
+  private token: string | null = null;
 
   private authMiddlewareOptions: AuthMiddlewareOptions = {
     host: authHostUrl,
@@ -51,7 +54,7 @@ export default class CommerceToolsAPI {
     };
   }
 
-  httpMiddlewareOptions: HttpMiddlewareOptions = {
+  private httpMiddlewareOptions: HttpMiddlewareOptions = {
     host: apiHostUrl,
     fetch,
   };
@@ -72,6 +75,30 @@ export default class CommerceToolsAPI {
       .withHttpMiddleware(this.httpMiddlewareOptions)
       .withLoggerMiddleware()
       .build();
+  }
+
+  private createExistingTokenClient() {
+    this.token = localStorage.getItem('userToken');
+    const authorization: string = `Bearer ${this.token}`;
+
+    const options: ExistingTokenMiddlewareOptions = {
+      force: true,
+    };
+
+    return new ClientBuilder()
+      .withExistingTokenFlow(authorization, options)
+      .withHttpMiddleware(this.httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build();
+  }
+
+  private createClient() {
+    if (!localStorage.getItem('userToken')) {
+      this.ctpClient = this.createCredentialsClient();
+    } else {
+      this.ctpClient = this.createExistingTokenClient();
+    }
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
   }
 
   async login(email: string, password: string) {
@@ -152,6 +179,7 @@ export default class CommerceToolsAPI {
   async emailCheck(email: string) {
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot
@@ -164,5 +192,40 @@ export default class CommerceToolsAPI {
         .execute();
     }
     return response;
+  }
+
+  async getProducts() {
+    this.createClient();
+
+    let result;
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .products()
+        .get({
+          queryArgs: {
+            limit: 40,
+          },
+        })
+        .execute()
+        .then((response) => {
+          console.log(response.body.results);
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.masterData.current.name['en-US'],
+              description: product.masterData.current.description?.['en-US'],
+              imageUrl: product.masterData.current.masterVariant.images?.[0]?.url,
+              price: product.masterData.current.masterVariant.prices?.[0]?.value.centAmount,
+              discountedPrice: product.masterData.current.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
   }
 }

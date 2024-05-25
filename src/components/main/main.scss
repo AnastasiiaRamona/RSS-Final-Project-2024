@@ -48,5 +48,6 @@
 
   .main-field {
     overflow: hidden;
+    @include flexbox(row, center);
   }
 }
