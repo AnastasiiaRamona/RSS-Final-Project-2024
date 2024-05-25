@@ -128,9 +128,10 @@ export default class App {
       this.header.addBackButton();
     });
 
-    renderRoute('/product', () => {
+    renderRoute('/product', async () => {
       this.changeMainElement(this.product.renderMain());
       this.createSwiper();
+      await this.product.getProductInformation();
     });
   }
 
