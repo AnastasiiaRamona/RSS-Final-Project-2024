@@ -1,3 +1,6 @@
+import { Fancybox } from '@fancyapps/ui';
+import Swiper from 'swiper';
+import { Navigation, Pagination, Zoom } from 'swiper/modules';
 import Footer from '../footer/footerView';
 import Header from '../header/headerView';
 import Login from '../login/loginView';
@@ -5,6 +8,7 @@ import Main from '../main/mainView';
 import Registration from '../registration/registrationView';
 import router from '../router';
 import MissingPage from '../missingPage/missingPageView';
+import DetailedProduct from '../detailedProduct/detailedProductView';
 import Catalog from '../catalog/catalogView';
 import HTMLCreator from '../HTMLCreator';
 
@@ -20,6 +24,8 @@ export default class App {
   private main: Main;
 
   private catalog: Catalog;
+
+  private product: DetailedProduct;
 
   private isLoggedIn: boolean = !!localStorage.getItem('userToken');
 
@@ -37,9 +43,11 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
+    this.product = new DetailedProduct();
   }
 
   render() {
+    this.setupRouter();
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
@@ -119,6 +127,11 @@ export default class App {
       this.changeMainElement(await this.catalog.renderPage());
       this.header.addBackButton();
     });
+
+    renderRoute('/product', () => {
+      this.changeMainElement(this.product.renderMain());
+      this.createSwiper();
+    });
   }
 
   changePageAlongThePath() {
@@ -138,6 +151,9 @@ export default class App {
         break;
       case 'catalog':
         this.renderPageByRoute('catalog');
+        break;
+      case 'product':
+        this.renderPageByRoute('product');
         break;
       default:
         if (routes[startingRoute]) {
@@ -166,5 +182,30 @@ export default class App {
         }
       }
     }
+  }
+
+  createSwiper() {
+    const swiper = new Swiper('.swiper', {
+      // configure Swiper to use modules
+      modules: [Navigation, Pagination, Zoom],
+      grabCursor: true,
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        type: 'bullets',
+      },
+
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+
+    Fancybox.bind('[data-fancybox]', {
+      // Your custom options
+    });
+
+    return swiper;
   }
 }

@@ -124,6 +124,7 @@
   .main-field {
     @include flexbox(row, center, center);
     position: relative;
+    overflow: hidden;
   }
 
   .left-dashboard {
