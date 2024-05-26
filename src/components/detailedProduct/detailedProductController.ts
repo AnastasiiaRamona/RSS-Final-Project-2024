@@ -13,18 +13,27 @@ export default class DetailedProductController {
     return result;
   }
 
-  renderProductInfo(title: string, description: string, price: number) {
+  renderProductInfo(title: string, description: string, price: number, discounted: number | undefined) {
     const titleProduct = document.querySelector('.detailed__product-title') as HTMLElement;
     const descriptionProduct = document.querySelector('.detailed__product-description') as HTMLElement;
     const priceProduct = document.querySelector('.detailed__product-price') as HTMLElement;
+    const priceProductDiscount = document.querySelector('.detailed__product-discount') as HTMLElement;
+
     if (titleProduct) {
       titleProduct.textContent = title;
     }
+
     if (descriptionProduct) {
-      descriptionProduct.textContent = description;
+      descriptionProduct.textContent = `Description: ${description}`;
     }
+
     if (priceProduct) {
-      priceProduct.textContent = `${price}`;
+      priceProduct.textContent = `${price} €`;
+    }
+
+    if (priceProductDiscount && discounted !== undefined) {
+      priceProductDiscount.textContent = `${discounted}  €`;
+      priceProduct.classList.add('discounted');
     }
   }
 
