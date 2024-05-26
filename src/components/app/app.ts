@@ -43,7 +43,7 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
-    this.product = new DetailedProduct();
+    this.product = new DetailedProduct('c4734136-b505-4157-b12f-ee1e1fcfe9a0');
   }
 
   render() {
@@ -130,8 +130,8 @@ export default class App {
 
     renderRoute('/product', async () => {
       this.changeMainElement(this.product.renderMain());
-      this.createSwiper();
       await this.product.getProductInformation();
+      this.createSwiper();
     });
   }
 
