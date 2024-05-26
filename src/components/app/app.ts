@@ -47,7 +47,6 @@ export default class App {
   }
 
   render() {
-    this.setupRouter();
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
@@ -132,6 +131,7 @@ export default class App {
       this.changeMainElement(this.product.renderMain());
       await this.product.getProductInformation();
       this.createSwiper();
+      this.header.addBackButton();
     });
   }
 
