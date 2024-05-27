@@ -30,4 +30,9 @@ export default class CatalogController {
     });
     return checkboxChecked;
   }
+
+  async filter() {
+    const filter = await this.model.filter();
+    return filter;
+  }
 }

@@ -34,4 +34,9 @@ export default class CatalogModel {
     const uniqueAttributes = removeDuplicates(attributes);
     return uniqueAttributes;
   }
+
+  async filter() {
+    const filter = await this.commerceToolsAPI.filter();
+    return filter;
+  }
 }

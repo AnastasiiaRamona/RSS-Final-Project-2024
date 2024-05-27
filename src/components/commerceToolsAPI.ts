@@ -211,6 +211,7 @@ export default class CommerceToolsAPI {
         const productTypes = response.body.results;
         productTypes.forEach((productType) => {
           productType.masterData.current.masterVariant.attributes?.forEach((attribute) => {
+            console.log(attribute);
             const attributeName = attribute.name;
             const attributeValue =
               Array.isArray(attribute.value) && typeof attribute.value[0] === 'object'
@@ -229,6 +230,31 @@ export default class CommerceToolsAPI {
       }
     }
     result = attributesObject;
+    this.filter();
+    return result;
+  }
+
+  async filter() {
+    this.ctpClient = this.createCredentialsClient();
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    let result;
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .productProjections()
+        .search()
+        .get({
+          queryArgs: {
+            filter: ['variants.attributes.color-of-toy.de: "different"'],
+          },
+        })
+        .execute()
+        .then((response) => {
+          console.log(response.body.results);
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
     return result;
   }
 }
