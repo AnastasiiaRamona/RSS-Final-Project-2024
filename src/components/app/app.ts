@@ -43,11 +43,12 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
-    this.product = new DetailedProduct();
+    this.product = new DetailedProduct('64999a45-f18e-47f9-a994-607cefe9d333');
+    // 069264d5-8083-48d5-bfca-381fb0569ca6
+    //  64999a45-f18e-47f9-a994-607cefe9d333
   }
 
   render() {
-    this.setupRouter();
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
@@ -128,9 +129,11 @@ export default class App {
       this.header.addBackButton();
     });
 
-    renderRoute('/product', () => {
+    renderRoute('/product', async () => {
       this.changeMainElement(this.product.renderMain());
+      await this.product.getProductInformation();
       this.createSwiper();
+      this.header.addBackButton();
     });
   }
 
