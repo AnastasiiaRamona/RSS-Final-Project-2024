@@ -8,8 +8,8 @@ import Main from '../main/mainView';
 import Registration from '../registration/registrationView';
 import router from '../router';
 import MissingPage from '../missingPage/missingPageView';
-import DetailedProduct from '../detailedProduct/detailedProductView';
 import Catalog from '../catalog/catalogView';
+import DetailedProduct from '../detailedProduct/detailedProductView';
 import HTMLCreator from '../HTMLCreator';
 import UserProfile from '../userProfile/userProfileView';
 
@@ -46,7 +46,9 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
-    this.product = new DetailedProduct('c4734136-b505-4157-b12f-ee1e1fcfe9a0');
+    this.product = new DetailedProduct('64999a45-f18e-47f9-a994-607cefe9d333');
+    // 069264d5-8083-48d5-bfca-381fb0569ca6
+    //  64999a45-f18e-47f9-a994-607cefe9d333
   }
 
   render() {
