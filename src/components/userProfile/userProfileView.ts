@@ -39,14 +39,36 @@ export default class UserProfile {
       this.lastName = customerData.lastName;
       this.dateOfBirth = customerData.dateOfBirth;
       this.addresses = customerData.addresses;
-      this.billingAddress = this.addresses?.find((address) => address.id === customerData.billingAddressId);
-      this.shippingAddress = this.addresses?.find((address) => address.id === customerData.shippingAddressId);
-      if (customerData.defaultBillingAddressId === customerData.billingAddressId) {
-        this.isBillingAddressIsDefault = true;
-      }
-      if (customerData.defaultShippingAddressId === customerData.shippingAddressId) {
-        this.isShippingAddressIsDefault = true;
-      }
+
+      this.billingAddress = this.addresses?.find(
+        (address) =>
+          address.id ===
+          (Array.isArray(customerData.billingAddressId)
+            ? customerData.billingAddressId[0]
+            : customerData.billingAddressId)
+      );
+
+      console.log(this.billingAddress);
+
+      this.shippingAddress = this.addresses?.find(
+        (address) =>
+          address.id ===
+          (Array.isArray(customerData.shippingAddressId)
+            ? customerData.shippingAddressId[0]
+            : customerData.shippingAddressId)
+      );
+
+      this.isBillingAddressIsDefault =
+        customerData.defaultBillingAddressId ===
+        (Array.isArray(customerData.billingAddressId)
+          ? customerData.billingAddressId[0]
+          : customerData.billingAddressId);
+
+      this.isShippingAddressIsDefault =
+        customerData.defaultShippingAddressId ===
+        (Array.isArray(customerData.shippingAddressId)
+          ? customerData.shippingAddressId[0]
+          : customerData.shippingAddressId);
     }
   }
 
@@ -60,6 +82,7 @@ export default class UserProfile {
     const personalInfoSection = HTMLCreator.createElement('div', { class: 'personal-info-section' }, [
       HTMLCreator.createElement('h2', {}, ['Personal Information']),
       HTMLCreator.createElement('p', {}, [`Email: ${this.email}`]),
+      HTMLCreator.createElement('p', {}, [`Password`]),
       HTMLCreator.createElement('p', {}, [`First Name: ${this.firstName}`]),
       HTMLCreator.createElement('p', {}, [`Last Name: ${this.lastName}`]),
       HTMLCreator.createElement('p', {}, [`Date of Birth: ${this.dateOfBirth}`]),
@@ -70,6 +93,36 @@ export default class UserProfile {
     const addressesSection = HTMLCreator.createElement('div', { class: 'addresses-section' }, [
       HTMLCreator.createElement('h2', {}, ['Saved Addresses', toggleButton]),
       ...(this.addresses || []).map((address) => {
+        let addressIcon: HTMLElement | null = null;
+        if (this.billingAddress && address.id === this.billingAddress.id) {
+          const addressIconSrc = this.getAddressIconSrc('billing');
+          addressIcon = HTMLCreator.createElement('img', {
+            src: addressIconSrc,
+            alt: `billing icon`,
+            class: 'address-icon',
+          });
+        } else if (this.shippingAddress && address.id === this.shippingAddress.id) {
+          const addressIconSrc = this.getAddressIconSrc('shipping');
+          addressIcon = HTMLCreator.createElement('img', {
+            src: addressIconSrc,
+            alt: `shipping icon`,
+            class: 'address-icon',
+          });
+        }
+
+        const addressIconsContainer = HTMLCreator.createElement('div', { class: 'address-icons-container' });
+        if (addressIcon) {
+          addressIconsContainer.appendChild(addressIcon);
+        }
+
+        if (
+          (this.isBillingAddressIsDefault && this.billingAddress && address.id === this.billingAddress.id) ||
+          (this.isShippingAddressIsDefault && this.shippingAddress && address.id === this.shippingAddress.id)
+        ) {
+          const defaultText = HTMLCreator.createElement('h3', { class: 'default-text' }, ['Default']);
+          addressIconsContainer.appendChild(defaultText);
+        }
+
         const addressLines = [
           HTMLCreator.createElement('p', {}, [`Street: ${address.streetName}`]),
           HTMLCreator.createElement('p', {}, [`City: ${address.city}`]),
@@ -83,7 +136,11 @@ export default class UserProfile {
             }),
           ]),
         ];
-        return HTMLCreator.createElement('div', { class: 'address-entry hidden' }, addressLines);
+
+        return HTMLCreator.createElement('div', { class: 'address-entry hidden' }, [
+          addressIconsContainer,
+          ...addressLines,
+        ]);
       }),
     ]);
 
@@ -113,6 +170,14 @@ export default class UserProfile {
       DE: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/800px-Flag_of_Germany.svg.png',
     };
     return flagMap[countryCode];
+  }
+
+  getAddressIconSrc(addressType: string): string {
+    const iconMap: { [key: string]: string } = {
+      shipping: 'https://cdn0.iconfinder.com/data/icons/pinpoint-interface/48/address-shipping-512.png',
+      billing: 'https://cdn3.iconfinder.com/data/icons/pinpoint-interface/48/address-billing-512.png',
+    };
+    return iconMap[addressType];
   }
 
   addEventListeners() {

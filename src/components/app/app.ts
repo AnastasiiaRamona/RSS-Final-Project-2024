@@ -130,7 +130,7 @@ export default class App {
 
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
-      this.header.addBackButton();
+      this.header.addMainPageButton();
     });
 
     renderRoute('/product', async () => {
@@ -144,7 +144,7 @@ export default class App {
       const userProfile = new UserProfile();
       this.changeMainElement(await userProfile.renderPage());
       userProfile.addEventListeners();
-      this.header.addBackButton();
+      this.header.addMainPageButton();
     });
   }
 
