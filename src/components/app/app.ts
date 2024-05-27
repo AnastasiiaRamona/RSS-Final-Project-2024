@@ -8,9 +8,10 @@ import Main from '../main/mainView';
 import Registration from '../registration/registrationView';
 import router from '../router';
 import MissingPage from '../missingPage/missingPageView';
-import DetailedProduct from '../detailedProduct/detailedProductView';
 import Catalog from '../catalog/catalogView';
+import DetailedProduct from '../detailedProduct/detailedProductView';
 import HTMLCreator from '../HTMLCreator';
+import UserProfile from '../userProfile/userProfileView';
 
 export default class App {
   private header: Header;
@@ -43,11 +44,10 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
-    this.product = new DetailedProduct();
+    this.product = new DetailedProduct('069264d5-8083-48d5-bfca-381fb0569ca6');
   }
 
   render() {
-    this.setupRouter();
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
@@ -76,6 +76,9 @@ export default class App {
     });
     this.body.addEventListener('catalogEvent', () => {
       this.router.navigateTo('/catalog');
+    });
+    this.body.addEventListener('userProfileEvent', () => {
+      this.router.navigateTo('/user-profile');
     });
   }
 
@@ -125,13 +128,21 @@ export default class App {
 
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
-      this.header.addBackButton();
+      this.header.addMainPageButton();
     });
 
     renderRoute('/product', async () => {
       this.changeMainElement(this.product.renderMain());
-      this.createSwiper();
       await this.product.getProductInformation();
+      this.createSwiper();
+      this.header.addBackButton();
+    });
+
+    renderRoute('/user-profile', async () => {
+      const userProfile = new UserProfile();
+      this.changeMainElement(await userProfile.renderPage());
+      userProfile.addEventListeners();
+      this.header.addMainPageButton();
     });
   }
 
@@ -152,6 +163,9 @@ export default class App {
         break;
       case 'catalog':
         this.renderPageByRoute('catalog');
+        break;
+      case 'user-profile':
+        this.renderPageByRoute('user-profile');
         break;
       case 'product':
         this.renderPageByRoute('product');
