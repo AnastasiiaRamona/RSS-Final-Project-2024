@@ -28,11 +28,11 @@ export default class DetailedProductController {
     }
 
     if (priceProduct) {
-      priceProduct.textContent = `${price} €`;
+      priceProduct.textContent = `${(price / 100).toFixed(2)} €`;
     }
 
     if (priceProductDiscount && discounted !== undefined) {
-      priceProductDiscount.textContent = `${discounted}  €`;
+      priceProductDiscount.textContent = `${(discounted / 100).toFixed(2)} €`;
       priceProduct.classList.add('discounted');
     }
   }

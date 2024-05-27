@@ -51,7 +51,6 @@ export default class DetailedProduct {
         price: result.body.masterData.current.masterVariant.prices?.[0]?.value.centAmount,
         discountedPrice: result.body.masterData.current.masterVariant.prices?.[0]?.discounted?.value.centAmount,
       };
-      console.log(result);
       if (productData.description && productData.price) {
         this.controller.renderProductInfo(
           productData.name,
