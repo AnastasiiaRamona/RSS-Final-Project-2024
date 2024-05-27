@@ -43,9 +43,7 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
-    this.product = new DetailedProduct('64999a45-f18e-47f9-a994-607cefe9d333');
-    // 069264d5-8083-48d5-bfca-381fb0569ca6
-    //  64999a45-f18e-47f9-a994-607cefe9d333
+    this.product = new DetailedProduct('069264d5-8083-48d5-bfca-381fb0569ca6');
   }
 
   render() {
