@@ -34,8 +34,6 @@ export default class App {
 
   private missingPage: MissingPage;
 
-  // private userProfile: UserProfile;
-
   private body = document.body;
 
   constructor() {
