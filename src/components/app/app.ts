@@ -11,6 +11,7 @@ import MissingPage from '../missingPage/missingPageView';
 import DetailedProduct from '../detailedProduct/detailedProductView';
 import Catalog from '../catalog/catalogView';
 import HTMLCreator from '../HTMLCreator';
+import UserProfile from '../userProfile/userProfileView';
 
 export default class App {
   private header: Header;
@@ -32,6 +33,8 @@ export default class App {
   private router = router;
 
   private missingPage: MissingPage;
+
+  // private userProfile: UserProfile;
 
   private body = document.body;
 
@@ -75,6 +78,9 @@ export default class App {
     });
     this.body.addEventListener('catalogEvent', () => {
       this.router.navigateTo('/catalog');
+    });
+    this.body.addEventListener('userProfileEvent', () => {
+      this.router.navigateTo('/user-profile');
     });
   }
 
@@ -133,6 +139,13 @@ export default class App {
       this.createSwiper();
       this.header.addBackButton();
     });
+
+    renderRoute('/user-profile', async () => {
+      const userProfile = new UserProfile();
+      this.changeMainElement(await userProfile.renderPage());
+      userProfile.addEventListeners();
+      this.header.addBackButton();
+    });
   }
 
   changePageAlongThePath() {
@@ -152,6 +165,9 @@ export default class App {
         break;
       case 'catalog':
         this.renderPageByRoute('catalog');
+        break;
+      case 'user-profile':
+        this.renderPageByRoute('user-profile');
         break;
       case 'product':
         this.renderPageByRoute('product');

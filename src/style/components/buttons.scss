@@ -13,7 +13,7 @@ button {
   border: none;
 }
 
-button:hover,
+button:not(:disabled):hover,
 .clicked {
   color: $white;
   background: $btn-bca-color;
@@ -30,4 +30,10 @@ button:hover,
   button {
     padding: 8px 13px;
   }
+}
+
+.inactive {
+  color: $white;
+  background: gray;
+  cursor: no-drop;
 }

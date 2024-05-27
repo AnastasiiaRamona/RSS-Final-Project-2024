@@ -117,6 +117,7 @@ export default class CommerceToolsAPI {
           },
         })
         .execute();
+      localStorage.setItem('userPetShopId', response.body.customer.id);
     }
 
     localStorage.setItem('userToken', userTokenCache.get().token);
@@ -234,6 +235,15 @@ export default class CommerceToolsAPI {
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot.products().withId({ ID: id }).get().execute();
+    }
+    return response;
+  }
+
+  async getCustomerByID(id: string) {
+    this.createClient();
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.customers().withId({ ID: id }).get().execute();
     }
     return response;
   }
