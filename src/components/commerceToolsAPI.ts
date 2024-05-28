@@ -211,7 +211,6 @@ export default class CommerceToolsAPI {
         const productTypes = response.body.results;
         productTypes.forEach((productType) => {
           productType.masterData.current.masterVariant.attributes?.forEach((attribute) => {
-            console.log(attribute);
             const attributeName = attribute.name;
             const attributeValue =
               Array.isArray(attribute.value) && typeof attribute.value[0] === 'object'
@@ -238,13 +237,16 @@ export default class CommerceToolsAPI {
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
     let result;
+    const attributeName = 'color-of-toy';
+    const attributeValue = 'grey';
+    const locale = '.en-US';
     if (this.apiRoot) {
       result = await this.apiRoot
         .productProjections()
         .search()
         .get({
           queryArgs: {
-            filter: ['variants.attributes.color-of-toy.de: "different"'],
+            filter: [`variants.attributes.${attributeName}${locale}:"${attributeValue}"`],
           },
         })
         .execute()
