@@ -6,7 +6,7 @@ import {
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
-import { BaseAddress, CustomerDraft, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { BaseAddress, CustomerDraft, CustomerUpdate, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import {
   clientId,
@@ -244,6 +244,22 @@ export default class CommerceToolsAPI {
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot.customers().withId({ ID: id }).get().execute();
+    }
+    return response;
+  }
+
+  async updateCustomer(id: string, updateData: CustomerUpdate) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .customers()
+        .withId({ ID: id })
+        .post({
+          body: updateData,
+        })
+        .execute();
     }
     return response;
   }
