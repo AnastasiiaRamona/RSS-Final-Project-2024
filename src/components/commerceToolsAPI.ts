@@ -233,64 +233,50 @@ export default class CommerceToolsAPI {
   }
 
   async filter(checkboxChecked: { [key: string]: string[] }) {
-    interface Product {
-      id: string;
-      name: string;
-      description?: string;
-      imageUrl?: string;
-      price?: number;
-      discountedPrice?: number;
-    }
-
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
     const localeArr = ['color-of-toy', 'quantity'];
-    const productsByFilter: Record<string, Product[]> = {};
-    await Promise.all(
-      Object.keys(checkboxChecked).map(async (key) => {
-        const attributeName = key;
-        const attributeValues = checkboxChecked[key];
-        let locale = '';
-        if (localeArr.includes(key)) {
-          locale = '.en-US';
-        }
-
-        const filters: string[] = attributeValues.map(
-          (value) => `variants.attributes.${attributeName}${locale}:"${value}"`
-        );
-        await Promise.all(
-          filters.map(async (filter) => {
-            if (this.apiRoot) {
-              const response = await this.apiRoot
-                .productProjections()
-                .search()
-                .get({
-                  queryArgs: {
-                    filter: [filter],
-                    limit: 40,
-                  },
-                })
-                .execute();
-              productsByFilter[filter] = response.body.results.map((product) => ({
-                id: product.id,
-                name: product.name['en-US'],
-                description: product.description?.['en-US'],
-                imageUrl: product.masterVariant.images?.[0]?.url,
-                price: product.masterVariant.prices?.[0]?.value.centAmount,
-                discountedPrice: product.masterVariant.prices?.[0]?.discounted?.value.centAmount,
-              }));
-            }
-          })
-        );
-      })
-    );
-    const uniqueProductsMap = new Map<string, Product>();
-    Object.values(productsByFilter)
-      .flat()
-      .forEach((product) => {
-        uniqueProductsMap.set(product.id, product);
-      });
-    const mergedProducts: Product[] = Array.from(uniqueProductsMap.values());
-    return mergedProducts;
+    let result;
+    const filters: string[] = [];
+    Object.keys(checkboxChecked).forEach((key) => {
+      const attributeValues = checkboxChecked[key];
+      const attributeName = key;
+      let locale = '';
+      if (localeArr.includes(key)) {
+        locale = '.en-US';
+      }
+      const filterValues = attributeValues.map((value) => `"${value}"`).join(', ');
+      filters.push(`variants.attributes.${attributeName}${locale}:${filterValues}`);
+    });
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .productProjections()
+        .search()
+        .get({
+          queryArgs: {
+            'filter.query': filters,
+            limit: 40,
+          },
+        })
+        .execute()
+        .then((response) => {
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.name['en-US'],
+              description: product.description?.['en-US'],
+              imageUrl: product.masterVariant.images?.[0]?.url,
+              price: product.masterVariant.prices?.[0]?.value.centAmount,
+              discountedPrice: product.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
   }
 }
