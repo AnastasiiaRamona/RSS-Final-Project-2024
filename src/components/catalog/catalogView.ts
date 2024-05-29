@@ -18,7 +18,10 @@ export default class Catalog {
           {
             class: 'catalog__filter',
           },
-          [(form = HTMLCreation.createElement('form', { id: 'filter__form', class: 'filter__form' }))]
+          [
+            HTMLCreation.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
+            (form = HTMLCreation.createElement('form', { id: 'filter__form', class: 'filter__form' })),
+          ]
         ),
       ]),
       (catalog = HTMLCreation.createElement('section', {
@@ -32,10 +35,15 @@ export default class Catalog {
 
   addEventListeners() {
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+    const resetFilter = document.querySelector('.catalog__reset-filter');
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
         this.filter(checkboxAll);
       });
+    });
+    resetFilter?.addEventListener('click', () => {
+      this.controller.resetFilter(checkboxAll);
+      this.filter(checkboxAll);
     });
   }
 

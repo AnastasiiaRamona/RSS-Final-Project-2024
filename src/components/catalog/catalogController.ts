@@ -36,4 +36,13 @@ export default class CatalogController {
     }
     return result;
   }
+
+  resetFilter(checkboxAll: NodeListOf<HTMLInputElement>) {
+    checkboxAll.forEach((checkbox) => {
+      if (checkbox instanceof HTMLInputElement) {
+        const tempCheckbox = checkbox;
+        tempCheckbox.checked = false;
+      }
+    });
+  }
 }
