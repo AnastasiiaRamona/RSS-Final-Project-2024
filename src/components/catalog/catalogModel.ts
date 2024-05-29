@@ -35,8 +35,8 @@ export default class CatalogModel {
     return uniqueAttributes;
   }
 
-  async filter() {
-    const filter = await this.commerceToolsAPI.filter();
+  async checkboxChecked(checkboxChecked: { [key: string]: string[] }) {
+    const filter = await this.commerceToolsAPI.filter(checkboxChecked);
     return filter;
   }
 }

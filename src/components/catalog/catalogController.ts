@@ -17,8 +17,9 @@ export default class CatalogController {
     return attribute;
   }
 
-  checkbox(checkboxAll: NodeListOf<HTMLInputElement>) {
+  checkboxChecked(checkboxAll: NodeListOf<HTMLInputElement>) {
     const checkboxChecked: { [key: string]: string[] } = {};
+    let result;
     checkboxAll.forEach((checkbox) => {
       if (checkbox.checked) {
         if (checkboxChecked[checkbox.id]) {
@@ -28,11 +29,11 @@ export default class CatalogController {
         }
       }
     });
-    return checkboxChecked;
-  }
-
-  async filter() {
-    const filter = await this.model.filter();
-    return filter;
+    if (Object.keys(checkboxChecked).length === 0) {
+      result = this.model.getProducts();
+    } else {
+      result = this.model.checkboxChecked(checkboxChecked);
+    }
+    return result;
   }
 }

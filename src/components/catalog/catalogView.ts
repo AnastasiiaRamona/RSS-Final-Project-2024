@@ -34,9 +34,23 @@ export default class Catalog {
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
-        this.controller.checkbox(checkboxAll);
+        this.filter(checkboxAll);
       });
     });
+  }
+
+  async filter(checkboxAll: NodeListOf<HTMLInputElement>) {
+    const filterProduct = await this.controller.checkboxChecked(checkboxAll);
+    if (filterProduct && Array.isArray(filterProduct)) {
+      const catalog = document.querySelector('.catalog__gallery');
+      if (catalog) {
+        catalog.innerHTML = '';
+        filterProduct.forEach((product) => {
+          const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
+          catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
+        });
+      }
+    }
   }
 
   async productView(catalog: HTMLElement) {
@@ -82,16 +96,15 @@ export default class Catalog {
 
   async attributesView(form: HTMLElement) {
     const attributes = await this.controller.getAttributes();
-    form.append(this.checbox(attributes));
+    form.append(this.checboxBultd(attributes));
   }
 
-  checbox(attributes: { [key: string]: string[] }): HTMLElement {
+  checboxBultd(attributes: { [key: string]: string[] }): HTMLElement {
     const container = HTMLCreation.createElement('div', { class: 'checkbox__container' }) as HTMLElement;
 
     Object.keys(attributes).forEach((key) => {
       const div = HTMLCreation.createElement('div', { class: key }) as HTMLElement;
       const header = HTMLCreation.createElement('h3', { class: key }, [key]) as HTMLElement;
-
       attributes[key].forEach((value) => {
         const checkbox = HTMLCreation.createElement('input', {
           type: 'checkbox',
@@ -103,11 +116,9 @@ export default class Catalog {
         const checkboxContainer = HTMLCreation.createElement('div', {}, [checkbox, label]) as HTMLElement;
         div.appendChild(checkboxContainer);
       });
-
-      div.insertBefore(header, div.firstChild); // Insert the header as the first child of the div
+      div.insertBefore(header, div.firstChild);
       container.appendChild(div);
     });
-
     return container;
   }
 }
