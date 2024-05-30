@@ -197,7 +197,6 @@ export default class CommerceToolsAPI {
           result = error;
         });
     }
-    console.log('pes');
     return result;
   }
 
