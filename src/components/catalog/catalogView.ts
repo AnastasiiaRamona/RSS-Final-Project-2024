@@ -104,10 +104,10 @@ export default class Catalog {
 
   async attributesView(form: HTMLElement) {
     const attributes = await this.controller.getAttributes();
-    form.append(this.checboxBultd(attributes));
+    form.append(this.checkboxBuild(attributes));
   }
 
-  checboxBultd(attributes: { [key: string]: string[] }): HTMLElement {
+  checkboxBuild(attributes: { [key: string]: string[] }): HTMLElement {
     const container = HTMLCreation.createElement('div', { class: 'checkbox__container' }) as HTMLElement;
 
     Object.keys(attributes).forEach((key) => {
