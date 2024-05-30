@@ -19,6 +19,19 @@ export default class Catalog {
             class: 'catalog__filter',
           },
           [
+            HTMLCreation.createElement('form', { class: 'catalog__sorting' }, [
+              HTMLCreation.createElement('label', { for: 'catalog__sorting', class: 'sorting__label' }, ['Sort']),
+              HTMLCreation.createElement(
+                'select',
+                { name: 'sort-param', id: 'catalog__sorting', class: 'sorting__select' },
+                [
+                  HTMLCreation.createElement('option', { value: '' }, ['--sorting--']),
+                  HTMLCreation.createElement('option', { value: 'price desc' }, ['by descending price']),
+                  HTMLCreation.createElement('option', { value: 'price asc' }, ['by ascending price']),
+                  HTMLCreation.createElement('option', { value: 'name.en-US asc' }, ['by name']),
+                ]
+              ),
+            ]),
             HTMLCreation.createElement('form', { class: 'catalog__search' }, [
               HTMLCreation.createElement('label', { for: 'product-search', class: 'search__label' }, [
                 'Search the site:',
@@ -47,22 +60,27 @@ export default class Catalog {
     const resetFilter = document.querySelector('.catalog__reset-filter');
     const searchButton = document.querySelector('.search__button');
     const searchInput = document.querySelector('.search__input') as HTMLInputElement;
+    const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
+
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
-        this.filter(checkboxAll);
+        this.filter(checkboxAll, sortSelect);
       });
     });
     resetFilter?.addEventListener('click', () => {
-      this.controller.resetFilter(checkboxAll);
-      this.filter(checkboxAll);
+      this.controller.resetFilter(checkboxAll, sortSelect);
+      this.filter(checkboxAll, sortSelect);
     });
     searchButton?.addEventListener('click', (event) => {
       this.search(event, searchInput);
     });
+    sortSelect?.addEventListener('change', () => {
+      this.filter(checkboxAll, sortSelect);
+    });
   }
 
-  async filter(checkboxAll: NodeListOf<HTMLInputElement>) {
-    const filterProduct = await this.controller.checkboxChecked(checkboxAll);
+  async filter(checkboxAll: NodeListOf<HTMLInputElement>, sortSelect: HTMLSelectElement) {
+    const filterProduct = await this.controller.checkboxChecked(checkboxAll, sortSelect);
     if (filterProduct && Array.isArray(filterProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
       if (catalog) {
@@ -77,8 +95,9 @@ export default class Catalog {
 
   async search(event: Event, searchInput: HTMLInputElement) {
     const searchProduct = await this.controller.search(event, searchInput);
+    const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
-    this.controller.resetFilter(checkboxAll);
+    this.controller.resetFilter(checkboxAll, sortSelect);
     if (searchProduct && Array.isArray(searchProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
       if (catalog) {

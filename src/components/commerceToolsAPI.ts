@@ -232,9 +232,10 @@ export default class CommerceToolsAPI {
     return result;
   }
 
-  async filter(checkboxChecked: { [key: string]: string[] }) {
+  async filter(checkboxChecked: { [key: string]: string[] }, sortingApi: string) {
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    console.log(sortingApi);
     const localeArr = ['color-of-toy', 'quantity'];
     let result;
     const filters: string[] = [];
@@ -249,14 +250,18 @@ export default class CommerceToolsAPI {
       filters.push(`variants.attributes.${attributeName}${locale}:${filterValues}`);
     });
     if (this.apiRoot) {
+      const queryArgs: { [key: string]: string | string[] | number | undefined } = {
+        'filter.query': filters,
+        limit: 40,
+      };
+      if (sortingApi) {
+        queryArgs.sort = sortingApi;
+      }
       result = await this.apiRoot
         .productProjections()
         .search()
         .get({
-          queryArgs: {
-            'filter.query': filters,
-            limit: 40,
-          },
+          queryArgs,
         })
         .execute()
         .then((response) => {
