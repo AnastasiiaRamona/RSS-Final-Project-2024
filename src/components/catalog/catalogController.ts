@@ -45,4 +45,11 @@ export default class CatalogController {
       }
     });
   }
+
+  search(event: Event, input: HTMLInputElement) {
+    event.preventDefault();
+    const text = input.value;
+    console.log(text);
+    // const result = this.model.search(text);
+  }
 }

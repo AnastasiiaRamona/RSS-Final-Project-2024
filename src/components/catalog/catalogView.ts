@@ -19,6 +19,15 @@ export default class Catalog {
             class: 'catalog__filter',
           },
           [
+            HTMLCreation.createElement('form', { class: 'catalog__search' }, [
+              HTMLCreation.createElement('label', { for: 'product-search', class: 'search__label' }, [
+                'Search the site:',
+              ]),
+              HTMLCreation.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }, [
+                'Reset Filter',
+              ]),
+              HTMLCreation.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
+            ]),
             HTMLCreation.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
             (form = HTMLCreation.createElement('form', { id: 'filter__form', class: 'filter__form' })),
           ]
@@ -36,6 +45,8 @@ export default class Catalog {
   addEventListeners() {
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
     const resetFilter = document.querySelector('.catalog__reset-filter');
+    const searchButton = document.querySelector('.search__button');
+    const searchInput = document.querySelector('.search__input') as HTMLInputElement;
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
         this.filter(checkboxAll);
@@ -44,6 +55,9 @@ export default class Catalog {
     resetFilter?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll);
       this.filter(checkboxAll);
+    });
+    searchButton?.addEventListener('click', (event) => {
+      this.controller.search(event, searchInput);
     });
   }
 
