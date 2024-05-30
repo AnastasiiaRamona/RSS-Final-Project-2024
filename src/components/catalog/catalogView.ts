@@ -57,7 +57,7 @@ export default class Catalog {
       this.filter(checkboxAll);
     });
     searchButton?.addEventListener('click', (event) => {
-      this.controller.search(event, searchInput);
+      this.search(event, searchInput);
     });
   }
 
@@ -68,6 +68,20 @@ export default class Catalog {
       if (catalog) {
         catalog.innerHTML = '';
         filterProduct.forEach((product) => {
+          const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
+          catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
+        });
+      }
+    }
+  }
+
+  async search(event: Event, searchInput: HTMLInputElement) {
+    const searchProduct = await this.controller.search(event, searchInput);
+    if (searchProduct && Array.isArray(searchProduct)) {
+      const catalog = document.querySelector('.catalog__gallery');
+      if (catalog) {
+        catalog.innerHTML = '';
+        searchProduct.forEach((product) => {
           const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
           catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
         });

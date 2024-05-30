@@ -39,4 +39,9 @@ export default class CatalogModel {
     const filter = await this.commerceToolsAPI.filter(checkboxChecked);
     return filter;
   }
+
+  async search(text: string) {
+    const search = await this.commerceToolsAPI.search(text);
+    return search;
+  }
 }

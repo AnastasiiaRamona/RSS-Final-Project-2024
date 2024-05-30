@@ -278,11 +278,10 @@ export default class CommerceToolsAPI {
           result = error;
         });
     }
-    this.search();
     return result;
   }
 
-  async search() {
+  async search(text: string) {
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
     let result;
@@ -292,7 +291,7 @@ export default class CommerceToolsAPI {
         .search()
         .get({
           queryArgs: {
-            'text.en-US': 'wand',
+            'text.en-US': text,
             limit: 40,
           },
         })
@@ -315,7 +314,6 @@ export default class CommerceToolsAPI {
           result = error;
         });
     }
-    console.log(result);
     return result;
   }
 }
