@@ -28,6 +28,7 @@ export default class UserProfileModel {
       await this.commerceToolsAPI.updateCustomer(id, updateData);
     } catch (error) {
       this.showResponseMessage('A user with the specified email already exists. Enter a different email.');
+      throw error;
     }
   }
 

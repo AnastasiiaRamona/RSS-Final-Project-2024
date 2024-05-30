@@ -281,49 +281,39 @@ export default class UserProfile {
         if (form.reportValidity()) {
           const changedParagraph = paragraph;
           changedParagraph.textContent = input.value;
-          const successTextInput = HTMLCreator.createElement('span', { class: 'success-text-input' }, [
-            'The changes were successfully saved.',
-          ]);
 
           const id = this.controller.getID();
           if (id && this.version) {
-            switch (index) {
-              case 0:
-                this.email = input.value;
-                await this.controller.updateEmail(this.version, id, this.email);
-                break;
-              case 1:
-                this.firstName = input.value;
-                await this.controller.updateFirstName(this.version, id, this.firstName);
-                break;
-              case 2:
-                this.lastName = input.value;
-                await this.controller.updateLastName(this.version, id, this.lastName);
-                break;
-              case 3:
-                this.dateOfBirth = input.value;
-                await this.controller.updateDateOfBirth(
-                  this.version,
-                  id,
-                  this.controller.parseDateString(this.dateOfBirth)
-                );
-                break;
-              default:
-                break;
-            }
-            await this.getCustomerData();
-            const existingElement = form.querySelector('.success-text-input');
-
-            if (existingElement) {
-              form.replaceChild(successTextInput, existingElement);
-            } else {
-              form.appendChild(successTextInput);
-            }
-            setTimeout(() => {
-              if (form.contains(successTextInput)) {
-                form.removeChild(successTextInput);
+            try {
+              switch (index) {
+                case 0:
+                  this.email = input.value;
+                  await this.controller.updateEmail(this.version, id, this.email);
+                  break;
+                case 1:
+                  this.firstName = input.value;
+                  await this.controller.updateFirstName(this.version, id, this.firstName);
+                  break;
+                case 2:
+                  this.lastName = input.value;
+                  await this.controller.updateLastName(this.version, id, this.lastName);
+                  break;
+                case 3:
+                  this.dateOfBirth = input.value;
+                  await this.controller.updateDateOfBirth(
+                    this.version,
+                    id,
+                    this.controller.parseDateString(this.dateOfBirth)
+                  );
+                  break;
+                default:
+                  break;
               }
-            }, 5000);
+              await this.getCustomerData();
+              this.renderSuccessfulMessage(form);
+            } catch (error) {
+              console.log('Error updating data:', error);
+            }
           }
         }
       });
@@ -333,8 +323,6 @@ export default class UserProfile {
       form.appendChild(submitButton);
 
       paragraph.replaceWith(form);
-
-      this.controller.checkValidate(form);
     });
   }
 
@@ -343,5 +331,24 @@ export default class UserProfile {
     if (newEditButton) {
       this.addEventListenerToTheEditButton(newEditButton, container);
     }
+  }
+
+  renderSuccessfulMessage(form: HTMLFormElement) {
+    const existingElement = document.querySelector('.success-text-input') as HTMLInputElement;
+
+    const successTextInput = HTMLCreator.createElement('span', { class: 'success-text-input' }, [
+      'The changes were successfully saved.',
+    ]);
+
+    if (existingElement) {
+      form.replaceChild(successTextInput, existingElement);
+    } else {
+      form.appendChild(successTextInput);
+    }
+    setTimeout(() => {
+      if (form.contains(successTextInput)) {
+        form.removeChild(successTextInput);
+      }
+    }, 5000);
   }
 }
