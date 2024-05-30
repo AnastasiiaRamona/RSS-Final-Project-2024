@@ -291,7 +291,8 @@ export default class CommerceToolsAPI {
         .search()
         .get({
           queryArgs: {
-            'text.en-US': text,
+            'text.en-US': `*${text}*`,
+            fuzzy: true,
             limit: 40,
           },
         })
