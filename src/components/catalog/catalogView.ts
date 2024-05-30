@@ -77,6 +77,8 @@ export default class Catalog {
 
   async search(event: Event, searchInput: HTMLInputElement) {
     const searchProduct = await this.controller.search(event, searchInput);
+    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+    this.controller.resetFilter(checkboxAll);
     if (searchProduct && Array.isArray(searchProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
       if (catalog) {
