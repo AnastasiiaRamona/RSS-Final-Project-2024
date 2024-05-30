@@ -209,7 +209,6 @@ export default class CommerceToolsAPI {
         })
         .execute()
         .then((response) => {
-          console.log(response.body.results);
           const products = response.body.results.map((product) => {
             const productData = {
               id: product.id,
@@ -218,6 +217,86 @@ export default class CommerceToolsAPI {
               imageUrl: product.masterData.current.masterVariant.images?.[0]?.url,
               price: product.masterData.current.masterVariant.prices?.[0]?.value.centAmount,
               discountedPrice: product.masterData.current.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
+
+  async getAttributes() {
+    this.ctpClient = this.createCredentialsClient();
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    let result;
+    const attributesObject: { [key: string]: (string | number)[] } = {};
+    if (this.apiRoot) {
+      try {
+        const response = await this.apiRoot.products().get().execute();
+        const productTypes = response.body.results;
+        productTypes.forEach((productType) => {
+          productType.masterData.current.masterVariant.attributes?.forEach((attribute) => {
+            const attributeName = attribute.name;
+            const attributeValue =
+              Array.isArray(attribute.value) && typeof attribute.value[0] === 'object'
+                ? attribute.value[0]['en-US']
+                : attribute.value[0];
+
+            if (attributesObject[attributeName]) {
+              attributesObject[attributeName].push(attributeValue);
+            } else {
+              attributesObject[attributeName] = [attributeValue];
+            }
+          });
+        });
+      } catch (error) {
+        result = error;
+      }
+    }
+    result = attributesObject;
+    return result;
+  }
+
+  async filter(checkboxChecked: { [key: string]: string[] }) {
+    this.ctpClient = this.createCredentialsClient();
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    const localeArr = ['color-of-toy', 'quantity'];
+    let result;
+    const filters: string[] = [];
+    Object.keys(checkboxChecked).forEach((key) => {
+      const attributeValues = checkboxChecked[key];
+      const attributeName = key;
+      let locale = '';
+      if (localeArr.includes(key)) {
+        locale = '.en-US';
+      }
+      const filterValues = attributeValues.map((value) => `"${value}"`).join(', ');
+      filters.push(`variants.attributes.${attributeName}${locale}:${filterValues}`);
+    });
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .productProjections()
+        .search()
+        .get({
+          queryArgs: {
+            'filter.query': filters,
+            limit: 40,
+          },
+        })
+        .execute()
+        .then((response) => {
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.name['en-US'],
+              description: product.description?.['en-US'],
+              imageUrl: product.masterVariant.images?.[0]?.url,
+              price: product.masterVariant.prices?.[0]?.value.centAmount,
+              discountedPrice: product.masterVariant.prices?.[0]?.discounted?.value.centAmount,
             };
             return productData;
           });

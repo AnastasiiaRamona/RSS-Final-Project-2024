@@ -20,4 +20,23 @@ export default class CatalogModel {
     ];
     return products;
   }
+
+  async getAttributes() {
+    const attributes = await this.commerceToolsAPI.getAttributes();
+    function removeDuplicates(obj: { [key: string]: (string | number)[] }) {
+      const result: { [key: string]: string[] } = {};
+      Object.keys(obj).forEach((key) => {
+        const uniqueArray = [...new Set(obj[key])];
+        result[key] = uniqueArray.map(String);
+      });
+      return result;
+    }
+    const uniqueAttributes = removeDuplicates(attributes);
+    return uniqueAttributes;
+  }
+
+  async checkboxChecked(checkboxChecked: { [key: string]: string[] }) {
+    const filter = await this.commerceToolsAPI.filter(checkboxChecked);
+    return filter;
+  }
 }

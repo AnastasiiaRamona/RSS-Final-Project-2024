@@ -10,6 +10,7 @@ export default class Catalog {
 
   async renderPage() {
     let catalog: HTMLElement | null = null;
+    let form: HTMLElement | null = null;
     const loginWrapper = HTMLCreator.createElement('main', { class: 'catalog__main' }, [
       HTMLCreator.createElement('aside', { class: 'catalog__aside' }, [
         HTMLCreator.createElement(
@@ -17,7 +18,10 @@ export default class Catalog {
           {
             class: 'catalog__filter',
           },
-          ['Filter']
+          [
+            HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
+            (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
+          ]
         ),
       ]),
       (catalog = HTMLCreator.createElement('section', {
@@ -25,10 +29,37 @@ export default class Catalog {
       })),
     ]);
     await this.productView(catalog);
+    await this.attributesView(form);
     return loginWrapper;
   }
 
-  addEventListeners() {}
+  addEventListeners() {
+    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+    const resetFilter = document.querySelector('.catalog__reset-filter');
+    checkboxAll.forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        this.filter(checkboxAll);
+      });
+    });
+    resetFilter?.addEventListener('click', () => {
+      this.controller.resetFilter(checkboxAll);
+      this.filter(checkboxAll);
+    });
+  }
+
+  async filter(checkboxAll: NodeListOf<HTMLInputElement>) {
+    const filterProduct = await this.controller.checkboxChecked(checkboxAll);
+    if (filterProduct && Array.isArray(filterProduct)) {
+      const catalog = document.querySelector('.catalog__gallery');
+      if (catalog) {
+        catalog.innerHTML = '';
+        filterProduct.forEach((product) => {
+          const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
+          catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
+        });
+      }
+    }
+  }
 
   async productView(catalog: HTMLElement) {
     const products = await this.controller.getProducts();
@@ -69,5 +100,33 @@ export default class Catalog {
       ]),
     ]);
     return productCard;
+  }
+
+  async attributesView(form: HTMLElement) {
+    const attributes = await this.controller.getAttributes();
+    form.append(this.checkboxBuild(attributes));
+  }
+
+  checkboxBuild(attributes: { [key: string]: string[] }): HTMLElement {
+    const container = HTMLCreator.createElement('div', { class: 'checkbox__container' }) as HTMLElement;
+
+    Object.keys(attributes).forEach((key) => {
+      const div = HTMLCreator.createElement('div', { class: key }) as HTMLElement;
+      const header = HTMLCreator.createElement('h3', { class: key }, [key]) as HTMLElement;
+      attributes[key].forEach((value) => {
+        const checkbox = HTMLCreator.createElement('input', {
+          type: 'checkbox',
+          class: 'checkbox__input',
+          id: `${key}`,
+          value,
+        }) as HTMLInputElement;
+        const label = HTMLCreator.createElement('label', {}, [value]) as HTMLElement;
+        const checkboxContainer = HTMLCreator.createElement('div', {}, [checkbox, label]) as HTMLElement;
+        div.appendChild(checkboxContainer);
+      });
+      div.insertBefore(header, div.firstChild);
+      container.appendChild(div);
+    });
+    return container;
   }
 }
