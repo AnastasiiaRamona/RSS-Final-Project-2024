@@ -38,7 +38,7 @@
   padding: 0 20px;
 }
 
-.personal-info-section p, .addresses-section p {
+.personal-info-section p, .addresses-section p, .personal-info-section form {
   @include font($primary-font-family, 18px, normal, 1.5, rgb(88, 87, 87));
   margin: 12px 8px;
   position: relative;
@@ -60,6 +60,15 @@
   &:hover {
     color: $success-color;
   }
+}
+
+.personal-info-section form {
+  @include flexbox(row, flex-start, center);
+  gap: 10px;
+}
+
+.personal-info-section form input {
+  color: gray;
 }
 
 .personal-info-section p {
@@ -110,8 +119,29 @@
   @include flexbox(row, space-between, center);
 }
 
-.country-flag, .address-icon {
+.country-flag, .address-icon, .edit-button, .reset-img {
   @include size(30px, auto);
+}
+
+.submit-img {
+  @include size(25px, auto);
+}
+
+.edit-button {
+  cursor: pointer;
+
+  &:hover {
+    filter: invert(1);
+  }
+}
+
+.reset-img:hover,
+.submit-img:hover {
+  filter: invert(1);
+}
+
+.clicked-icon {
+  filter: invert(1);
 }
 
 .default-text {
@@ -120,5 +150,20 @@
 
   &:hover {
     color: $success-color;
+  }
+}
+
+.success-text-input {
+  color: $primary-color;
+}
+
+@media (max-width: 670px) {
+  .success-text-input {
+    font-size: x-small;
+    text-align: justify;
+  }
+
+  input {
+    width: 130px;
   }
 }
