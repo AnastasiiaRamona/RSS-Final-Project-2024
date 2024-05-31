@@ -93,3 +93,49 @@
   border-radius: 20px;
   display: inline-block;
 }
+
+.catalog__aside {
+  margin-left: 10px;
+  padding-top: 20px;
+  @include flexbox();
+  @include size(auto, 74vh);
+  align-items: start;
+  position: relative;
+}
+
+.catalog__filter {
+  @include size(20vw, 70vh);
+  @include flexbox(column, space-between);
+  align-items: stretch;
+  gap: 2vh;
+  padding: 30px;
+  background-color: rgb(145, 189, 156, 0.8);
+  border-radius: 40px;
+  border: 2px solid rgb(0, 84, 60);
+  font-size: 30px;
+  overflow: auto;
+}
+
+.search__input {
+  width: 100%;
+  padding-left: 10px;
+  border-radius: 20px;
+}
+.sorting__select {
+  width: 100%;
+  padding: 2px;
+  border-radius: 20px;
+  padding-left: 10px;
+}
+
+.checkbox__price {
+  @include flexbox(column);
+  align-items:normal;
+  gap: 5px;
+}
+
+.price__input {
+  width: 100%;
+  padding-left: 10px;
+  border-radius: 20px;
+}
