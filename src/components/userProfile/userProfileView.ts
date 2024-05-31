@@ -424,6 +424,7 @@ export default class UserProfile {
           type: 'password',
           id: 'new-password',
           name: 'new-password',
+          class: 'input-password',
         }) as HTMLInputElement,
         resetButton,
         submitButton,
@@ -441,10 +442,20 @@ export default class UserProfile {
       });
     });
 
+    const newPasswordInput = form.querySelector('#new-password') as HTMLInputElement;
+
+    resetButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      newPasswordInput.value = '';
+      const inputEvent = new Event('input', { bubbles: true });
+      newPasswordInput.dispatchEvent(inputEvent);
+    });
+
+    this.controller.checkValidatePassword(form);
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const currentPasswordInput = form.querySelector('#current-password') as HTMLInputElement;
-      const newPasswordInput = form.querySelector('#new-password') as HTMLInputElement;
 
       if (this.version && this.email) {
         try {
@@ -456,6 +467,8 @@ export default class UserProfile {
           );
           await this.getCustomerData();
           this.renderSuccessfulMessage(form);
+          currentPasswordInput.value = '';
+          newPasswordInput.value = '';
         } catch (error) {
           console.log('Error:', error);
         }

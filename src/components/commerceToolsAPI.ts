@@ -366,7 +366,16 @@ export default class CommerceToolsAPI {
       }
     }
 
+    localStorage.clear();
+
+    this.ctpClient = null;
+    this.apiRoot = null;
+    userTokenCache.set({
+      token: '',
+      expirationTime: 0,
+    });
     await this.login(email, newPassword);
+
     return response;
   }
 }

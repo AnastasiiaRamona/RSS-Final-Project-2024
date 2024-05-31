@@ -91,7 +91,11 @@ export default class UserProfileModel {
       const result = await this.commerceToolsAPI.changePassword(version, currentPassword, newPassword, email);
       return result;
     } catch (error) {
-      this.showResponseMessage('The current password is incorrect.');
+      if (newPassword === '') {
+        this.showResponseMessage('You need to enter a new password');
+      } else {
+        this.showResponseMessage('The current password is incorrect');
+      }
       throw error;
     }
   }
