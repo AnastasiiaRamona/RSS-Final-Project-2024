@@ -1,11 +1,12 @@
 import {
   Client,
   ClientBuilder,
+  ExistingTokenMiddlewareOptions,
   PasswordAuthMiddlewareOptions,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
-import { BaseAddress, CustomerDraft, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { BaseAddress, CustomerDraft, CustomerUpdate, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import {
   clientId,
@@ -21,6 +22,8 @@ export default class CommerceToolsAPI {
   private apiRoot: ByProjectKeyRequestBuilder | null = null;
 
   private ctpClient: Client | null = null;
+
+  private token: string | null = null;
 
   private authMiddlewareOptions: AuthMiddlewareOptions = {
     host: authHostUrl,
@@ -51,7 +54,7 @@ export default class CommerceToolsAPI {
     };
   }
 
-  httpMiddlewareOptions: HttpMiddlewareOptions = {
+  private httpMiddlewareOptions: HttpMiddlewareOptions = {
     host: apiHostUrl,
     fetch,
   };
@@ -74,6 +77,30 @@ export default class CommerceToolsAPI {
       .build();
   }
 
+  private createExistingTokenClient() {
+    this.token = localStorage.getItem('userToken');
+    const authorization: string = `Bearer ${this.token}`;
+
+    const options: ExistingTokenMiddlewareOptions = {
+      force: true,
+    };
+
+    return new ClientBuilder()
+      .withExistingTokenFlow(authorization, options)
+      .withHttpMiddleware(this.httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build();
+  }
+
+  private createClient() {
+    if (!localStorage.getItem('userToken')) {
+      this.ctpClient = this.createCredentialsClient();
+    } else {
+      this.ctpClient = this.createExistingTokenClient();
+    }
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+  }
+
   async login(email: string, password: string) {
     const options = this.createPasswordFlowOptions(email, password);
     this.ctpClient = this.createPasswordClient(options);
@@ -90,6 +117,7 @@ export default class CommerceToolsAPI {
           },
         })
         .execute();
+      localStorage.setItem('userPetShopId', response.body.customer.id);
     }
 
     localStorage.setItem('userToken', userTokenCache.get().token);
@@ -152,6 +180,7 @@ export default class CommerceToolsAPI {
   async emailCheck(email: string) {
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot
@@ -167,8 +196,8 @@ export default class CommerceToolsAPI {
   }
 
   async getProducts() {
-    this.ctpClient = this.createCredentialsClient();
-    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    this.createClient();
+
     let result;
     if (this.apiRoot) {
       result = await this.apiRoot
@@ -320,5 +349,39 @@ export default class CommerceToolsAPI {
         });
     }
     return result;
+  }
+
+  async getProductByID(id: string) {
+    this.createClient();
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.products().withId({ ID: id }).get().execute();
+    }
+    return response;
+  }
+
+  async getCustomerByID(id: string) {
+    this.createClient();
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.customers().withId({ ID: id }).get().execute();
+    }
+    return response;
+  }
+
+  async updateCustomer(id: string, updateData: CustomerUpdate) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .customers()
+        .withId({ ID: id })
+        .post({
+          body: updateData,
+        })
+        .execute();
+    }
+    return response;
   }
 }

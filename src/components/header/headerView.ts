@@ -1,4 +1,4 @@
-import HTMLCreation from '../HTMLCreation';
+import HTMLCreator from '../HTMLCreator';
 import dogPath from '../../assets/dog.png';
 import catPath from '../../assets/cat.png';
 import pawPath from '../../assets/paw.png';
@@ -9,25 +9,25 @@ export default class Header {
   renderHeader(isLoggedIn: boolean) {
     const textButton = isLoggedIn ? 'Log out' : 'Login';
 
-    const header = HTMLCreation.createElement('header', { class: 'upper-dashboard' }, [
-      HTMLCreation.createElement('div', { class: 'heading-and-image' }, [
-        HTMLCreation.createElement('img', { class: 'cat-image', src: catPath, alt: 'cat' }),
-        HTMLCreation.createElement('div', { class: 'heading' }, [
-          HTMLCreation.createElement('h1', { class: 'title' }, [
+    const header = HTMLCreator.createElement('header', { class: 'upper-dashboard' }, [
+      HTMLCreator.createElement('div', { class: 'heading-and-image' }, [
+        HTMLCreator.createElement('img', { class: 'cat-image', src: catPath, alt: 'cat' }),
+        HTMLCreator.createElement('div', { class: 'heading' }, [
+          HTMLCreator.createElement('h1', { class: 'title' }, [
             'Paws & Claws',
-            HTMLCreation.createElement('img', {
+            HTMLCreator.createElement('img', {
               class: 'paw__image',
               src: pawPath,
               alt: 'paw',
             }),
           ]),
-          HTMLCreation.createElement('h2', { class: 'subtitle' }, ['Online Pet Shop']),
+          HTMLCreator.createElement('h2', { class: 'subtitle' }, ['Online Pet Shop']),
         ]),
       ]),
-      HTMLCreation.createElement('div', { class: 'upper-dashboard__buttons' }, [
-        HTMLCreation.createElement('button', { class: 'upper-dashboard__logout-button' }, [`${textButton}`]),
-        HTMLCreation.createElement('button', { class: 'upper-dashboard__register-button' }, ['Register']),
-        HTMLCreation.createElement('img', {
+      HTMLCreator.createElement('div', { class: 'upper-dashboard__buttons' }, [
+        HTMLCreator.createElement('button', { class: 'upper-dashboard__logout-button' }, [`${textButton}`]),
+        HTMLCreator.createElement('button', { class: 'upper-dashboard__register-button' }, ['Register']),
+        HTMLCreator.createElement('img', {
           class: 'upper-dashboard__image',
           src: dogPath,
           alt: 'dog',
@@ -53,9 +53,9 @@ export default class Header {
 
   addBurgerButton() {
     const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
-    const burgerButton = HTMLCreation.createElement('button', { class: 'upper-dashboard__burger-menu' }, [
-      HTMLCreation.createElement('div', { class: 'upper-dashboard__burger-menu__first-part' }),
-      HTMLCreation.createElement('div', { class: 'upper-dashboard__burger-menu__second-part' }),
+    const burgerButton = HTMLCreator.createElement('button', { class: 'upper-dashboard__burger-menu' }, [
+      HTMLCreator.createElement('div', { class: 'upper-dashboard__burger-menu__first-part' }),
+      HTMLCreator.createElement('div', { class: 'upper-dashboard__burger-menu__second-part' }),
     ]);
     buttonsDiv?.appendChild(burgerButton);
 
@@ -76,20 +76,9 @@ export default class Header {
     });
   }
 
-  addLoginButton() {
-    const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
-    const loginButton = HTMLCreation.createElement('button', { class: 'button-for-check' }, ['Login']);
-    buttonsDiv?.appendChild(loginButton);
-
-    loginButton.addEventListener('click', () => {
-      const mainPageEvent = new CustomEvent('mainPageEvent');
-      document.body.dispatchEvent(mainPageEvent);
-    });
-  }
-
   addMainPageButton() {
     const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
-    const mainPageButton = HTMLCreation.createElement('button', { class: 'main-page-button' }, ['Main page 🏠']);
+    const mainPageButton = HTMLCreator.createElement('button', { class: 'main-page-button' }, ['Main page 🏠']);
     buttonsDiv?.appendChild(mainPageButton);
 
     mainPageButton.addEventListener('click', () => {
@@ -100,7 +89,7 @@ export default class Header {
 
   addBackButton() {
     const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
-    const backButton = HTMLCreation.createElement('button', { class: 'back-button' }, [this.backButtonTextContent]);
+    const backButton = HTMLCreator.createElement('button', { class: 'back-button' }, [this.backButtonTextContent]);
     buttonsDiv?.appendChild(backButton);
 
     backButton.addEventListener('click', () => {
