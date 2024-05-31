@@ -55,4 +55,11 @@ export default class CatalogController {
     const result = this.model.search(text);
     return result;
   }
+
+  search(event: Event, input: HTMLInputElement) {
+    event.preventDefault();
+    const text = input.value;
+    const result = this.model.search(text);
+    return result;
+  }
 }
