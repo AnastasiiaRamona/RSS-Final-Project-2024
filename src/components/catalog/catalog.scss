@@ -118,9 +118,24 @@
 
 .search__input {
   width: 100%;
+  padding-left: 10px;
+  border-radius: 20px;
 }
 .sorting__select {
   width: 100%;
   padding: 2px;
+  border-radius: 20px;
+  padding-left: 10px;
 }
 
+.checkbox__price {
+  @include flexbox(column);
+  align-items:normal;
+  gap: 5px;
+}
+
+.price__input {
+  width: 100%;
+  padding-left: 10px;
+  border-radius: 20px;
+}
