@@ -85,4 +85,14 @@ export default class UserProfileModel {
       duration: 5000,
     }).showToast();
   }
+
+  async changeUserPassword(version: number, currentPassword: string, newPassword: string, email: string) {
+    try {
+      const result = await this.commerceToolsAPI.changePassword(version, currentPassword, newPassword, email);
+      return result;
+    } catch (error) {
+      this.showResponseMessage('The current password is incorrect.');
+      throw error;
+    }
+  }
 }

@@ -3,6 +3,15 @@ import iso3166 from 'iso-3166-1-alpha-2';
 import HTMLCreator from '../HTMLCreator';
 import UserProfileController from './userProfileController';
 import editIcon from '../../assets/edit.svg';
+import passwordIconSrc from '../../assets/password-icon.png';
+import resetIconSrc from '../../assets/reset-button.png';
+import submitIconSrc from '../../assets/submit-button.png';
+import shippingAddressIconSrc from '../../assets/shipping-address-icon.png';
+import billingAddressIconSrc from '../../assets/billing-address-icon.png';
+import germanyFlag from '../../assets/germany.png';
+import usaFlag from '../../assets/usa.svg';
+import italyFlag from '../../assets/italy.png';
+import closeIconSrc from '../../assets/close-icon.png';
 
 export default class UserProfile {
   controller: UserProfileController;
@@ -10,8 +19,6 @@ export default class UserProfile {
   private version: number | undefined = undefined;
 
   private email: string | undefined = undefined;
-
-  private password: string | undefined = undefined;
 
   private firstName: string | undefined = undefined;
 
@@ -37,7 +44,6 @@ export default class UserProfile {
     const customerData = await this.controller.getCustomerById();
     if (customerData && customerData.dateOfBirth) {
       this.email = customerData.email;
-      this.password = customerData.password;
       this.firstName = customerData.firstName;
       this.lastName = customerData.lastName;
       this.dateOfBirth = this.formatDate(customerData.dateOfBirth);
@@ -80,6 +86,8 @@ export default class UserProfile {
     const profileContainer = HTMLCreator.createElement('div', { class: 'profile-container' }, []);
 
     const personalInfoSection = this.renderPersonalInfoSection();
+
+    const securitySettingSection = this.renderSecuritySettingsSection();
 
     const toggleButton = HTMLCreator.createElement('div', { class: 'toggle-button' });
 
@@ -138,6 +146,7 @@ export default class UserProfile {
     ]);
 
     profileContainer.appendChild(personalInfoSection);
+    profileContainer.appendChild(securitySettingSection);
     profileContainer.appendChild(addressesSection);
 
     const main = HTMLCreator.createElement('main', { class: 'profile-user-main' }, [profileContainer]);
@@ -156,6 +165,27 @@ export default class UserProfile {
     return personalInfoSection;
   }
 
+  renderSecuritySettingsSection() {
+    const securitySettingSection = HTMLCreator.createElement('div', { class: 'security-settings-section' }, [
+      HTMLCreator.createElement('h2', {}, ['Security Settings']),
+      this.renderChangePasswordButton(),
+    ]);
+    return securitySettingSection;
+  }
+
+  renderChangePasswordButton() {
+    const passwordIcon = HTMLCreator.createElement('img', {
+      class: 'password-icon-img',
+      src: passwordIconSrc,
+      alt: 'password icon',
+    });
+    const changePasswordButton = HTMLCreator.createElement('button', { class: 'change-password-button' }, [
+      'Change password',
+      passwordIcon,
+    ]);
+    return changePasswordButton;
+  }
+
   formatDate(date: string) {
     const dateObject = new Date(date);
     const month = dateObject.getMonth() + 1 < 10 ? `0${dateObject.getMonth() + 1}` : `${dateObject.getMonth() + 1}`;
@@ -170,17 +200,17 @@ export default class UserProfile {
 
   getFlagSrc(countryCode: string): string {
     const flagMap: { [key: string]: string } = {
-      IT: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/03/Flag_of_Italy.svg/1200px-Flag_of_Italy.svg.png',
-      US: 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg',
-      DE: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/800px-Flag_of_Germany.svg.png',
+      IT: italyFlag,
+      US: usaFlag,
+      DE: germanyFlag,
     };
     return flagMap[countryCode];
   }
 
   getAddressIconSrc(addressType: string): string {
     const iconMap: { [key: string]: string } = {
-      shipping: 'https://cdn0.iconfinder.com/data/icons/pinpoint-interface/48/address-shipping-512.png',
-      billing: 'https://cdn3.iconfinder.com/data/icons/pinpoint-interface/48/address-billing-512.png',
+      shipping: shippingAddressIconSrc,
+      billing: billingAddressIconSrc,
     };
     return iconMap[addressType];
   }
@@ -216,6 +246,15 @@ export default class UserProfile {
     const personalInfoSection = document.querySelector('.personal-info-section') as HTMLElement;
     if (editButton) {
       this.addEventListenerToTheEditButton(editButton, personalInfoSection);
+    }
+
+    const changePasswordButton = document.querySelector('.change-password-button') as HTMLButtonElement;
+    const securitySettingsSection = document.querySelector('.security-settings-section') as HTMLElement;
+    if (changePasswordButton && securitySettingsSection) {
+      changePasswordButton.addEventListener('click', () => {
+        const changePasswordForm = this.renderChangePasswordForm();
+        securitySettingsSection.replaceChild(changePasswordForm, changePasswordButton);
+      });
     }
   }
 
@@ -256,17 +295,8 @@ export default class UserProfile {
         input.classList.add(inputClasses[index]);
       }
 
-      const resetButton = HTMLCreator.createElement('input', {
-        type: 'image',
-        class: 'reset-img',
-        src: 'https://cdn-icons-png.freepik.com/512/2618/2618245.png',
-      });
-
-      const submitButton = HTMLCreator.createElement('input', {
-        class: 'submit-img',
-        type: 'image',
-        src: 'https://icons.iconarchive.com/icons/icons8/windows-8/256/Very-Basic-Ok-icon.png',
-      });
+      const resetButton = this.renderResetButton();
+      const submitButton = this.renderSubmitButton();
 
       resetButton.addEventListener('click', (event) => {
         event.preventDefault();
@@ -277,7 +307,7 @@ export default class UserProfile {
 
       submitButton.addEventListener('click', async (event) => {
         event.preventDefault();
-        this.controller.checkValidate(form);
+        this.controller.checkValidatePersonalInformation(form);
         if (form.reportValidity()) {
           const changedParagraph = paragraph;
           changedParagraph.textContent = input.value;
@@ -350,5 +380,88 @@ export default class UserProfile {
         form.removeChild(successTextInput);
       }
     }, 5000);
+  }
+
+  renderResetButton() {
+    const resetButton = HTMLCreator.createElement('input', {
+      type: 'image',
+      class: 'reset-img',
+      src: resetIconSrc,
+    });
+
+    return resetButton;
+  }
+
+  renderSubmitButton() {
+    const submitButton = HTMLCreator.createElement('input', {
+      class: 'submit-img',
+      type: 'image',
+      src: submitIconSrc,
+    });
+    return submitButton;
+  }
+
+  renderChangePasswordForm() {
+    const resetButton = this.renderResetButton();
+    const submitButton = this.renderSubmitButton();
+
+    const closeButton = HTMLCreator.createElement('img', {
+      class: 'close-icon-img',
+      src: closeIconSrc,
+      alt: 'close icon',
+    });
+
+    const form = HTMLCreator.createElement('form', { class: 'security-settings-form' }, [
+      HTMLCreator.createElement('label', { for: 'current-password' }, ['Enter your current password:']),
+      HTMLCreator.createElement('input', {
+        type: 'password',
+        id: 'current-password',
+        name: 'current-password',
+      }) as HTMLInputElement,
+      HTMLCreator.createElement('label', { for: 'new-password' }, ['Enter your new password:']),
+      HTMLCreator.createElement('div', { class: 'new-password-container' }, [
+        HTMLCreator.createElement('input', {
+          type: 'password',
+          id: 'new-password',
+          name: 'new-password',
+        }) as HTMLInputElement,
+        resetButton,
+        submitButton,
+      ]),
+      closeButton,
+    ]) as HTMLFormElement;
+
+    const securitySettingsSection = document.querySelector('.security-settings-section') as HTMLElement;
+    closeButton.addEventListener('click', () => {
+      const changePasswordButtonResult = this.renderChangePasswordButton();
+      securitySettingsSection.replaceChild(changePasswordButtonResult, form);
+      changePasswordButtonResult.addEventListener('click', () => {
+        const changePasswordForm = this.renderChangePasswordForm();
+        securitySettingsSection.replaceChild(changePasswordForm, changePasswordButtonResult);
+      });
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const currentPasswordInput = form.querySelector('#current-password') as HTMLInputElement;
+      const newPasswordInput = form.querySelector('#new-password') as HTMLInputElement;
+
+      if (this.version && this.email) {
+        try {
+          await this.controller.changeUserPassword(
+            this.version,
+            currentPasswordInput.value,
+            newPasswordInput.value,
+            this.email
+          );
+          await this.getCustomerData();
+          this.renderSuccessfulMessage(form);
+        } catch (error) {
+          console.log('Error:', error);
+        }
+      }
+    });
+
+    return form;
   }
 }

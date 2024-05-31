@@ -35,8 +35,12 @@ export default class UserProfileController {
     return customerData;
   }
 
-  checkValidate(element: HTMLFormElement) {
-    Validation.checkValidatePersonalInformation(element);
+  checkValidatePersonalInformation(element: HTMLFormElement) {
+    Validation.checkValidationPersonalInformation(element);
+  }
+
+  checkValidatePassword(element: HTMLFormElement) {
+    Validation.checkValidationPassword(element);
   }
 
   async updateEmail(version: number, id: string, newEmail: string) {
@@ -56,6 +60,11 @@ export default class UserProfileController {
 
   async updateDateOfBirth(version: number, id: string, dateOfBirth: string) {
     const result = await this.model.updateDateOfBirth(version, id, dateOfBirth);
+    return result;
+  }
+
+  async changeUserPassword(version: number, currentPassword: string, newPassword: string, email: string) {
+    const result = await this.model.changeUserPassword(version, currentPassword, newPassword, email);
     return result;
   }
 

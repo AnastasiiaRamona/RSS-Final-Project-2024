@@ -342,4 +342,30 @@ export default class CommerceToolsAPI {
     }
     return response;
   }
+
+  async changePassword(version: number, currentPassword: string, newPassword: string, email: string) {
+    let response;
+    if (this.apiRoot) {
+      try {
+        response = await this.apiRoot
+          .me()
+          .password()
+          .post({
+            body: {
+              currentPassword,
+              newPassword,
+              version,
+            },
+          })
+          .execute();
+        localStorage.clear();
+        await this.login(email, newPassword);
+      } catch (error) {
+        console.log('Error changing password:', error);
+        throw new Error('Password change failed');
+      }
+    }
+
+    return response;
+  }
 }
