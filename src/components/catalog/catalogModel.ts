@@ -35,9 +35,14 @@ export default class CatalogModel {
     return uniqueAttributes;
   }
 
-  async checkboxChecked(checkboxChecked: { [key: string]: string[] }, sorting: string) {
+  async checkboxChecked(
+    checkboxChecked: { [key: string]: string[] },
+    sorting: string,
+    minPrice: string,
+    maxPrice: string
+  ) {
     const sortingApi = sorting;
-    const filter = await this.commerceToolsAPI.filter(checkboxChecked, sortingApi);
+    const filter = await this.commerceToolsAPI.filter(checkboxChecked, sortingApi, minPrice, maxPrice);
     return filter;
   }
 

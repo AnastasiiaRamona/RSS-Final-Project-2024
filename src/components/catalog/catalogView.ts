@@ -19,6 +19,15 @@ export default class Catalog {
             class: 'catalog__filter',
           },
           [
+            HTMLCreation.createElement('form', { class: 'catalog__search' }, [
+              HTMLCreation.createElement('label', { for: 'product-search', class: 'search__label' }, [
+                'Search the site:',
+              ]),
+              HTMLCreation.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }, [
+                'Reset Filter',
+              ]),
+              HTMLCreation.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
+            ]),
             HTMLCreation.createElement('form', { class: 'catalog__sorting' }, [
               HTMLCreation.createElement('label', { for: 'catalog__sorting', class: 'sorting__label' }, ['Sort']),
               HTMLCreation.createElement(
@@ -31,15 +40,6 @@ export default class Catalog {
                   HTMLCreation.createElement('option', { value: 'name.en-US asc' }, ['by name']),
                 ]
               ),
-            ]),
-            HTMLCreation.createElement('form', { class: 'catalog__search' }, [
-              HTMLCreation.createElement('label', { for: 'product-search', class: 'search__label' }, [
-                'Search the site:',
-              ]),
-              HTMLCreation.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }, [
-                'Reset Filter',
-              ]),
-              HTMLCreation.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
             ]),
             HTMLCreation.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
             (form = HTMLCreation.createElement('form', { id: 'filter__form', class: 'filter__form' })),
@@ -61,26 +61,36 @@ export default class Catalog {
     const searchButton = document.querySelector('.search__button');
     const searchInput = document.querySelector('.search__input') as HTMLInputElement;
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
+    const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
 
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
-        this.filter(checkboxAll, sortSelect);
+        this.filter(checkboxAll, sortSelect, priceInputAll);
       });
     });
     resetFilter?.addEventListener('click', () => {
-      this.controller.resetFilter(checkboxAll, sortSelect);
-      this.filter(checkboxAll, sortSelect);
+      this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
+      this.filter(checkboxAll, sortSelect, priceInputAll);
     });
     searchButton?.addEventListener('click', (event) => {
       this.search(event, searchInput);
     });
     sortSelect?.addEventListener('change', () => {
-      this.filter(checkboxAll, sortSelect);
+      this.filter(checkboxAll, sortSelect, priceInputAll);
+    });
+    priceInputAll.forEach((priceInput) => {
+      priceInput.addEventListener('change', () => {
+        this.filter(checkboxAll, sortSelect, priceInputAll);
+      });
     });
   }
 
-  async filter(checkboxAll: NodeListOf<HTMLInputElement>, sortSelect: HTMLSelectElement) {
-    const filterProduct = await this.controller.checkboxChecked(checkboxAll, sortSelect);
+  async filter(
+    checkboxAll: NodeListOf<HTMLInputElement>,
+    sortSelect: HTMLSelectElement,
+    priceInputAll: NodeListOf<HTMLInputElement>
+  ) {
+    const filterProduct = await this.controller.checkboxChecked(checkboxAll, sortSelect, priceInputAll);
     if (filterProduct && Array.isArray(filterProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
       if (catalog) {
@@ -97,7 +107,8 @@ export default class Catalog {
     const searchProduct = await this.controller.search(event, searchInput);
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
-    this.controller.resetFilter(checkboxAll, sortSelect);
+    const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+    this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
     if (searchProduct && Array.isArray(searchProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
       if (catalog) {
@@ -158,23 +169,53 @@ export default class Catalog {
 
   checboxBultd(attributes: { [key: string]: string[] }): HTMLElement {
     const container = HTMLCreation.createElement('div', { class: 'checkbox__container' }) as HTMLElement;
-
+    const minPrice = (Number(attributes.minPrice[0]) / 100).toFixed(0);
+    const maxPrice = (Number(attributes.maxPrice[0]) / 100).toFixed(0);
+    const price = HTMLCreation.createElement('div', { class: 'checkbox__price' }, [
+      HTMLCreation.createElement('div', { class: 'checkbox__price-min' }, [
+        HTMLCreation.createElement('span', { class: 'price__span', type: 'range', id: 'min-price' }, ['Minimum Price']),
+        HTMLCreation.createElement('input', {
+          type: 'number',
+          value: `${minPrice}`,
+          class: 'price__input',
+          id: 'min-price',
+          step: '1',
+          max: maxPrice,
+          min: minPrice,
+        }),
+      ]),
+      HTMLCreation.createElement('div', { class: 'checkbox__price-min' }, [
+        HTMLCreation.createElement('span', { class: 'price__span', type: 'range', id: 'max-price' }, ['Maximum Price']),
+        HTMLCreation.createElement('input', {
+          type: 'number',
+          value: `${maxPrice}`,
+          class: 'price__input',
+          id: 'max-price',
+          step: '1',
+          max: maxPrice,
+          min: minPrice,
+        }),
+      ]),
+    ]);
+    container.appendChild(price);
     Object.keys(attributes).forEach((key) => {
-      const div = HTMLCreation.createElement('div', { class: key }) as HTMLElement;
-      const header = HTMLCreation.createElement('h3', { class: key }, [key]) as HTMLElement;
-      attributes[key].forEach((value) => {
-        const checkbox = HTMLCreation.createElement('input', {
-          type: 'checkbox',
-          class: 'checkbox__input',
-          id: `${key}`,
-          value,
-        }) as HTMLInputElement;
-        const label = HTMLCreation.createElement('label', {}, [value]) as HTMLElement;
-        const checkboxContainer = HTMLCreation.createElement('div', {}, [checkbox, label]) as HTMLElement;
-        div.appendChild(checkboxContainer);
-      });
-      div.insertBefore(header, div.firstChild);
-      container.appendChild(div);
+      if (key !== 'minPrice' && key !== 'maxPrice') {
+        const div = HTMLCreation.createElement('div', { class: key }) as HTMLElement;
+        const header = HTMLCreation.createElement('h3', { class: key }, [key]) as HTMLElement;
+        attributes[key].forEach((value) => {
+          const checkbox = HTMLCreation.createElement('input', {
+            type: 'checkbox',
+            class: 'checkbox__input',
+            id: `${key}`,
+            value,
+          }) as HTMLInputElement;
+          const label = HTMLCreation.createElement('label', {}, [value]) as HTMLElement;
+          const checkboxContainer = HTMLCreation.createElement('div', {}, [checkbox, label]) as HTMLElement;
+          div.appendChild(checkboxContainer);
+        });
+        div.insertBefore(header, div.firstChild);
+        container.appendChild(div);
+      }
     });
     return container;
   }

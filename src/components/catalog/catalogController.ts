@@ -17,10 +17,22 @@ export default class CatalogController {
     return attribute;
   }
 
-  checkboxChecked(checkboxAll: NodeListOf<HTMLInputElement>, sortSelect: HTMLSelectElement) {
+  checkboxChecked(
+    checkboxAll: NodeListOf<HTMLInputElement>,
+    sortSelect: HTMLSelectElement,
+    priceInputAll: NodeListOf<HTMLInputElement>
+  ) {
     const checkboxChecked: { [key: string]: string[] } = {};
     const sorting = sortSelect.value;
-    let result;
+    let minPrice: string = '';
+    let maxPrice: string = '';
+    priceInputAll.forEach((input) => {
+      if (input.id === 'min-price') {
+        minPrice = (Number(input.value) * 100).toString();
+      } else if (input.id === 'max-price') {
+        maxPrice = (Number(input.value) * 100).toString();
+      }
+    });
     checkboxAll.forEach((checkbox) => {
       if (checkbox.checked) {
         if (checkboxChecked[checkbox.id]) {
@@ -30,19 +42,27 @@ export default class CatalogController {
         }
       }
     });
-    if (Object.keys(checkboxChecked).length === 0 && !sorting) {
-      result = this.model.getProducts();
-    } else {
-      result = this.model.checkboxChecked(checkboxChecked, sorting);
-    }
+    const result = this.model.checkboxChecked(checkboxChecked, sorting, minPrice, maxPrice);
     return result;
   }
 
-  resetFilter(checkboxAll: NodeListOf<HTMLInputElement>, sortSelect: HTMLSelectElement) {
+  resetFilter(
+    checkboxAll: NodeListOf<HTMLInputElement>,
+    sortSelect: HTMLSelectElement,
+    priceInputAll: NodeListOf<HTMLInputElement>
+  ) {
     checkboxAll.forEach((checkbox) => {
       if (checkbox instanceof HTMLInputElement) {
         const tempCheckbox = checkbox;
         tempCheckbox.checked = false;
+      }
+    });
+    priceInputAll.forEach((input) => {
+      const tempInput = input;
+      if (input.id === 'min-price') {
+        tempInput.value = input.min;
+      } else if (input.id === 'max-price') {
+        tempInput.value = input.max;
       }
     });
     const tempSelect = sortSelect;

@@ -175,7 +175,7 @@ export default class CommerceToolsAPI {
         .products()
         .get({
           queryArgs: {
-            limit: 40,
+            limit: 100,
           },
         })
         .execute()
@@ -204,13 +204,26 @@ export default class CommerceToolsAPI {
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
     let result;
+    const priceArr: number[] = [];
     const attributesObject: { [key: string]: (string | number)[] } = {};
     if (this.apiRoot) {
       try {
-        const response = await this.apiRoot.products().get().execute();
+        const response = await this.apiRoot
+          .productProjections()
+          .search()
+          .get({
+            queryArgs: {
+              limit: 100,
+            },
+          })
+          .execute();
         const productTypes = response.body.results;
         productTypes.forEach((productType) => {
-          productType.masterData.current.masterVariant.attributes?.forEach((attribute) => {
+          const price = productType.masterVariant.prices?.[0].value.centAmount;
+          if (price) {
+            priceArr.push(price);
+          }
+          productType.masterVariant.attributes?.forEach((attribute) => {
             const attributeName = attribute.name;
             const attributeValue =
               Array.isArray(attribute.value) && typeof attribute.value[0] === 'object'
@@ -223,6 +236,10 @@ export default class CommerceToolsAPI {
               attributesObject[attributeName] = [attributeValue];
             }
           });
+          const minPrice = Math.min(...priceArr);
+          const maxPrice = Math.max(...priceArr);
+          attributesObject.minPrice = [minPrice];
+          attributesObject.maxPrice = [maxPrice];
         });
       } catch (error) {
         result = error;
@@ -232,10 +249,9 @@ export default class CommerceToolsAPI {
     return result;
   }
 
-  async filter(checkboxChecked: { [key: string]: string[] }, sortingApi: string) {
+  async filter(checkboxChecked: { [key: string]: string[] }, sortingApi: string, minPrice: string, maxPrice: string) {
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
-    console.log(sortingApi);
     const localeArr = ['color-of-toy', 'quantity'];
     let result;
     const filters: string[] = [];
@@ -249,6 +265,10 @@ export default class CommerceToolsAPI {
       const filterValues = attributeValues.map((value) => `"${value}"`).join(', ');
       filters.push(`variants.attributes.${attributeName}${locale}:${filterValues}`);
     });
+
+    if (minPrice !== undefined && maxPrice !== undefined) {
+      filters.push(`variants.price.centAmount:range(${minPrice} to ${maxPrice})`);
+    }
     if (this.apiRoot) {
       const queryArgs: { [key: string]: string | string[] | number | undefined } = {
         'filter.query': filters,
