@@ -344,6 +344,8 @@ export default class CommerceToolsAPI {
   }
 
   async changePassword(version: number, currentPassword: string, newPassword: string, email: string) {
+    this.createClient();
+
     let response;
     if (this.apiRoot) {
       try {
@@ -358,14 +360,13 @@ export default class CommerceToolsAPI {
             },
           })
           .execute();
-        localStorage.clear();
-        await this.login(email, newPassword);
       } catch (error) {
         console.log('Error changing password:', error);
         throw new Error('Password change failed');
       }
     }
 
+    await this.login(email, newPassword);
     return response;
   }
 }
