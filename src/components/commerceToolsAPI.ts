@@ -309,6 +309,43 @@ export default class CommerceToolsAPI {
     return result;
   }
 
+  async search(text: string) {
+    this.ctpClient = this.createCredentialsClient();
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    let result;
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .productProjections()
+        .search()
+        .get({
+          queryArgs: {
+            'text.en-US': `*${text}*`,
+            fuzzy: true,
+            limit: 40,
+          },
+        })
+        .execute()
+        .then((response) => {
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.name['en-US'],
+              description: product.description?.['en-US'],
+              imageUrl: product.masterVariant.images?.[0]?.url,
+              price: product.masterVariant.prices?.[0]?.value.centAmount,
+              discountedPrice: product.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
+
   async getProductByID(id: string) {
     this.createClient();
     let response;

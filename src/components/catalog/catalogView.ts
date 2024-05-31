@@ -19,6 +19,15 @@ export default class Catalog {
             class: 'catalog__filter',
           },
           [
+            HTMLCreator.createElement('form', { class: 'catalog__search' }, [
+              HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, [
+                'Search the site:',
+              ]),
+              HTMLCreator.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }, [
+                'Reset Filter',
+              ]),
+              HTMLCreator.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
+            ]),
             HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
             (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
           ]
@@ -36,6 +45,8 @@ export default class Catalog {
   addEventListeners() {
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
     const resetFilter = document.querySelector('.catalog__reset-filter');
+    const searchButton = document.querySelector('.search__button');
+    const searchInput = document.querySelector('.search__input') as HTMLInputElement;
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
         this.filter(checkboxAll);
@@ -44,6 +55,9 @@ export default class Catalog {
     resetFilter?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll);
       this.filter(checkboxAll);
+    });
+    searchButton?.addEventListener('click', (event) => {
+      this.search(event, searchInput);
     });
   }
 
@@ -54,6 +68,22 @@ export default class Catalog {
       if (catalog) {
         catalog.innerHTML = '';
         filterProduct.forEach((product) => {
+          const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
+          catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
+        });
+      }
+    }
+  }
+
+  async search(event: Event, searchInput: HTMLInputElement) {
+    const searchProduct = await this.controller.search(event, searchInput);
+    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+    this.controller.resetFilter(checkboxAll);
+    if (searchProduct && Array.isArray(searchProduct)) {
+      const catalog = document.querySelector('.catalog__gallery');
+      if (catalog) {
+        catalog.innerHTML = '';
+        searchProduct.forEach((product) => {
           const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
           catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
         });
@@ -104,10 +134,10 @@ export default class Catalog {
 
   async attributesView(form: HTMLElement) {
     const attributes = await this.controller.getAttributes();
-    form.append(this.checkboxBuild(attributes));
+    form.append(this.checboxBultd(attributes));
   }
 
-  checkboxBuild(attributes: { [key: string]: string[] }): HTMLElement {
+  checboxBultd(attributes: { [key: string]: string[] }): HTMLElement {
     const container = HTMLCreator.createElement('div', { class: 'checkbox__container' }) as HTMLElement;
 
     Object.keys(attributes).forEach((key) => {
