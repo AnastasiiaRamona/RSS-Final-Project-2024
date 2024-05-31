@@ -1,7 +1,7 @@
 import Header from '../components/header/headerView';
-import HTMLCreation from '../components/HTMLCreation';
+import HTMLCreator from '../components/HTMLCreator';
 
-jest.mock('../components/HTMLCreation');
+jest.mock('../components/HTMLCreator');
 jest.mock('../assets/dog.png', () => 'dog.png');
 jest.mock('../assets/cat.png', () => 'cat.png');
 
@@ -14,7 +14,7 @@ describe('Header', () => {
   });
 
   test('Should render the header with login button when not logged in', () => {
-    (HTMLCreation.createElement as jest.Mock).mockImplementation(
+    (HTMLCreator.createElement as jest.Mock).mockImplementation(
       (tag: string, attrs: Record<string, string>, children: HTMLElement[]) => {
         const element = document.createElement(tag);
         if (attrs) {

@@ -1,3 +1,6 @@
+import { Fancybox } from '@fancyapps/ui';
+import Swiper from 'swiper';
+import { Navigation, Pagination, Zoom } from 'swiper/modules';
 import Footer from '../footer/footerView';
 import Header from '../header/headerView';
 import Login from '../login/loginView';
@@ -6,6 +9,9 @@ import Registration from '../registration/registrationView';
 import router from '../router';
 import MissingPage from '../missingPage/missingPageView';
 import Catalog from '../catalog/catalogView';
+import DetailedProduct from '../detailedProduct/detailedProductView';
+import HTMLCreator from '../HTMLCreator';
+import UserProfile from '../userProfile/userProfileView';
 
 export default class App {
   private header: Header;
@@ -19,6 +25,8 @@ export default class App {
   private main: Main;
 
   private catalog: Catalog;
+
+  private product: DetailedProduct;
 
   private isLoggedIn: boolean = !!localStorage.getItem('userToken');
 
@@ -36,19 +44,20 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
-    this.setupRouter();
+    this.product = new DetailedProduct('069264d5-8083-48d5-bfca-381fb0569ca6');
   }
 
   render() {
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
+    this.setupRouter();
   }
 
   async renderStartPage() {
     this.body.appendChild(this.header.renderHeader(this.isLoggedIn));
-    this.body.appendChild(await this.catalog.renderPage());
-    this.catalog.addEventListeners();
+    const main = HTMLCreator.createElement('main', { class: 'main-field' });
+    this.body.appendChild(main);
     this.body.appendChild(this.footer.renderFooter());
   }
 
@@ -67,6 +76,9 @@ export default class App {
     });
     this.body.addEventListener('catalogEvent', () => {
       this.router.navigateTo('/catalog');
+    });
+    this.body.addEventListener('userProfileEvent', () => {
+      this.router.navigateTo('/user-profile');
     });
   }
 
@@ -97,9 +109,6 @@ export default class App {
     renderRoute('/main', () => {
       this.changeMainElement(this.main.renderPage());
       this.header.addBurgerButton();
-      if (this.isLoggedIn) {
-        this.header.addLoginButton();
-      }
       this.main.addEventListeners();
     });
 
@@ -122,28 +131,53 @@ export default class App {
       this.header.addMainPageButton();
       this.catalog.addEventListeners();
     });
+
+    renderRoute('/product', async () => {
+      this.changeMainElement(this.product.renderMain());
+      await this.product.getProductInformation();
+      this.createSwiper();
+      this.header.addBackButton();
+    });
+
+    renderRoute('/user-profile', async () => {
+      const userProfile = new UserProfile();
+      this.changeMainElement(await userProfile.renderPage());
+      userProfile.addEventListeners();
+      this.header.addMainPageButton();
+    });
   }
 
   changePageAlongThePath() {
     const startingRoute = window.location.pathname.slice(1);
     const { routes } = this.router;
 
-    if (startingRoute === '' || startingRoute === 'main') {
-      this.renderPageByRoute('main');
-    } else if (startingRoute === 'login') {
-      if (this.isLoggedIn) {
+    switch (startingRoute) {
+      case '':
+      case 'main':
         this.renderPageByRoute('main');
-      } else {
-        this.renderPageByRoute('login');
-      }
-    } else if (startingRoute === 'registration') {
-      this.renderPageByRoute('registration');
-    } else if (startingRoute === 'catalog') {
-      this.renderPageByRoute('catalog');
-    } else if (routes[startingRoute]) {
-      this.renderPageByRoute(startingRoute);
-    } else {
-      this.renderPageByRoute('404page', true);
+        break;
+      case 'login':
+        this.renderPageByRoute(this.isLoggedIn ? 'main' : 'login');
+        break;
+      case 'registration':
+        this.renderPageByRoute('registration');
+        break;
+      case 'catalog':
+        this.renderPageByRoute('catalog');
+        break;
+      case 'user-profile':
+        this.renderPageByRoute('user-profile');
+        break;
+      case 'product':
+        this.renderPageByRoute('product');
+        break;
+      default:
+        if (routes[startingRoute]) {
+          this.renderPageByRoute(startingRoute);
+        } else {
+          this.renderPageByRoute('404page', true);
+        }
+        break;
     }
   }
 
@@ -164,5 +198,30 @@ export default class App {
         }
       }
     }
+  }
+
+  createSwiper() {
+    const swiper = new Swiper('.swiper', {
+      // configure Swiper to use modules
+      modules: [Navigation, Pagination, Zoom],
+      grabCursor: true,
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        type: 'bullets',
+      },
+
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+
+    Fancybox.bind('[data-fancybox]', {
+      // Your custom options
+    });
+
+    return swiper;
   }
 }

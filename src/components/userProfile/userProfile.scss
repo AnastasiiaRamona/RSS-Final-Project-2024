@@ -1,0 +1,169 @@
+.profile-container {
+  @include container(93vw, 30px);
+  background: $bca-gradient;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.496);
+  border-radius: 15px;
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  height: 73vh;
+  position: relative;
+
+  &:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.588);
+  }
+}
+
+.profile-container h2 {
+  @include font($primary-font-family, x-large, bold, 1.3, $primary-color);
+  border-bottom: 3px solid $light;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+
+  &:before {
+    content: url('https://cdn.dribbble.com/users/1900827/screenshots/5354476/attachments/1161314/caboodle-cat-icon.svg');
+    @include size(30px, 30px);
+    display: inline-block;
+    position: absolute;
+    left: -40px;
+  }
+}
+
+.personal-info-section, .addresses-section {
+  margin-bottom: 35px;
+  padding: 0 20px;
+}
+
+.personal-info-section p, .addresses-section p, .personal-info-section form {
+  @include font($primary-font-family, 18px, normal, 1.5, rgb(88, 87, 87));
+  margin: 12px 8px;
+  position: relative;
+  padding-left: 25px;
+  transition: color 0.3s ease-in-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background-color: $info-color;
+    border-radius: 50%;
+  }
+
+  &:hover {
+    color: $success-color;
+  }
+}
+
+.personal-info-section form {
+  @include flexbox(row, flex-start, center);
+  gap: 10px;
+}
+
+.personal-info-section form input {
+  color: gray;
+}
+
+.personal-info-section p {
+  color: $white;
+
+  &:hover {
+    color: $light;
+  }
+}
+
+.address-entry {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #e0faf3;
+    border: 1px solid #037160;
+  }
+}
+
+.toggle-button {
+  cursor: pointer;
+  @include size(0,0);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 15px solid $primary-color;
+  transition: transform 0.3s ease-in-out;
+}
+
+.toggle-button.rotate {
+  transform: rotate(180deg);
+}
+
+.hidden {
+  display: none;
+}
+
+.country {
+  @include flexbox(row, flex-start, center);
+  gap: 5px;
+}
+
+.address-icons-container {
+  @include flexbox(row, space-between, center);
+}
+
+.country-flag, .address-icon, .edit-button, .reset-img {
+  @include size(30px, auto);
+}
+
+.submit-img {
+  @include size(25px, auto);
+}
+
+.edit-button {
+  cursor: pointer;
+
+  &:hover {
+    filter: invert(1);
+  }
+}
+
+.reset-img:hover,
+.submit-img:hover {
+  filter: invert(1);
+}
+
+.clicked-icon {
+  filter: invert(1);
+}
+
+.default-text {
+  @include font($third-font-family, large, bold);
+  color: $secondary-color;
+
+  &:hover {
+    color: $success-color;
+  }
+}
+
+.success-text-input {
+  color: $primary-color;
+}
+
+@media (max-width: 670px) {
+  .success-text-input {
+    font-size: x-small;
+    text-align: justify;
+  }
+
+  input {
+    width: 130px;
+  }
+}
