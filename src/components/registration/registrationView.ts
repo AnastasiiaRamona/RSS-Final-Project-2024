@@ -1,6 +1,6 @@
 import iso3166 from 'iso-3166-1';
 import { BaseAddress } from '@commercetools/platform-sdk';
-import HTMLCreation from '../HTMLCreation';
+import HTMLCreator from '../HTMLCreator';
 
 import RegistrationController from './registrationController';
 
@@ -26,28 +26,28 @@ export default class Registration {
   }
 
   renderForm() {
-    const form = HTMLCreation.createElement('form', { class: 'form  form-registration', action: '/' }, [
+    const form = HTMLCreator.createElement('form', { class: 'form  form-registration', action: '/' }, [
       this.registrationUsersFieldset.renderFieldsetRegistrationUsers(),
-      HTMLCreation.createElement('label', { class: 'label label-delivery__criterion' }, [
+      HTMLCreator.createElement('label', { class: 'label label-delivery__criterion' }, [
         'Set as billing and shipping address',
       ]),
-      HTMLCreation.createElement('input', {
+      HTMLCreator.createElement('input', {
         type: 'checkbox',
         class: 'input input-checkbox__address',
       }),
 
-      HTMLCreation.createElement('div', { class: 'form-inner' }, [
+      HTMLCreator.createElement('div', { class: 'form-inner' }, [
         this.billingFieldset.renderFieldsetRegistrationAddress(),
         this.shippingFieldset.renderFieldsetRegistrationAddress(),
       ]),
-      HTMLCreation.createElement('button', { class: 'button button-registration' }, ['Sign up']),
+      HTMLCreator.createElement('button', { class: 'button button-registration' }, ['Sign up']),
     ]);
     return form;
   }
 
   renderPage() {
-    const registrationMain = HTMLCreation.createElement('main', { class: 'registration-main' }, [
-      HTMLCreation.createElement('div', { class: 'container container-registration' }, [this.renderForm()]),
+    const registrationMain = HTMLCreator.createElement('main', { class: 'registration-main' }, [
+      HTMLCreator.createElement('div', { class: 'container container-registration' }, [this.renderForm()]),
     ]);
     return registrationMain;
   }
