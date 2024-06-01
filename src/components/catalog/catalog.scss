@@ -22,6 +22,14 @@
   background-color: rgb(145, 189, 156, 0.8);
   padding: 15px;
   gap: 20px;
+  flex-basis: 280px;
+  cursor: pointer;
+  transition: all 0.5s linear;
+  &:hover {
+    transform: scale(1.03);
+    box-shadow: 1px 3px 26px 5px rgba(0,0,0,0.81);
+    background-color: rgba(145, 233, 167, 0.8);
+  }
 }
 
 .product-card__box {
@@ -40,13 +48,13 @@
 }
 
 .product-card__img {
-  scale: 1.1;
-  border-radius: 50px;
+  height: 100%;
+  object-fit: cover;
 }
 
 .product-card__description {
-  overflow: hidden; 
-  display: -webkit-box; 
+  overflow: hidden;
+  display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   text-align: justify;
@@ -77,8 +85,8 @@
   content: '';
   position: absolute;
   top: 45%;
-  left: -10%; 
-  width: 120%; 
+  left: -10%;
+  width: 120%;
   height: 3px;
   background-color: rgba(252, 40, 99, 0.9);
   transform: rotate(150deg);
@@ -130,7 +138,7 @@
 
 .checkbox__price {
   @include flexbox(column);
-  align-items:normal;
+  align-items: normal;
   gap: 5px;
 }
 
