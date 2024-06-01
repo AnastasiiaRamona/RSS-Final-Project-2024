@@ -1,3 +1,4 @@
+import iso3166 from 'iso-3166-1-alpha-2';
 import Validation from './validation';
 import UserProfileModel from './userProfileModel';
 
@@ -43,6 +44,10 @@ export default class UserProfileController {
     Validation.checkValidationPassword(element);
   }
 
+  checkValidateAddress(element: HTMLFormElement) {
+    Validation.checkValidationAddress(element);
+  }
+
   async updateEmail(version: number, id: string, newEmail: string) {
     const result = await this.model.updateEmail(version, id, newEmail);
     return result;
@@ -72,5 +77,17 @@ export default class UserProfileController {
     const [day, month, year] = dateString.split('.');
     const date = `${year}-${month}-${day}`;
     return date;
+  }
+
+  formatDate(date: string) {
+    const dateObject = new Date(date);
+    const month = dateObject.getMonth() + 1 < 10 ? `0${dateObject.getMonth() + 1}` : `${dateObject.getMonth() + 1}`;
+    const formattedDate = `${dateObject.getDate()}.${month}.${dateObject.getFullYear()}`;
+    return formattedDate;
+  }
+
+  getFullNameOfCountry(country: string) {
+    const countryName = iso3166.getCountry(country);
+    return countryName;
   }
 }

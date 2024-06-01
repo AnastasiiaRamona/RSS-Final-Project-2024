@@ -64,4 +64,45 @@ export default class Validation {
       }
     });
   }
+
+  static checkValidationAddress(form: HTMLFormElement) {
+    form.addEventListener('input', (event: Event) => {
+      const element: HTMLInputElement = event.target as HTMLInputElement;
+      const { value } = element;
+
+      if (element.classList.contains('input-street')) {
+        if (!/^.+$/.test(value)) {
+          element.setCustomValidity('Street must contain at least one character');
+        } else {
+          element.setCustomValidity('');
+        }
+      }
+
+      if (element.classList.contains('input-city')) {
+        if (!/^[^\W\d_]+$/.test(value)) {
+          element.setCustomValidity(
+            'City must contain at least one character and not contain special characters or numbers'
+          );
+        } else {
+          element.setCustomValidity('');
+        }
+      }
+
+      if (element.classList.contains('input-code')) {
+        if (!/^\d{5}$/.test(value)) {
+          element.setCustomValidity('Enter the correct code');
+        } else {
+          element.setCustomValidity('');
+        }
+      }
+
+      if (element.classList.contains('input-country')) {
+        if (!/(Italy|Germany|United States)/.test(value)) {
+          element.setCustomValidity('Select one country from the list');
+        } else {
+          element.setCustomValidity('');
+        }
+      }
+    });
+  }
 }
