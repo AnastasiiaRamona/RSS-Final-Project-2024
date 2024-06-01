@@ -191,11 +191,11 @@ export default class UserProfile {
     }
 
     const addNewAddressButton = document.querySelector('.add-new-address-button') as HTMLButtonElement;
-    const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
-    if (addNewAddressButton && addressesSection) {
+    const addressesSectionElement = document.querySelector('.addresses-section') as HTMLElement;
+    if (addNewAddressButton && addressesSectionElement) {
       addNewAddressButton.addEventListener('click', () => {
         const newAddressFormContainer = this.newAddressForm.renderNewAddressForm();
-        addressesSection.insertBefore(newAddressFormContainer, addNewAddressButton);
+        addressesSectionElement.insertBefore(newAddressFormContainer, addNewAddressButton);
         const newAddressForm = document.querySelector('.new-address-form') as HTMLFormElement;
         this.addEventListenerToTheNewAddressForm(newAddressForm);
       });
@@ -204,7 +204,7 @@ export default class UserProfile {
     const id = this.controller.getID();
 
     const deleteButtons = document.querySelectorAll('.delete-img') as NodeListOf<HTMLElement>;
-    for (let i = 0; i < deleteButtons.length; i++) {
+    for (let i = 0; i < deleteButtons.length; i += 1) {
       const deleteButton = deleteButtons[i];
       deleteButton.addEventListener('click', async () => {
         await this.getCustomerData();

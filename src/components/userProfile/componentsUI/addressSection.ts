@@ -41,11 +41,11 @@ export default class AddressSection {
       shippingAddressIcon.classList.add('address-clicked');
     }
 
-    const deleteIconDiv = HTMLCreator.createElement('div', {},);
+    const deleteIconDiv = HTMLCreator.createElement('div', {});
 
     const addressIconsContainer = HTMLCreator.createElement('div', { class: 'address-icons-container' }, [
       addressesIconsDiv,
-      deleteIconDiv
+      deleteIconDiv,
     ]);
 
     if (isDefault) {
