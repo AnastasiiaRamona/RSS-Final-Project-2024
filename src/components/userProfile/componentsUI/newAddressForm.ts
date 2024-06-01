@@ -9,80 +9,105 @@ export default class NewAddressForm {
     this.buttons = new Buttons();
   }
 
-  renderAddAddressForm() {
+  renderNewAddressForm() {
+    const createResetButton = (input: HTMLInputElement) => {
+      const resetButton = this.buttons.renderResetButton();
+
+      resetButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        const inputOfResetButton = input;
+        inputOfResetButton.value = '';
+        const inputEvent = new Event('input', { bubbles: true });
+        input.dispatchEvent(inputEvent);
+      });
+
+      return resetButton;
+    };
+
     let addressIconSrc = this.buttons.getAddressIconSrc('shipping');
     const addressIconShipping = HTMLCreator.createElement('img', {
       src: addressIconSrc,
-      alt: `shipping icon`,
+      alt: 'shipping icon',
       class: 'address-icon',
+      id: 'shipping-address',
     });
 
     addressIconSrc = this.buttons.getAddressIconSrc('billing');
     const addressIconBilling = HTMLCreator.createElement('img', {
       src: addressIconSrc,
-      alt: `billing icon`,
+      alt: 'billing icon',
       class: 'address-icon',
+      id: 'billing-address',
     });
+
+    const streetInput = HTMLCreator.createElement('input', {
+      type: 'text',
+      id: 'street',
+      name: 'street',
+      class: 'input-street',
+      placeholder: 'street',
+    }) as HTMLInputElement;
+
+    const cityInput = HTMLCreator.createElement('input', {
+      type: 'text',
+      id: 'city',
+      name: 'city',
+      class: 'input-city',
+      placeholder: 'city',
+    }) as HTMLInputElement;
+
+    const postalCodeInput = HTMLCreator.createElement('input', {
+      type: 'text',
+      id: 'postalCode',
+      name: 'postalCode',
+      class: 'input-code',
+      placeholder: 'postal code',
+    }) as HTMLInputElement;
+
+    const countryInput = HTMLCreator.createElement('input', {
+      type: 'text',
+      id: 'country',
+      name: 'country',
+      class: 'input-country',
+      placeholder: 'select one country',
+      required: 'true',
+      list: 'countryList',
+    }) as HTMLInputElement;
 
     const form = HTMLCreator.createElement('form', { class: 'new-address-form' }, [
       HTMLCreator.createElement('div', {}, [
         HTMLCreator.createElement('label', { for: 'street' }, ['Street:']),
-        HTMLCreator.createElement('input', {
-          type: 'text',
-          id: 'street',
-          name: 'street',
-          class: 'input-street',
-          placeholder: 'street',
-        }),
-        this.buttons.renderResetButton(),
+        streetInput,
+        createResetButton(streetInput),
       ]),
 
       HTMLCreator.createElement('div', {}, [
         HTMLCreator.createElement('label', { for: 'city' }, ['City:']),
-        HTMLCreator.createElement('input', {
-          type: 'text',
-          id: 'city',
-          name: 'city',
-          class: 'input-city',
-          placeholder: 'city',
-        }),
-        this.buttons.renderResetButton(),
+        cityInput,
+        createResetButton(cityInput),
       ]),
 
       HTMLCreator.createElement('div', {}, [
         HTMLCreator.createElement('label', { for: 'postalCode' }, ['Postal Code:']),
-        HTMLCreator.createElement('input', {
-          type: 'text',
-          id: 'postalCode',
-          name: 'postalCode',
-          class: 'input-code',
-          placeholder: 'postal code',
-        }),
-        this.buttons.renderResetButton(),
+        postalCodeInput,
+        createResetButton(postalCodeInput),
       ]),
 
       HTMLCreator.createElement('div', {}, [
         HTMLCreator.createElement('label', { for: 'country' }, ['Country:']),
-        HTMLCreator.createElement('input', {
-          type: 'text',
-          id: 'country',
-          name: 'country',
-          class: 'input-country',
-          placeholder: 'select one country',
-          required: 'true',
-          list: 'countryList',
-        }),
+        countryInput,
         this.renderDatalist(),
-        this.buttons.renderResetButton(),
+        createResetButton(countryInput),
       ]),
 
       HTMLCreator.createElement('div', { class: 'billing-shipping-icons-container' }, [
         addressIconBilling,
         addressIconShipping,
         HTMLCreator.createElement('img', {
-          class: 'address-icon',
+          class: 'address-icon address-clicked',
           src: generalAddressIconSrc,
           alt: 'general address icon',
+          id: 'general-address',
         }),
       ]),
 
@@ -111,10 +136,6 @@ export default class NewAddressForm {
       if (addressesSection) {
         addressesSection.removeChild(formContainer);
       }
-    });
-
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
     });
 
     return formContainer;

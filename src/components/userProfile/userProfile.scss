@@ -119,6 +119,11 @@
   }
 }
 
+.address-icons-container div {
+  @include flexbox(row);
+  gap: 5px;
+}
+
 .address-entry,
 .new-address-form-container {
   padding: 20px;
@@ -164,13 +169,15 @@
 .address-icon,
 .edit-button,
 .reset-img,
-.close-icon-img {
+.close-icon-img,
+.delete-img {
   @include size(30px, auto);
   cursor: pointer;
 }
 
 .address-icon:hover,
-.address-icon .clicked {
+.address-clicked,
+.delete-img:hover {
   filter: invert(1) sepia(1) saturate(10000%) hue-rotate(85deg) brightness(0.7);
 }
 
@@ -221,6 +228,19 @@
 
   .personal-info-section input[type='text'] {
     width: 140px;
+  }
+
+  .new-address-form input[type='text'] {
+    width: 70px;
+  }
+
+  .new-address-form label {
+    font-size: small;
+  }
+
+  .new-address-form-container .close-icon-img,
+  .new-address-form .reset-img {
+    @include size(auto, 20px);
   }
 }
 

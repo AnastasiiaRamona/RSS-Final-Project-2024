@@ -1,14 +1,13 @@
 import { Address } from '@commercetools/platform-sdk';
+import iso3166 from 'iso-3166-1';
 import HTMLCreator from '../HTMLCreator';
 import UserProfileController from './userProfileController';
-import germanyFlag from '../../assets/germany.png';
-import usaFlag from '../../assets/usa.svg';
-import italyFlag from '../../assets/italy.png';
 import PersonalInfoSection from './componentsUI/personalInfoSection';
 import ChangePasswordForm from './componentsUI/changePasswordForm';
 import Buttons from './componentsUI/buttons';
 import NewAddressForm from './componentsUI/newAddressForm';
 import SecuritySettingsSection from './componentsUI/securitySettingsSection';
+import AddressSection from './componentsUI/addressSection';
 
 export default class UserProfile {
   controller: UserProfileController;
@@ -25,13 +24,13 @@ export default class UserProfile {
 
   private addresses: Address[] | undefined = undefined;
 
-  private shippingAddress: Address | undefined = undefined;
+  private billingAddressIds: string[] | undefined = undefined;
 
-  private billingAddress: Address | undefined = undefined;
+  private shippingAddressIds: string[] | undefined = undefined;
 
-  private isBillingAddressIsDefault: boolean = false;
+  private defaultBillingAddressId: string | undefined = undefined;
 
-  private isShippingAddressIsDefault: boolean = false;
+  private defaultShippingAddressId: string | undefined = undefined;
 
   private personalInfoSection: PersonalInfoSection;
 
@@ -43,12 +42,15 @@ export default class UserProfile {
 
   private buttons: Buttons;
 
+  private addressSection: AddressSection;
+
   constructor() {
     this.controller = new UserProfileController();
     this.personalInfoSection = new PersonalInfoSection();
     this.changePasswordForm = new ChangePasswordForm();
     this.newAddressForm = new NewAddressForm();
     this.securitySettingsSection = new SecuritySettingsSection();
+    this.addressSection = new AddressSection();
     this.buttons = new Buttons();
   }
 
@@ -61,34 +63,10 @@ export default class UserProfile {
       this.dateOfBirth = this.controller.formatDate(customerData.dateOfBirth);
       this.addresses = customerData.addresses;
       this.version = customerData.version;
-
-      this.billingAddress = this.addresses?.find(
-        (address) =>
-          address.id ===
-          (Array.isArray(customerData.billingAddressId)
-            ? customerData.billingAddressId[0]
-            : customerData.billingAddressId)
-      );
-
-      this.shippingAddress = this.addresses?.find(
-        (address) =>
-          address.id ===
-          (Array.isArray(customerData.shippingAddressId)
-            ? customerData.shippingAddressId[0]
-            : customerData.shippingAddressId)
-      );
-
-      this.isBillingAddressIsDefault =
-        customerData.defaultBillingAddressId ===
-        (Array.isArray(customerData.billingAddressId)
-          ? customerData.billingAddressId[0]
-          : customerData.billingAddressId);
-
-      this.isShippingAddressIsDefault =
-        customerData.defaultShippingAddressId ===
-        (Array.isArray(customerData.shippingAddressId)
-          ? customerData.shippingAddressId[0]
-          : customerData.shippingAddressId);
+      this.billingAddressIds = customerData.billingAddressIds;
+      this.shippingAddressIds = customerData.shippingAddressIds;
+      this.defaultBillingAddressId = customerData.defaultBillingAddressId;
+      this.defaultShippingAddressId = customerData.defaultShippingAddressId;
     }
   }
 
@@ -113,57 +91,47 @@ export default class UserProfile {
 
       const addressesSection = HTMLCreator.createElement('div', { class: 'addresses-section' }, [
         HTMLCreator.createElement('h2', { class: 'saved-addresses-title' }, ['Saved Addresses', toggleButton]),
-        ...(this.addresses || []).map((address) => {
-          let addressIcon: HTMLElement | null = null;
-          if (this.billingAddress && address.id === this.billingAddress.id) {
-            const addressIconSrc = this.buttons.getAddressIconSrc('billing');
-            addressIcon = HTMLCreator.createElement('img', {
-              src: addressIconSrc,
-              alt: `billing icon`,
-              class: 'address-icon',
-            });
-          } else if (this.shippingAddress && address.id === this.shippingAddress.id) {
-            const addressIconSrc = this.buttons.getAddressIconSrc('shipping');
-            addressIcon = HTMLCreator.createElement('img', {
-              src: addressIconSrc,
-              alt: `shipping icon`,
-              class: 'address-icon',
-            });
-          }
+      ]);
 
-          const addressIconsContainer = HTMLCreator.createElement('div', { class: 'address-icons-container' });
-          if (addressIcon) {
-            addressIconsContainer.appendChild(addressIcon);
+      if (this.addresses && this.billingAddressIds && this.shippingAddressIds) {
+        this.addresses.forEach((address) => {
+          let addressType: string;
+          let isDefault: boolean = false;
+
+          if (
+            address.id &&
+            this.billingAddressIds?.includes(address.id) &&
+            this.shippingAddressIds?.includes(address.id)
+          ) {
+            addressType = 'general';
+          } else if (address.id && this.billingAddressIds?.includes(address.id)) {
+            addressType = 'billing';
+          } else if (address.id && this.shippingAddressIds?.includes(address.id)) {
+            addressType = 'shipping';
+          } else {
+            addressType = 'unknown';
           }
 
           if (
-            (this.isBillingAddressIsDefault && this.billingAddress && address.id === this.billingAddress.id) ||
-            (this.isShippingAddressIsDefault && this.shippingAddress && address.id === this.shippingAddress.id)
+            (addressType === 'billing' && address.id === this.defaultBillingAddressId) ||
+            (addressType === 'shipping' && address.id === this.defaultShippingAddressId)
           ) {
-            const defaultText = HTMLCreator.createElement('h3', { class: 'default-text' }, ['Default']);
-            addressIconsContainer.appendChild(defaultText);
+            isDefault = true;
           }
 
-          const addressLines = [
-            HTMLCreator.createElement('p', {}, [`Street: ${address.streetName}`]),
-            HTMLCreator.createElement('p', {}, [`City: ${address.city}`]),
-            HTMLCreator.createElement('p', {}, [`Postal Code: ${address.postalCode}`]),
-            HTMLCreator.createElement('p', { class: 'country' }, [
-              `Country: ${this.controller.getFullNameOfCountry(address.country)}`,
-              HTMLCreator.createElement('img', {
-                src: this.getFlagSrc(address.country),
-                alt: `${address.country} flag`,
-                class: 'country-flag',
-              }),
-            ]),
-          ];
+          if (
+            addressType === 'general' &&
+            address.id === this.defaultBillingAddressId &&
+            address.id === this.defaultShippingAddressId
+          ) {
+            isDefault = true;
+          }
 
-          return HTMLCreator.createElement('div', { class: 'address-entry hidden' }, [
-            addressIconsContainer,
-            ...addressLines,
-          ]);
-        }),
-      ]);
+          const addressEntry = this.addressSection.renderAddressSection(address, addressType, isDefault);
+
+          addressesSection.appendChild(addressEntry);
+        });
+      }
 
       addressesSection.appendChild(addNewAddressButton);
 
@@ -173,15 +141,6 @@ export default class UserProfile {
     }
     const main = HTMLCreator.createElement('main', { class: 'profile-user-main' }, [profileContainer]);
     return main;
-  }
-
-  getFlagSrc(countryCode: string): string {
-    const flagMap: { [key: string]: string } = {
-      IT: italyFlag,
-      US: usaFlag,
-      DE: germanyFlag,
-    };
-    return flagMap[countryCode];
   }
 
   addEventListeners() {
@@ -235,8 +194,36 @@ export default class UserProfile {
     const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
     if (addNewAddressButton && addressesSection) {
       addNewAddressButton.addEventListener('click', () => {
-        const addNewAddressForm = this.newAddressForm.renderAddAddressForm();
-        addressesSection.insertBefore(addNewAddressForm, addNewAddressButton);
+        const newAddressFormContainer = this.newAddressForm.renderNewAddressForm();
+        addressesSection.insertBefore(newAddressFormContainer, addNewAddressButton);
+        const newAddressForm = document.querySelector('.new-address-form') as HTMLFormElement;
+        this.addEventListenerToTheNewAddressForm(newAddressForm);
+      });
+    }
+
+    const id = this.controller.getID();
+
+    const deleteButtons = document.querySelectorAll('.delete-img') as NodeListOf<HTMLElement>;
+    for (let i = 0; i < deleteButtons.length; i++) {
+      const deleteButton = deleteButtons[i];
+      deleteButton.addEventListener('click', async () => {
+        await this.getCustomerData();
+        if (this.addresses && this.version && id) {
+          const address = this.addresses[i];
+          const addressId = address.id;
+          if (addressId) {
+            await this.controller.removeAddress(this.version, id, addressId);
+
+            const buttonContainer = deleteButton.parentElement;
+            const addressItem = buttonContainer?.parentElement;
+            const addressContainer = addressItem?.parentElement;
+            const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
+
+            if (addressContainer) {
+              addressesSection.removeChild(addressContainer);
+            }
+          }
+        }
       });
     }
   }
@@ -260,6 +247,112 @@ export default class UserProfile {
         this.toggleEditMode(container);
         if (secondContainer) {
           this.toggleEditMode(secondContainer);
+        }
+      }
+    });
+  }
+
+  addEventListenerToTheChangePasswordForm(form: HTMLFormElement) {
+    this.controller.checkValidationPassword(form);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const currentPasswordInput = form.querySelector('#current-password') as HTMLInputElement;
+      const newPasswordInput = form.querySelector('#new-password') as HTMLInputElement;
+
+      if (this.version && this.email) {
+        try {
+          await this.controller.changeUserPassword(
+            this.version,
+            currentPasswordInput.value,
+            newPasswordInput.value,
+            this.email
+          );
+          await this.getCustomerData();
+          this.renderSuccessfulMessage(form);
+          currentPasswordInput.value = '';
+          newPasswordInput.value = '';
+        } catch (error) {
+          console.log('Error:', error);
+        }
+      }
+    });
+  }
+
+  addEventListenerToTheNewAddressForm(form: HTMLFormElement) {
+    const iconsAddressContainer = document.querySelector('.billing-shipping-icons-container') as HTMLElement;
+
+    if (iconsAddressContainer) {
+      iconsAddressContainer.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        if (target.tagName.toLowerCase() === 'img') {
+          const allImages = iconsAddressContainer.querySelectorAll('img');
+          allImages.forEach((img) => img.classList.remove('address-clicked'));
+          target.classList.add('address-clicked');
+        }
+      });
+    }
+
+    const id = this.controller.getID();
+
+    this.controller.checkValidationAddress(form);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const newStreetName = (document.querySelector('.new-address-form .input-street') as HTMLInputElement).value;
+      const newCity = (document.querySelector('.new-address-form .input-city') as HTMLInputElement).value;
+      const newPostalCode = (document.querySelector('.new-address-form .input-code') as HTMLInputElement).value;
+      const newCountry = (document.querySelector('.new-address-form .input-country') as HTMLInputElement).value;
+      let inputCountryCode = iso3166.whereCountry(newCountry)?.alpha2 || 'UNDEFINED';
+      if (newCountry === 'United States') {
+        inputCountryCode = 'US';
+      }
+
+      let addressType;
+      let isDefault: boolean = false;
+
+      if (this.version && id) {
+        await this.controller.addNewAddress(this.version, id, newStreetName, newPostalCode, newCity, inputCountryCode);
+        await this.getCustomerData();
+        if (this.addresses) {
+          const lastAddressId = this.addresses[this.addresses.length - 1]?.id;
+          const allImages = iconsAddressContainer.querySelectorAll('img');
+          for (const img of allImages) {
+            if (img.classList.contains('address-clicked') && this.version && lastAddressId) {
+              if (img.id === 'billing-address') {
+                await this.controller.setBillingAddress(this.version, id, lastAddressId);
+                await this.getCustomerData();
+                addressType = 'billing';
+                isDefault = await this.checkDefaultAddress(this.version, id, lastAddressId, 'billing');
+              } else if (img.id === 'shipping-address') {
+                await this.controller.setShippingAddress(this.version, id, lastAddressId);
+                await this.getCustomerData();
+                isDefault = await this.checkDefaultAddress(this.version, id, lastAddressId, 'shipping');
+                addressType = 'shipping';
+              } else if (img.id === 'general-address') {
+                await this.controller.setBillingAddress(this.version, id, lastAddressId);
+                await this.getCustomerData();
+                await this.controller.setShippingAddress(this.version, id, lastAddressId);
+                await this.getCustomerData();
+                isDefault = await this.checkDefaultAddress(this.version, id, lastAddressId, 'general');
+                addressType = 'general';
+              }
+            }
+          }
+          this.renderSuccessfulMessage(form);
+          const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
+          const newAddressFormContainer = document.querySelector('.new-address-form-container') as HTMLElement;
+          if (addressType && isDefault && this.addresses) {
+            addressesSection.replaceChild(
+              this.addressSection.renderAddressSection(
+                this.addresses[this.addresses.length - 1],
+                addressType,
+                isDefault
+              ),
+              newAddressFormContainer
+            );
+          }
         }
       }
     });
@@ -292,7 +385,7 @@ export default class UserProfile {
 
       submitButton.addEventListener('click', async (event) => {
         event.preventDefault();
-        this.controller.checkValidatePersonalInformation(form);
+        this.controller.checkValidationPersonalInformation(form);
         if (form.reportValidity()) {
           const changedParagraph = paragraph;
           changedParagraph.textContent = input.value;
@@ -348,33 +441,6 @@ export default class UserProfile {
     }
   }
 
-  addEventListenerToTheChangePasswordForm(form: HTMLFormElement) {
-    this.controller.checkValidatePassword(form);
-
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const currentPasswordInput = form.querySelector('#current-password') as HTMLInputElement;
-      const newPasswordInput = form.querySelector('#new-password') as HTMLInputElement;
-
-      if (this.version && this.email) {
-        try {
-          await this.controller.changeUserPassword(
-            this.version,
-            currentPasswordInput.value,
-            newPasswordInput.value,
-            this.email
-          );
-          await this.getCustomerData();
-          this.renderSuccessfulMessage(form);
-          currentPasswordInput.value = '';
-          newPasswordInput.value = '';
-        } catch (error) {
-          console.log('Error:', error);
-        }
-      }
-    });
-  }
-
   renderSuccessfulMessage(form: HTMLFormElement) {
     const existingElement = document.querySelector('.success-text-input') as HTMLInputElement;
 
@@ -392,5 +458,22 @@ export default class UserProfile {
         form.removeChild(successTextInput);
       }
     }, 5000);
+  }
+
+  async checkDefaultAddress(version: number, id: string, lastAddressId: string, type: string) {
+    const defaultCheckbox = document.querySelector('#defaultAddress') as HTMLInputElement;
+    if (defaultCheckbox && defaultCheckbox.checked) {
+      await this.getCustomerData();
+      if (type === 'billing') {
+        await this.controller.setDefaultBillingAddress(version, id, lastAddressId);
+      } else if (type === 'shipping') {
+        await this.controller.setDefaultShippingAddress(version, id, lastAddressId);
+      } else if (type === 'general') {
+        await this.controller.setDefaultGeneralAddress(version, id, lastAddressId);
+      }
+      this.getCustomerData();
+      return true;
+    }
+    return false;
   }
 }

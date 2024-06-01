@@ -1,4 +1,3 @@
-import iso3166 from 'iso-3166-1-alpha-2';
 import Validation from './validation';
 import UserProfileModel from './userProfileModel';
 
@@ -26,8 +25,8 @@ export default class UserProfileController {
         lastName: result?.body.lastName,
         dateOfBirth: result?.body.dateOfBirth,
         addresses: result?.body.addresses,
-        billingAddressId: result?.body.billingAddressIds,
-        shippingAddressId: result?.body.shippingAddressIds,
+        billingAddressIds: result?.body.billingAddressIds,
+        shippingAddressIds: result?.body.shippingAddressIds,
         defaultBillingAddressId: result?.body.defaultBillingAddressId,
         defaultShippingAddressId: result?.body.defaultShippingAddressId,
         version: result?.body.version,
@@ -36,15 +35,15 @@ export default class UserProfileController {
     return customerData;
   }
 
-  checkValidatePersonalInformation(element: HTMLFormElement) {
+  checkValidationPersonalInformation(element: HTMLFormElement) {
     Validation.checkValidationPersonalInformation(element);
   }
 
-  checkValidatePassword(element: HTMLFormElement) {
+  checkValidationPassword(element: HTMLFormElement) {
     Validation.checkValidationPassword(element);
   }
 
-  checkValidateAddress(element: HTMLFormElement) {
+  checkValidationAddress(element: HTMLFormElement) {
     Validation.checkValidationAddress(element);
   }
 
@@ -73,6 +72,48 @@ export default class UserProfileController {
     return result;
   }
 
+  async addNewAddress(
+    version: number,
+    id: string,
+    streetName: string,
+    postalCode: string,
+    city: string,
+    country: string
+  ) {
+    const result = await this.model.addNewAddress(version, id, streetName, postalCode, city, country);
+    return result;
+  }
+
+  async setBillingAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setBillingAddress(version, id, addressId);
+    return result;
+  }
+
+  async setShippingAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setShippingAddress(version, id, addressId);
+    return result;
+  }
+
+  async setDefaultShippingAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setDefaultShippingAddress(version, id, addressId);
+    return result;
+  }
+
+  async setDefaultBillingAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setDefaultBillingAddress(version, id, addressId);
+    return result;
+  }
+
+  async setDefaultGeneralAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setDefaultGeneralAddress(version, id, addressId);
+    return result;
+  }
+
+  async removeAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.removeAddress(version, id, addressId);
+    return result;
+  }
+
   parseDateString(dateString: string): string {
     const [day, month, year] = dateString.split('.');
     const date = `${year}-${month}-${day}`;
@@ -84,10 +125,5 @@ export default class UserProfileController {
     const month = dateObject.getMonth() + 1 < 10 ? `0${dateObject.getMonth() + 1}` : `${dateObject.getMonth() + 1}`;
     const formattedDate = `${dateObject.getDate()}.${month}.${dateObject.getFullYear()}`;
     return formattedDate;
-  }
-
-  getFullNameOfCountry(country: string) {
-    const countryName = iso3166.getCountry(country);
-    return countryName;
   }
 }

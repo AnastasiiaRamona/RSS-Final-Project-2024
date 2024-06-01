@@ -7,6 +7,7 @@ import shippingAddressIconSrc from '../../../assets/shipping-address-icon.png';
 import billingAddressIconSrc from '../../../assets/billing-address-icon.png';
 import closeIconSrc from '../../../assets/close-icon.png';
 import newAddressSrc from '../../../assets/new-address.png';
+import deleteButtonSrc from '../../../assets/delete-icon.png';
 
 export default class Buttons {
   renderResetButton() {
@@ -26,6 +27,15 @@ export default class Buttons {
       src: submitIconSrc,
     });
     return submitButton;
+  }
+
+  renderDeleteButton() {
+    const deleteButton = HTMLCreator.createElement('img', {
+      class: 'delete-img',
+      src: deleteButtonSrc,
+      alt: 'delete button',
+    });
+    return deleteButton;
   }
 
   renderEditButton() {
