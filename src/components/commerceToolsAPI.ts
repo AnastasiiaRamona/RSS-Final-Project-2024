@@ -386,7 +386,6 @@ export default class CommerceToolsAPI {
           result = error;
         });
     }
-    console.log('cat api', result);
     return result;
   }
 

@@ -79,7 +79,6 @@ export default class CatalogModel {
         children: {},
       };
     });
-    console.log(categoryMap);
     Object.values(categoryMap).forEach((category) => {
       if (category.parent) {
         if (!categoryMap[category.parent]) {
@@ -94,7 +93,6 @@ export default class CatalogModel {
         categoryTree[category.id] = category;
       }
     });
-    console.log(categoryTree);
     return categoryTree;
   }
 }

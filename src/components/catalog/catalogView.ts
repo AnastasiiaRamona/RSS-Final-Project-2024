@@ -1,6 +1,15 @@
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
 
+interface CategoryNode {
+  id: string;
+  name: string;
+  parent?: string;
+  children: CategoryMap;
+}
+interface CategoryMap {
+  [key: string]: CategoryNode;
+}
 export default class Catalog {
   controller: CatalogController;
 
@@ -11,6 +20,7 @@ export default class Catalog {
   async renderPage() {
     let catalog: HTMLElement | null = null;
     let form: HTMLElement | null = null;
+    let category: HTMLElement | null = null;
     const loginWrapper = HTMLCreator.createElement('main', { class: 'catalog__main' }, [
       HTMLCreator.createElement('aside', { class: 'catalog__aside' }, [
         HTMLCreator.createElement(
@@ -49,10 +59,11 @@ export default class Catalog {
       (catalog = HTMLCreator.createElement('section', {
         class: 'catalog__gallery',
       })),
+      (category = HTMLCreator.createElement('div', { class: 'catalog__category' }, ['Category'])),
     ]);
     await this.productView(catalog);
     await this.attributesView(form);
-    this.getCategory();
+    await this.getCategory(category);
     return loginWrapper;
   }
 
@@ -86,9 +97,61 @@ export default class Catalog {
     });
   }
 
-  async getCategory() {
-    const category = await this.controller.getCategory();
+  async getCategory(category: HTMLElement) {
+    const categoryTree = await this.controller.getCategory();
     console.log(category);
+    if (category) {
+      const tree = this.createCategoryTree(categoryTree);
+      category.appendChild(await tree);
+    }
+  }
+
+  async createCategoryTree(categoryTree: CategoryMap) {
+    const ul = HTMLCreator.createElement('ul', {}, []);
+
+    await Promise.all(
+      Object.values(categoryTree).map(async (category) => {
+        const li = HTMLCreator.createElement('li', { 'data-id': category.id }, [category.name]);
+
+        li.addEventListener('click', (event) => {
+          event.stopPropagation();
+          console.log('clclc');
+          this.displaySubcategories(category.id, categoryTree);
+        });
+
+        if (Object.keys(category.children).length > 0) {
+          const subTree = await this.createCategoryTree(category.children);
+          li.appendChild(subTree);
+        }
+
+        ul.appendChild(li);
+      })
+    );
+    return ul;
+  }
+
+  async displaySubcategories(categoryId: string, categoryTree: CategoryMap) {
+    const categoryContainer = document.getElementById('category-container');
+    if (!categoryContainer) return;
+    categoryContainer.innerHTML = '';
+    const category = this.findCategoryById(categoryId, categoryTree);
+    if (category) {
+      const subcategoryTree = await this.createCategoryTree({ [category.id]: category });
+      categoryContainer.appendChild(subcategoryTree);
+    }
+  }
+
+  findCategoryById(categoryId: string, categoryTree: CategoryMap): CategoryNode | null {
+    let result: CategoryNode | null = null;
+    Object.values(categoryTree).some((category) => {
+      if (category.id === categoryId) {
+        result = category;
+        return true;
+      }
+      result = this.findCategoryById(categoryId, category.children);
+      return result !== null;
+    });
+    return result;
   }
 
   async filter(
