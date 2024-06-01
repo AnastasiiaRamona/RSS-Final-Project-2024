@@ -17,7 +17,6 @@ import {
   defaultCustomerScope,
   userTokenCache,
 } from './data';
-import { CarouselPlugins } from '@fancyapps/ui';
 
 export default class CommerceToolsAPI {
   private apiRoot: ByProjectKeyRequestBuilder | null = null;
@@ -369,7 +368,6 @@ export default class CommerceToolsAPI {
           result = error;
         });
     }
-    this.getCategory();
     return result;
   }
 

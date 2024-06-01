@@ -75,4 +75,9 @@ export default class CatalogController {
     const result = this.model.search(text);
     return result;
   }
+
+  async getCategory() {
+    const categories = await this.model.getCategory();
+    return categories;
+  }
 }

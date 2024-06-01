@@ -52,6 +52,7 @@ export default class Catalog {
     ]);
     await this.productView(catalog);
     await this.attributesView(form);
+    this.getCategory();
     return loginWrapper;
   }
 
@@ -83,6 +84,11 @@ export default class Catalog {
         this.filter(checkboxAll, sortSelect, priceInputAll);
       });
     });
+  }
+
+  async getCategory() {
+    const category = await this.controller.getCategory();
+    console.log(category);
   }
 
   async filter(
