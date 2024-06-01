@@ -25,7 +25,7 @@
   position: relative;
 
   &:before {
-    content: url('https://cdn.dribbble.com/users/1900827/screenshots/5354476/attachments/1161314/caboodle-cat-icon.svg');
+    content: url('./assets/cat-icon.svg');
     @include size(30px, 30px);
     display: inline-block;
     position: absolute;
@@ -33,7 +33,7 @@
   }
 }
 
-.personal-info-section, .addresses-section {
+.personal-info-section, .addresses-section, .security-settings-section {
   margin-bottom: 35px;
   padding: 0 20px;
 }
@@ -60,6 +60,21 @@
   &:hover {
     color: $success-color;
   }
+}
+
+.security-settings-form {
+  max-width: 60vw;
+  @include flexbox(column, center, flex-start);
+  gap: 10px;
+}
+
+.security-settings-form label {
+  @include font($primary-font-family, 18px, normal, 1.5, $white);
+}
+
+.new-password-container {
+  @include flexbox(row);
+  gap: 8px;
 }
 
 .personal-info-section form {
@@ -119,7 +134,7 @@
   @include flexbox(row, space-between, center);
 }
 
-.country-flag, .address-icon, .edit-button, .reset-img {
+.country-flag, .address-icon, .edit-button, .reset-img, .close-icon-img {
   @include size(30px, auto);
 }
 
@@ -127,17 +142,15 @@
   @include size(25px, auto);
 }
 
-.edit-button {
+.edit-button,
+.close-icon-img,
+.reset-img,
+.submit-img {
   cursor: pointer;
 
   &:hover {
     filter: invert(1);
   }
-}
-
-.reset-img:hover,
-.submit-img:hover {
-  filter: invert(1);
 }
 
 .clicked-icon {
@@ -163,7 +176,20 @@
     text-align: justify;
   }
 
-  input {
-    width: 130px;
+  .personal-info-section input[type='text'] {
+    width: 140px;
   }
+}
+
+.change-password-button {
+  margin-left: 8px;
+}
+
+.change-password-button {
+  @include flexbox(column, center, center);
+}
+
+.password-icon-img {
+  @include size(auto, 20px);
+  transition: all 0.5s linear;
 }

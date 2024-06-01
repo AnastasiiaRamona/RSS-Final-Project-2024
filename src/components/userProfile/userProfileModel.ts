@@ -28,6 +28,7 @@ export default class UserProfileModel {
       await this.commerceToolsAPI.updateCustomer(id, updateData);
     } catch (error) {
       this.showResponseMessage('A user with the specified email already exists. Enter a different email.');
+      throw error;
     }
   }
 
@@ -83,5 +84,19 @@ export default class UserProfileModel {
       },
       duration: 5000,
     }).showToast();
+  }
+
+  async changeUserPassword(version: number, currentPassword: string, newPassword: string, email: string) {
+    try {
+      const result = await this.commerceToolsAPI.changePassword(version, currentPassword, newPassword, email);
+      return result;
+    } catch (error) {
+      if (newPassword === '') {
+        this.showResponseMessage('You need to enter a new password');
+      } else {
+        this.showResponseMessage('The current password is incorrect');
+      }
+      throw error;
+    }
   }
 }

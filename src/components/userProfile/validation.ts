@@ -1,5 +1,5 @@
 export default class Validation {
-  static checkValidatePersonalInformation(form: HTMLFormElement) {
+  static checkValidationPersonalInformation(form: HTMLFormElement) {
     form.addEventListener('input', (event: Event) => {
       const element: HTMLInputElement = event.target as HTMLInputElement;
       const { value } = element;
@@ -43,6 +43,23 @@ export default class Validation {
           } else {
             element.setCustomValidity('');
           }
+        }
+      }
+    });
+  }
+
+  static checkValidationPassword(form: HTMLFormElement) {
+    form.addEventListener('input', (event: Event) => {
+      const element: HTMLInputElement = event.target as HTMLInputElement;
+      const { value } = element;
+
+      if (element.classList.contains('input-password')) {
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(value)) {
+          element.setCustomValidity(
+            'Enter a minimum of 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number. Only English letters and digits are allowed.'
+          );
+        } else {
+          element.setCustomValidity('');
         }
       }
     });

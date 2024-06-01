@@ -404,4 +404,40 @@ export default class CommerceToolsAPI {
     }
     return response;
   }
+
+  async changePassword(version: number, currentPassword: string, newPassword: string, email: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      try {
+        response = await this.apiRoot
+          .me()
+          .password()
+          .post({
+            body: {
+              currentPassword,
+              newPassword,
+              version,
+            },
+          })
+          .execute();
+      } catch (error) {
+        console.log('Error changing password:', error);
+        throw new Error('Password change failed');
+      }
+    }
+
+    localStorage.clear();
+
+    this.ctpClient = null;
+    this.apiRoot = null;
+    userTokenCache.set({
+      token: '',
+      expirationTime: 0,
+    });
+    await this.login(email, newPassword);
+
+    return response;
+  }
 }
