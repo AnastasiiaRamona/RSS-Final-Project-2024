@@ -17,6 +17,7 @@ import {
   defaultCustomerScope,
   userTokenCache,
 } from './data';
+import { CarouselPlugins } from '@fancyapps/ui';
 
 export default class CommerceToolsAPI {
   private apiRoot: ByProjectKeyRequestBuilder | null = null;
@@ -368,6 +369,26 @@ export default class CommerceToolsAPI {
           result = error;
         });
     }
+    this.getCategory();
+    return result;
+  }
+
+  async getCategory() {
+    this.createClient();
+    let result;
+    if (this.apiRoot) {
+      await this.apiRoot
+        .categories()
+        .get()
+        .execute()
+        .then((response) => {
+          result = response.body.results;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    console.log('cat api', result);
     return result;
   }
 
@@ -423,7 +444,6 @@ export default class CommerceToolsAPI {
           })
           .execute();
       } catch (error) {
-        console.log('Error changing password:', error);
         throw new Error('Password change failed');
       }
     }
