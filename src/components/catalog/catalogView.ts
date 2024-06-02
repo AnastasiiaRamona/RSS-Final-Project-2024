@@ -56,7 +56,9 @@ export default class Catalog {
           ),
         ]),
         HTMLCreator.createElement('div', { class: 'core__wrapper' }, [
-          (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, ['Category'])),
+          (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
+            HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
+          ])),
           (catalog = HTMLCreator.createElement('section', {
             class: 'catalog__gallery',
           })),
@@ -79,14 +81,8 @@ export default class Catalog {
     const categoryAll = document.querySelectorAll('.category__element') as NodeListOf<HTMLInputElement>;
 
     categoryAll.forEach((category) => {
-      category.addEventListener('click', () => {
-        // const subcategoriesContainer = category.querySelector('ul');
-        // if (subcategoriesContainer) {
-        //   subcategoriesContainer.hidden = !subcategoriesContainer.hidden;
-        // } else if (Object.keys(category.children).length > 0) {
-        //   const subcategories = this.createCategoryTree(category.children);
-        //   category.appendChild(subcategories);
-        // }
+      category.addEventListener('click', (event) => {
+        this.showProductsOfCategory(event);
       });
     });
 
@@ -112,6 +108,24 @@ export default class Catalog {
     });
   }
 
+  async showProductsOfCategory(event: Event) {
+    const productOfCategory = await this.controller.getProductsOfCategory(event);
+    const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
+    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+    const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+    this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
+    if (productOfCategory && Array.isArray(productOfCategory)) {
+      const catalog = document.querySelector('.catalog__gallery');
+      if (catalog) {
+        catalog.innerHTML = '';
+        productOfCategory.forEach((product) => {
+          const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
+          catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
+        });
+      }
+    }
+  }
+
   async getCategory(category: HTMLElement) {
     const categoryTree = await this.controller.getCategory();
     if (category) {
@@ -123,7 +137,7 @@ export default class Catalog {
   async createCategoryTree(categoryTree: CategoryMap) {
     const ul = HTMLCreator.createElement('ul', { class: 'category__list' });
     Object.values(categoryTree).forEach(async (category) => {
-      const li = HTMLCreator.createElement('li', { 'data-id': category.id, class: 'category__element' }, [
+      const li = HTMLCreator.createElement('li', { id: category.id, class: 'category__element' }, [
         category.name,
       ]) as HTMLElement;
       if (Object.keys(category.children).length > 0) {
@@ -137,36 +151,12 @@ export default class Catalog {
   async createSubcategoryTree(subcategoryTree: CategoryMap) {
     const subUl = HTMLCreator.createElement('ul', { class: 'category__sub-list hide__sub-list' });
     Object.values(subcategoryTree).forEach(async (subCategory) => {
-      const li = HTMLCreator.createElement('li', { 'data-id': subCategory.id, class: 'category__sub-element' }, [
+      const li = HTMLCreator.createElement('li', { id: subCategory.id, class: 'category__sub-element' }, [
         subCategory.name,
       ]) as HTMLElement;
       subUl.appendChild(li);
     });
     return subUl;
-  }
-
-  async displaySubcategories(categoryId: string, categoryTree: CategoryMap) {
-    const categoryContainer = document.getElementById('category-container');
-    if (!categoryContainer) return;
-    categoryContainer.innerHTML = '';
-    const category = this.findCategoryById(categoryId, categoryTree);
-    if (category) {
-      const subcategoryTree = await this.createCategoryTree({ [category.id]: category });
-      categoryContainer.appendChild(subcategoryTree);
-    }
-  }
-
-  findCategoryById(categoryId: string, categoryTree: CategoryMap): CategoryNode | null {
-    let result: CategoryNode | null = null;
-    Object.values(categoryTree).some((category) => {
-      if (category.id === categoryId) {
-        result = category;
-        return true;
-      }
-      result = this.findCategoryById(categoryId, category.children);
-      return result !== null;
-    });
-    return result;
   }
 
   async filter(

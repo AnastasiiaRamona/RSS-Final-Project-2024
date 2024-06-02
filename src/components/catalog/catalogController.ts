@@ -80,4 +80,11 @@ export default class CatalogController {
     const categories = await this.model.getCategory();
     return categories;
   }
+
+  async getProductsOfCategory(event: Event) {
+    const category = event.target as HTMLElement;
+    const categoryId = category.id;
+    const productOfCategory = this.model.getProductsOfCategory(categoryId);
+    return productOfCategory;
+  }
 }

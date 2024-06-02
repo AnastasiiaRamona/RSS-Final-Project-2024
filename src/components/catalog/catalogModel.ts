@@ -93,7 +93,11 @@ export default class CatalogModel {
         categoryTree[category.id] = category;
       }
     });
-    console.log(categoryTree);
     return categoryTree;
+  }
+
+  async getProductsOfCategory(categoryId: string) {
+    const productOfCategory = this.commerceToolsAPI.getProductsOfCategory(categoryId);
+    return productOfCategory;
   }
 }
