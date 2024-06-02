@@ -99,4 +99,143 @@ export default class UserProfileModel {
       throw error;
     }
   }
+
+  async addNewAddress(
+    version: number,
+    id: string,
+    streetName: string,
+    postalCode: string,
+    city: string,
+    country: string
+  ) {
+    const newAddress = {
+      streetName,
+      postalCode,
+      city,
+      country,
+    };
+
+    const updateData: CustomerUpdate = {
+      version,
+      actions: [
+        {
+          action: 'addAddress',
+          address: newAddress,
+        },
+      ],
+    };
+    await this.commerceToolsAPI.updateCustomer(id, updateData);
+  }
+
+  async setBillingAddress(version: number, id: string, addressId: string) {
+    const updateData: CustomerUpdate = {
+      version,
+      actions: [
+        {
+          action: 'addBillingAddressId',
+          addressId,
+        },
+      ],
+    };
+
+    await this.commerceToolsAPI.updateCustomer(id, updateData);
+  }
+
+  async setShippingAddress(version: number, id: string, addressId: string) {
+    const updateData: CustomerUpdate = {
+      version,
+      actions: [
+        {
+          action: 'addShippingAddressId',
+          addressId,
+        },
+      ],
+    };
+    await this.commerceToolsAPI.updateCustomer(id, updateData);
+  }
+
+  async setDefaultShippingAddress(version: number, id: string, addressId: string) {
+    const updateData: CustomerUpdate = {
+      version,
+      actions: [
+        {
+          action: 'setDefaultShippingAddress',
+          addressId,
+        },
+      ],
+    };
+    await this.commerceToolsAPI.updateCustomer(id, updateData);
+  }
+
+  async setDefaultBillingAddress(version: number, id: string, addressId: string) {
+    const updateData: CustomerUpdate = {
+      version,
+      actions: [
+        {
+          action: 'setDefaultBillingAddress',
+          addressId,
+        },
+      ],
+    };
+    await this.commerceToolsAPI.updateCustomer(id, updateData);
+  }
+
+  async setDefaultGeneralAddress(version: number, id: string, addressId: string) {
+    const updateData: CustomerUpdate = {
+      version,
+      actions: [
+        {
+          action: 'setDefaultBillingAddress',
+          addressId,
+        },
+        {
+          action: 'setDefaultShippingAddress',
+          addressId,
+        },
+      ],
+    };
+    await this.commerceToolsAPI.updateCustomer(id, updateData);
+  }
+
+  async removeAddress(version: number, id: string, addressId: string) {
+    const updateData: CustomerUpdate = {
+      version,
+      actions: [
+        {
+          action: 'removeAddress',
+          addressId,
+        },
+      ],
+    };
+    await this.commerceToolsAPI.updateCustomer(id, updateData);
+  }
+
+  async changeAddress(
+    version: number,
+    id: string,
+    addressId: string,
+    streetName: string,
+    postalCode: string,
+    city: string,
+    country: string
+  ) {
+    const updatedAddress = {
+      streetName,
+      postalCode,
+      city,
+      country,
+    };
+
+    const updateData: CustomerUpdate = {
+      version,
+      actions: [
+        {
+          action: 'changeAddress',
+          addressId,
+          address: updatedAddress,
+        },
+      ],
+    };
+    await this.commerceToolsAPI.updateCustomer(id, updateData);
+  }
 }
