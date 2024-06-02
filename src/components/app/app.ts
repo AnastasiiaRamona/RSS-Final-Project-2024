@@ -54,7 +54,7 @@ export default class App {
     this.setupRouter();
   }
 
-  renderStartPage() {
+  async renderStartPage() {
     this.body.appendChild(this.header.renderHeader(this.isLoggedIn));
     const main = HTMLCreator.createElement('main', { class: 'main-field' });
     this.body.appendChild(main);
@@ -129,6 +129,7 @@ export default class App {
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
       this.header.addMainPageButton();
+      this.catalog.addEventListeners();
     });
 
     renderRoute('/product', async () => {

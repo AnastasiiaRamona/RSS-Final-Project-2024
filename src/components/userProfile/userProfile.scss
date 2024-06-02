@@ -25,7 +25,7 @@
   position: relative;
 
   &:before {
-    content: url('https://cdn.dribbble.com/users/1900827/screenshots/5354476/attachments/1161314/caboodle-cat-icon.svg');
+    content: url('./assets/cat-icon.svg');
     @include size(30px, 30px);
     display: inline-block;
     position: absolute;
@@ -33,12 +33,16 @@
   }
 }
 
-.personal-info-section, .addresses-section {
+.personal-info-section,
+.addresses-section,
+.security-settings-section {
   margin-bottom: 35px;
   padding: 0 20px;
 }
 
-.personal-info-section p, .addresses-section p {
+.personal-info-section p,
+.addresses-section p,
+.personal-info-section form {
   @include font($primary-font-family, 18px, normal, 1.5, rgb(88, 87, 87));
   margin: 12px 8px;
   position: relative;
@@ -62,6 +66,51 @@
   }
 }
 
+.new-address-form-container {
+  @include font($primary-font-family, 18px, normal, 1.5, rgb(88, 87, 87));
+  position: relative;
+  transition: color 0.3s ease-in-out;
+}
+
+.new-address-form {
+  max-width: 315px;
+  @include flexbox(column);
+  gap: 10px;
+}
+
+.new-address-form div {
+  @include flexbox(row, space-between);
+  gap: 10px;
+}
+
+.new-address-form label {
+  width: 70px;
+}
+
+.security-settings-form {
+  max-width: 60vw;
+  @include flexbox(column, center, flex-start);
+  gap: 10px;
+}
+
+.security-settings-form label {
+  @include font($primary-font-family, 18px, normal, 1.5, $white);
+}
+
+.new-password-container {
+  @include flexbox(row);
+  gap: 8px;
+}
+
+.personal-info-section form {
+  @include flexbox(row, flex-start, center);
+  gap: 10px;
+}
+
+.personal-info-section form input {
+  color: gray;
+}
+
 .personal-info-section p {
   color: $white;
 
@@ -70,7 +119,13 @@
   }
 }
 
-.address-entry {
+.address-icons-container div {
+  @include flexbox(row);
+  gap: 5px;
+}
+
+.address-entry,
+.new-address-form-container {
   padding: 20px;
   background-color: #f9f9f9;
   border: 1px solid #e0e0e0;
@@ -84,9 +139,13 @@
   }
 }
 
+.new-address-form-container {
+  @include flexbox(row, space-between, flex-start);
+}
+
 .toggle-button {
   cursor: pointer;
-  @include size(0,0);
+  @include size(0, 0);
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-bottom: 15px solid $primary-color;
@@ -95,10 +154,6 @@
 
 .toggle-button.rotate {
   transform: rotate(180deg);
-}
-
-.hidden {
-  display: none;
 }
 
 .country {
@@ -110,8 +165,63 @@
   @include flexbox(row, space-between, center);
 }
 
-.country-flag, .address-icon {
+.address-icon {
   @include size(30px, auto);
+}
+
+.country-flag,
+.new-address-form .address-icon,
+.edit-button,
+.reset-img,
+.close-icon-img,
+.delete-img {
+  @include size(30px, auto);
+  cursor: pointer;
+  display: block;
+}
+
+.new-address-form .address-icon .address-icon:hover,
+.address-clicked,
+.delete-img:hover {
+  filter: invert(1) sepia(1) saturate(10000%) hue-rotate(85deg) brightness(0.7);
+}
+
+.submit-img,
+.close-button-img {
+  @include size(25px, auto);
+}
+
+.edit-button,
+.close-icon-img,
+.reset-img,
+.submit-img {
+  cursor: pointer;
+
+  &:hover {
+    filter: invert(1);
+  }
+}
+
+.clicked-icon {
+  filter: invert(1);
+}
+
+.address-entry .edit-button {
+  &:hover,
+  .clicked-icon {
+    filter: invert(1) sepia(1) saturate(10000%) hue-rotate(-135deg) brightness(0.7);
+  }
+}
+
+.edit-button-inactive {
+  display: none;
+}
+
+
+.new-address-form .reset-img:hover,
+.new-address-form .submit-img:hover,
+.new-address-form-container .close-icon-img:hover {
+  filter: invert(1) sepia(1) saturate(10000%) hue-rotate(85deg) brightness(0.7);
 }
 
 .default-text {
@@ -120,5 +230,90 @@
 
   &:hover {
     color: $success-color;
+  }
+}
+
+.success-text-input {
+  color: $primary-color;
+}
+
+@media (max-width: 670px) {
+  .success-text-input {
+    font-size: x-small;
+    text-align: justify;
+  }
+
+  .personal-info-section input[type='text'] {
+    width: 140px;
+  }
+
+  .new-address-form input[type='text'] {
+    width: 70px;
+  }
+
+  .new-address-form label {
+    font-size: small;
+  }
+
+  .new-address-form-container .close-icon-img,
+  .new-address-form .reset-img {
+    @include size(auto, 20px);
+  }
+}
+
+.change-password-button,
+.add-new-address-button {
+  @include flexbox(column, center, center);
+  margin-left: 8px;
+}
+
+.password-icon-img,
+.new-address-icon-img {
+  @include size(auto, 20px);
+  transition: all 0.5s linear;
+}
+
+.hidden {
+  display: none;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+
+  .custom-checkbox {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    appearance: none;
+    background-color: $light;
+    border: 1px solid $primary-color;
+    border-radius: 3px;
+    position: relative;
+
+    &:checked {
+      background-color: $success-color;
+      border: none;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 6px;
+        width: 6px;
+        height: 12px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+  }
+
+  .custom-label {
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
   }
 }
