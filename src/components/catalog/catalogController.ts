@@ -87,4 +87,11 @@ export default class CatalogController {
     const productOfCategory = this.model.getProductsOfCategory(categoryId);
     return productOfCategory;
   }
+
+  async getBreadcrumbsOfCategory(event: Event) {
+    const category = event.target as HTMLElement;
+    const categoryId = category.id;
+    const productOfCategory = this.model.getBreadcrumbsOfCategory(categoryId);
+    return productOfCategory;
+  }
 }

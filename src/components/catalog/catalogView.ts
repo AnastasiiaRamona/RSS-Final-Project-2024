@@ -1,6 +1,14 @@
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
 
+interface Category {
+  id: string;
+  name: { 'en-US': string };
+}
+interface BreadcrumbsInfo {
+  parentCategory: Category | null;
+  category: Category;
+}
 interface CategoryNode {
   id: string;
   name: string;
@@ -55,6 +63,7 @@ export default class Catalog {
             ]
           ),
         ]),
+        HTMLCreator.createElement('div', { class: 'breadcrumb' }),
         HTMLCreator.createElement('div', { class: 'core__wrapper' }, [
           (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
             HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
@@ -124,6 +133,7 @@ export default class Catalog {
         });
       }
     }
+    this.generateBreadcrumbs(event);
   }
 
   async getCategory(category: HTMLElement) {
@@ -157,6 +167,46 @@ export default class Catalog {
       subUl.appendChild(li);
     });
     return subUl;
+  }
+
+  async generateBreadcrumbs(event: Event) {
+    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+    const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
+    const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+
+    const container = document.querySelector('.breadcrumb') as HTMLElement;
+    container.innerHTML = '';
+    const breadcrumbTitle = HTMLCreator.createElement('div', { class: 'breadcrumb__title breadcrumb__element' }, [
+      'Category',
+    ]);
+    breadcrumbTitle?.addEventListener('click', () => {
+      this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
+      this.filter(checkboxAll, sortSelect, priceInputAll);
+      container.innerHTML = '';
+      container.append(breadcrumbTitle);
+    });
+    container.append(breadcrumbTitle);
+    const breadcrumbsOfCategory = (await this.controller.getBreadcrumbsOfCategory(event)) as BreadcrumbsInfo;
+    const breadCrumbsCategory = HTMLCreator.createElement(
+      'div',
+      { class: 'breadcrumbs__category breadcrumb__element', id: breadcrumbsOfCategory.category?.id },
+      [`${breadcrumbsOfCategory.category?.name[`en-US`]}`]
+    );
+    breadCrumbsCategory.addEventListener('click', (eventBreadcrumbs) => {
+      this.showProductsOfCategory(eventBreadcrumbs);
+    });
+    if (breadcrumbsOfCategory.parentCategory) {
+      const breadCrumbsParentCategory = HTMLCreator.createElement(
+        'div',
+        { class: 'breadcrumbs__parent-category breadcrumb__element', id: breadcrumbsOfCategory.parentCategory.id },
+        [`${breadcrumbsOfCategory.parentCategory?.name[`en-US`]}`]
+      );
+      breadCrumbsParentCategory.addEventListener('click', (eventBreadcrumbs) => {
+        this.showProductsOfCategory(eventBreadcrumbs);
+      });
+      container.append(breadCrumbsParentCategory);
+    }
+    container.append(breadCrumbsCategory);
   }
 
   async filter(

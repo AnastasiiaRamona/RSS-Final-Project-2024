@@ -492,4 +492,28 @@ export default class CommerceToolsAPI {
     }
     return result;
   }
+
+  async getBreadcrumbsOfCategory(categoryId: string) {
+    this.createClient();
+    let result;
+    try {
+      if (this.apiRoot) {
+        const categoryResponse = await this.apiRoot.categories().withId({ ID: categoryId }).get().execute();
+        const category = categoryResponse.body;
+        let parentCategory = null;
+        if (category.parent) {
+          const parentCategoryResponse = await this.apiRoot
+            .categories()
+            .withId({ ID: category.parent.id })
+            .get()
+            .execute();
+          parentCategory = parentCategoryResponse.body;
+        }
+        result = { category, parentCategory };
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
 }

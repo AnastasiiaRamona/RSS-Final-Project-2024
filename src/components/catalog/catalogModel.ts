@@ -100,4 +100,9 @@ export default class CatalogModel {
     const productOfCategory = this.commerceToolsAPI.getProductsOfCategory(categoryId);
     return productOfCategory;
   }
+
+  async getBreadcrumbsOfCategory(categoryId: string) {
+    const productOfCategory = this.commerceToolsAPI.getBreadcrumbsOfCategory(categoryId);
+    return productOfCategory;
+  }
 }
