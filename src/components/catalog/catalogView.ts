@@ -21,50 +21,52 @@ export default class Catalog {
     let catalog: HTMLElement | null = null;
     let form: HTMLElement | null = null;
     let category: HTMLElement | null = null;
-    const loginWrapper = HTMLCreator.createElement('main', { class: 'catalog__main' }, [
-      HTMLCreator.createElement('aside', { class: 'catalog__aside' }, [
-        HTMLCreator.createElement(
-          'div',
-          {
-            class: 'catalog__filter',
-          },
-          [
-            HTMLCreator.createElement('form', { class: 'catalog__search' }, [
-              HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, [
-                'Search the site:',
+    const catalogWrapper = HTMLCreator.createElement('main', { class: 'catalog__main' }, [
+      HTMLCreator.createElement('div', { class: 'catalog__wrapper' }, [
+        HTMLCreator.createElement('section', { class: 'catalog__aside' }, [
+          HTMLCreator.createElement(
+            'div',
+            {
+              class: 'catalog__filter',
+            },
+            [
+              HTMLCreator.createElement('form', { class: 'catalog__search' }, [
+                HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, [
+                  'Search the site:',
+                ]),
+                HTMLCreator.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }),
+                HTMLCreator.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
               ]),
-              HTMLCreator.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }, [
-                'Reset Filter',
+              HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
+              HTMLCreator.createElement('form', { class: 'catalog__sorting' }, [
+                HTMLCreator.createElement('label', { for: 'catalog__sorting', class: 'sorting__label' }, ['Sort']),
+                HTMLCreator.createElement(
+                  'select',
+                  { name: 'sort-param', id: 'catalog__sorting', class: 'sorting__select' },
+                  [
+                    HTMLCreator.createElement('option', { value: '' }, ['--sorting--']),
+                    HTMLCreator.createElement('option', { value: 'price desc' }, ['by descending price']),
+                    HTMLCreator.createElement('option', { value: 'price asc' }, ['by ascending price']),
+                    HTMLCreator.createElement('option', { value: 'name.en-US asc' }, ['by name']),
+                  ]
+                ),
               ]),
-              HTMLCreator.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
-            ]),
-            HTMLCreator.createElement('form', { class: 'catalog__sorting' }, [
-              HTMLCreator.createElement('label', { for: 'catalog__sorting', class: 'sorting__label' }, ['Sort']),
-              HTMLCreator.createElement(
-                'select',
-                { name: 'sort-param', id: 'catalog__sorting', class: 'sorting__select' },
-                [
-                  HTMLCreator.createElement('option', { value: '' }, ['--sorting--']),
-                  HTMLCreator.createElement('option', { value: 'price desc' }, ['by descending price']),
-                  HTMLCreator.createElement('option', { value: 'price asc' }, ['by ascending price']),
-                  HTMLCreator.createElement('option', { value: 'name.en-US asc' }, ['by name']),
-                ]
-              ),
-            ]),
-            HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
-            (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
-          ]
-        ),
+              (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
+            ]
+          ),
+        ]),
+        HTMLCreator.createElement('div', { class: 'core__wrapper' }, [
+          (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, ['Category'])),
+          (catalog = HTMLCreator.createElement('section', {
+            class: 'catalog__gallery',
+          })),
+        ]),
       ]),
-      (catalog = HTMLCreator.createElement('section', {
-        class: 'catalog__gallery',
-      })),
-      (category = HTMLCreator.createElement('div', { class: 'catalog__category' }, ['Category'])),
     ]);
     await this.productView(catalog);
     await this.attributesView(form);
     await this.getCategory(category);
-    return loginWrapper;
+    return catalogWrapper;
   }
 
   addEventListeners() {
@@ -74,6 +76,19 @@ export default class Catalog {
     const searchInput = document.querySelector('.search__input') as HTMLInputElement;
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+    const categoryAll = document.querySelectorAll('.category__element') as NodeListOf<HTMLInputElement>;
+
+    categoryAll.forEach((category) => {
+      category.addEventListener('click', () => {
+        // const subcategoriesContainer = category.querySelector('ul');
+        // if (subcategoriesContainer) {
+        //   subcategoriesContainer.hidden = !subcategoriesContainer.hidden;
+        // } else if (Object.keys(category.children).length > 0) {
+        //   const subcategories = this.createCategoryTree(category.children);
+        //   category.appendChild(subcategories);
+        // }
+      });
+    });
 
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
@@ -99,7 +114,6 @@ export default class Catalog {
 
   async getCategory(category: HTMLElement) {
     const categoryTree = await this.controller.getCategory();
-    console.log(category);
     if (category) {
       const tree = this.createCategoryTree(categoryTree);
       category.appendChild(await tree);
@@ -107,27 +121,28 @@ export default class Catalog {
   }
 
   async createCategoryTree(categoryTree: CategoryMap) {
-    const ul = HTMLCreator.createElement('ul', {}, []);
-
-    await Promise.all(
-      Object.values(categoryTree).map(async (category) => {
-        const li = HTMLCreator.createElement('li', { 'data-id': category.id }, [category.name]);
-
-        li.addEventListener('click', (event) => {
-          event.stopPropagation();
-          console.log('clclc');
-          this.displaySubcategories(category.id, categoryTree);
-        });
-
-        if (Object.keys(category.children).length > 0) {
-          const subTree = await this.createCategoryTree(category.children);
-          li.appendChild(subTree);
-        }
-
-        ul.appendChild(li);
-      })
-    );
+    const ul = HTMLCreator.createElement('ul', { class: 'category__list' });
+    Object.values(categoryTree).forEach(async (category) => {
+      const li = HTMLCreator.createElement('li', { 'data-id': category.id, class: 'category__element' }, [
+        category.name,
+      ]) as HTMLElement;
+      if (Object.keys(category.children).length > 0) {
+        li.appendChild(await this.createSubcategoryTree(category.children));
+      }
+      ul.appendChild(li);
+    });
     return ul;
+  }
+
+  async createSubcategoryTree(subcategoryTree: CategoryMap) {
+    const subUl = HTMLCreator.createElement('ul', { class: 'category__sub-list hide__sub-list' });
+    Object.values(subcategoryTree).forEach(async (subCategory) => {
+      const li = HTMLCreator.createElement('li', { 'data-id': subCategory.id, class: 'category__sub-element' }, [
+        subCategory.name,
+      ]) as HTMLElement;
+      subUl.appendChild(li);
+    });
+    return subUl;
   }
 
   async displaySubcategories(categoryId: string, categoryTree: CategoryMap) {
@@ -269,7 +284,7 @@ export default class Catalog {
     container.appendChild(price);
     Object.keys(attributes).forEach((key) => {
       if (key !== 'minPrice' && key !== 'maxPrice') {
-        const div = HTMLCreator.createElement('div', { class: key }) as HTMLElement;
+        const div = HTMLCreator.createElement('div', { class: `${key} checkbox__element` }) as HTMLElement;
         const header = HTMLCreator.createElement('h3', { class: key }, [key]) as HTMLElement;
         attributes[key].forEach((value) => {
           const checkbox = HTMLCreator.createElement('input', {

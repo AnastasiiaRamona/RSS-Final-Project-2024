@@ -2,15 +2,16 @@
   @include flexbox();
 }
 
+.core__wrapper {
+  @include flexbox();
+  align-items:flex-start;
+  padding: 20px 5px;
+}
+
 .catalog__gallery {
-  padding: 20px 0;
   @include flexbox();
   flex-wrap: wrap;
   gap: 10px;
-  @include size(auto, 74vh);
-  align-items: start;
-  position: relative;
-  overflow-y: auto;
 }
 
 .product-card {
@@ -102,26 +103,39 @@
   display: inline-block;
 }
 
+.catalog__wrapper {
+  @include flexbox(column);
+  @include size(auto, 74vh);
+  align-items: center;
+  justify-content: normal;
+  position: relative;
+  overflow-y: auto;
+}
+
 .catalog__aside {
   margin-left: 10px;
   padding-top: 20px;
   @include flexbox();
-  @include size(auto, 74vh);
   align-items: start;
   position: relative;
 }
 
 .catalog__filter {
-  @include size(20vw, 70vh);
-  @include flexbox(column, space-between);
+  @include size(98vw, 30vh);
+  @include flexbox();
   align-items: stretch;
+  justify-content: space-around;
   gap: 2vh;
-  padding: 30px;
+  padding: 10px;
   background-color: rgb(145, 189, 156, 0.8);
   border-radius: 40px;
   border: 2px solid rgb(0, 84, 60);
-  font-size: 30px;
-  overflow: auto;
+  font-size: 20px;
+}
+
+.catalog__search {
+  width: 10vw;
+  height: 100%;
 }
 
 .search__input {
@@ -129,6 +143,16 @@
   padding-left: 10px;
   border-radius: 20px;
 }
+
+.search__button {
+  height: 10vh;
+}
+
+.catalog__sorting {
+  width: 10vw;
+  height: 100%;
+}
+
 .sorting__select {
   width: 100%;
   padding: 2px;
@@ -138,7 +162,7 @@
 
 .checkbox__price {
   @include flexbox(column);
-  align-items: normal;
+  justify-content: normal;
   gap: 5px;
 }
 
@@ -148,7 +172,33 @@
   border-radius: 20px;
 }
 
-.catalog__category ul {
-  list-style-type: none;
-  color: brown;
+.checkbox__container {
+  @include flexbox();
+  align-items:normal;
+  gap: 10px;
+}
+.checkbox__element {
+  @include flexbox(column);
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items:normal;
+  font-size: 20px;
+}
+
+.catalog__category {
+  @include size(20vw, 90vh);
+  @include flexbox();
+  align-items: stretch;
+  justify-content: space-around;
+  gap: 2vh;
+  padding: 10px;
+  background-color: rgb(145, 189, 156, 0.8);
+  border-radius: 40px;
+  border: 2px solid rgb(0, 84, 60);
+  font-size: 20px;
+}
+
+
+.hide__sub-list {
+
 }
