@@ -91,4 +91,30 @@ export default class Buttons {
     addNewAddressButton.removeAttribute('disabled');
     addNewAddressButton.classList.remove('inactive');
   }
+
+  addInactivityOfNewAddressButton() {
+    const addNewAddressButton = document.querySelector('.add-new-address-button') as HTMLButtonElement;
+    addNewAddressButton.setAttribute('disabled', 'disabled');
+    addNewAddressButton.classList.add('inactive');
+  }
+
+  addInactivityOfEditButtons() {
+    const addressSection = document.querySelector('.addresses-section');
+    if (addressSection) {
+      const editButtons = addressSection.querySelectorAll('.edit-button');
+      editButtons.forEach((button) => {
+        button.classList.add('edit-button-inactive');
+      });
+    }
+  }
+
+  addActivityOfEditButtons() {
+    const addressSection = document.querySelector('.addresses-section');
+    if (addressSection) {
+      const editButtons = addressSection.querySelectorAll('.edit-button');
+      editButtons.forEach((button) => {
+        button.classList.remove('edit-button-inactive');
+      });
+    }
+  }
 }

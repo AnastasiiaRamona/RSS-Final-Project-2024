@@ -9,11 +9,15 @@ import italyFlag from '../../../assets/italy.png';
 export default class AddressSection {
   private buttons: Buttons;
 
+  private address: Address | null = null;
+
   constructor() {
     this.buttons = new Buttons();
   }
 
   renderAddressSection(address: Address, addressType: string, isDefault: boolean) {
+    this.address = address;
+
     const billingAddressIconSrc = this.buttons.getAddressIconSrc('billing');
     const billingAddressIcon = HTMLCreator.createElement('img', {
       src: billingAddressIconSrc,
@@ -29,8 +33,13 @@ export default class AddressSection {
     });
 
     const deleteButton = this.buttons.renderDeleteButton();
+    const editButton = this.buttons.renderEditButton();
 
-    const addressesIconsDiv = HTMLCreator.createElement('div', {}, [billingAddressIcon, shippingAddressIcon]);
+    const addressesIconsDiv = HTMLCreator.createElement('div', {}, [
+      billingAddressIcon,
+      shippingAddressIcon,
+      editButton,
+    ]);
 
     if (addressType === 'billing') {
       billingAddressIcon.classList.add('address-clicked');
@@ -69,10 +78,12 @@ export default class AddressSection {
       ]),
     ];
 
-    return HTMLCreator.createElement('div', { class: 'address-entry hidden' }, [
+    const addressEntry = HTMLCreator.createElement('div', { class: 'address-entry hidden' }, [
       addressIconsContainer,
       ...addressLines,
     ]);
+
+    return addressEntry;
   }
 
   getFullNameOfCountry(country: string) {
@@ -87,5 +98,9 @@ export default class AddressSection {
       DE: germanyFlag,
     };
     return flagMap[countryCode];
+  }
+
+  returnAddress() {
+    return this.address;
   }
 }

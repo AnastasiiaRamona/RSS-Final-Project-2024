@@ -165,17 +165,22 @@
   @include flexbox(row, space-between, center);
 }
 
+.address-icon {
+  @include size(30px, auto);
+}
+
 .country-flag,
-.address-icon,
+.new-address-form .address-icon,
 .edit-button,
 .reset-img,
 .close-icon-img,
 .delete-img {
   @include size(30px, auto);
   cursor: pointer;
+  display: block;
 }
 
-.address-icon:hover,
+.new-address-form .address-icon .address-icon:hover,
 .address-clicked,
 .delete-img:hover {
   filter: invert(1) sepia(1) saturate(10000%) hue-rotate(85deg) brightness(0.7);
@@ -200,6 +205,18 @@
 .clicked-icon {
   filter: invert(1);
 }
+
+.address-entry .edit-button {
+  &:hover,
+  .clicked-icon {
+    filter: invert(1) sepia(1) saturate(10000%) hue-rotate(-135deg) brightness(0.7);
+  }
+}
+
+.edit-button-inactive {
+  display: none;
+}
+
 
 .new-address-form .reset-img:hover,
 .new-address-form .submit-img:hover,

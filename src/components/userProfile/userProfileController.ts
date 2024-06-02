@@ -114,6 +114,19 @@ export default class UserProfileController {
     return result;
   }
 
+  async changeAddress(
+    version: number,
+    id: string,
+    addressId: string,
+    streetName: string,
+    postalCode: string,
+    city: string,
+    country: string
+  ) {
+    const result = await this.model.changeAddress(version, id, addressId, streetName, postalCode, city, country);
+    return result;
+  }
+
   parseDateString(dateString: string): string {
     const [day, month, year] = dateString.split('.');
     const date = `${year}-${month}-${day}`;

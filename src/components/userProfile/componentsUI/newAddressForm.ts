@@ -1,15 +1,21 @@
+import iso3166 from 'iso-3166-1-alpha-2';
+import { Address } from '@commercetools/platform-sdk';
 import HTMLCreator from '../../HTMLCreator';
 import Buttons from './buttons';
 import generalAddressIconSrc from '../../../assets/address-icon.png';
+import UserProfileController from '../userProfileController';
 
 export default class NewAddressForm {
   private buttons: Buttons;
 
+  private controller: UserProfileController;
+
   constructor() {
     this.buttons = new Buttons();
+    this.controller = new UserProfileController();
   }
 
-  renderNewAddressForm() {
+  renderNewAddressForm(address?: Address) {
     const createResetButton = (input: HTMLInputElement) => {
       const resetButton = this.buttons.renderResetButton();
 
@@ -74,6 +80,14 @@ export default class NewAddressForm {
       list: 'countryList',
     }) as HTMLInputElement;
 
+    if (address && address.streetName && address.city && address.postalCode && address.country) {
+      streetInput.value = address.streetName;
+      cityInput.value = address.city;
+      postalCodeInput.value = address.postalCode;
+      const country = this.getFullNameOfCountry(address.country) as string;
+      countryInput.value = country;
+    }
+
     const form = HTMLCreator.createElement('form', { class: 'new-address-form' }, [
       HTMLCreator.createElement('div', {}, [
         HTMLCreator.createElement('label', { for: 'street' }, ['Street:']),
@@ -131,13 +145,7 @@ export default class NewAddressForm {
       closeButton,
     ]);
 
-    closeButton.addEventListener('click', () => {
-      const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
-      if (addressesSection) {
-        addressesSection.removeChild(formContainer);
-        this.buttons.removeInactivityOfNewAddressButton();
-      }
-    });
+    this.triggerInputEvents([streetInput, cityInput, postalCodeInput, countryInput]);
 
     return formContainer;
   }
@@ -146,5 +154,42 @@ export default class NewAddressForm {
     const countries = ['United States', 'Germany', 'Italy'];
     const options = countries.map((country) => HTMLCreator.createElement('option', { value: country }));
     return HTMLCreator.createElement('datalist', { id: 'countryList' }, options);
+  }
+
+  getFullNameOfCountry(country: string) {
+    const countryName = iso3166.getCountry(country);
+    return countryName;
+  }
+
+  addEventListenersToTheIconsContainer() {
+    const iconsAddressContainer = document.querySelector('.billing-shipping-icons-container') as HTMLElement;
+
+    if (iconsAddressContainer) {
+      iconsAddressContainer.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        if (target.tagName.toLowerCase() === 'img') {
+          const allImages = iconsAddressContainer.querySelectorAll('img');
+          allImages.forEach((img) => img.classList.remove('address-clicked'));
+          target.classList.add('address-clicked');
+        }
+      });
+    }
+  }
+
+  addEventListenerToTheCloseButton(closeButton: HTMLElement, formContainer: HTMLElement) {
+    closeButton.addEventListener('click', () => {
+      const addressSection = document.querySelector('.addresses-section') as HTMLElement;
+      if (addressSection) {
+        addressSection.removeChild(formContainer);
+        this.buttons.removeInactivityOfNewAddressButton();
+      }
+    });
+  }
+
+  triggerInputEvents(inputs: HTMLInputElement[]) {
+    inputs.forEach((input) => {
+      const event = new Event('input', { bubbles: true });
+      input.dispatchEvent(event);
+    });
   }
 }

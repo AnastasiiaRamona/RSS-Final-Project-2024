@@ -66,14 +66,20 @@ export default class Validation {
   }
 
   static checkValidationAddress(form: HTMLFormElement) {
-    const inputs = document.querySelectorAll('input') as NodeListOf<HTMLInputElement>;
-    inputs.forEach((input) => {
-      if (!(input.type === 'checkbox')) input.setCustomValidity('required field');
-    });
+    // const inputs = document.querySelectorAll('input') as NodeListOf<HTMLInputElement>;
+    // inputs.forEach((input) => {
+    //   if (!(input.type === 'checkbox')) input.setCustomValidity('required field');
+    // });
 
     form.addEventListener('input', (event: Event) => {
       const element: HTMLInputElement = event.target as HTMLInputElement;
       const { value } = element;
+
+      if (value === '') {
+        element.setCustomValidity('This field cannot be empty');
+      } else {
+        element.setCustomValidity('');
+      }
 
       if (element.classList.contains('input-street')) {
         if (!/^.+$/.test(value)) {

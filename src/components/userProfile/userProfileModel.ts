@@ -209,4 +209,33 @@ export default class UserProfileModel {
     };
     await this.commerceToolsAPI.updateCustomer(id, updateData);
   }
+
+  async changeAddress(
+    version: number,
+    id: string,
+    addressId: string,
+    streetName: string,
+    postalCode: string,
+    city: string,
+    country: string
+  ) {
+    const updatedAddress = {
+      streetName,
+      postalCode,
+      city,
+      country,
+    };
+
+    const updateData: CustomerUpdate = {
+      version,
+      actions: [
+        {
+          action: 'changeAddress',
+          addressId,
+          address: updatedAddress,
+        },
+      ],
+    };
+    await this.commerceToolsAPI.updateCustomer(id, updateData);
+  }
 }
