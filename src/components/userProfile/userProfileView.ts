@@ -324,9 +324,9 @@ export default class UserProfile {
                 addressType,
                 isDefault
               );
+              this.addEventListenerToTheToggleButtonOfElement(newAddressEmpty);
               newAddressEmpty.classList.remove('hidden');
               addressesSection.replaceChild(newAddressEmpty, newAddressFormContainer);
-              this.addEventListenerToTheToggleButton();
               const deleteButton = newAddressEmpty.querySelector('.delete-img');
               deleteButton?.addEventListener('click', async () => {
                 await this.getCustomerData();
@@ -489,6 +489,19 @@ export default class UserProfile {
     });
   }
 
+  addEventListenerToTheToggleButtonOfElement(element: Element) {
+    const toggleButton = document.querySelector('.toggle-button');
+    let isRotated = true;
+
+    toggleButton?.addEventListener('click', () => {
+      isRotated = !isRotated;
+      toggleButton.classList.toggle('rotate', isRotated);
+      if (element) {
+        element.classList.toggle('hidden', !isRotated);
+      }
+    });
+  }
+
   addEventListenerToTheEditForms() {
     const addressesEntries = document.querySelectorAll('.address-entry');
 
@@ -580,9 +593,9 @@ export default class UserProfile {
                         addressType,
                         isDefault
                       );
+                      this.addEventListenerToTheToggleButtonOfElement(newAddressEmpty);
                       newAddressEmpty.classList.remove('hidden');
                       addressesSection.replaceChild(newAddressEmpty, newAddressFormContainer);
-                      this.addEventListenerToTheToggleButton();
                       const deleteButton = newAddressEmpty.querySelector('.delete-img');
                       deleteButton?.addEventListener('click', async () => {
                         await this.getCustomerData();
