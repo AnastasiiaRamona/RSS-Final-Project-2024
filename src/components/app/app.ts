@@ -26,8 +26,6 @@ export default class App {
 
   private catalog: Catalog;
 
-  private product: DetailedProduct;
-
   private isLoggedIn: boolean = !!localStorage.getItem('userToken');
 
   private router = router;
@@ -35,6 +33,8 @@ export default class App {
   private missingPage: MissingPage;
 
   private body = document.body;
+
+  private productId: string | null = null;
 
   constructor() {
     this.header = new Header();
@@ -44,7 +44,6 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
-    this.product = new DetailedProduct('069264d5-8083-48d5-bfca-381fb0569ca6');
   }
 
   render() {
@@ -80,6 +79,13 @@ export default class App {
     this.body.addEventListener('userProfileEvent', () => {
       this.router.navigateTo('/user-profile');
     });
+    this.body.addEventListener('productEvent', ((event: CustomEvent) => {
+      this.productId = event.detail.id;
+
+      if (this.productId) {
+        this.router.navigateTo(`/product?id=${this.productId}`);
+      }
+    }) as EventListener);
   }
 
   changeHeaderElement(element: HTMLElement) {
@@ -132,11 +138,16 @@ export default class App {
       this.catalog.addEventListeners();
     });
 
-    renderRoute('/product', async () => {
-      this.changeMainElement(this.product.renderMain());
-      await this.product.getProductInformation();
-      this.createSwiper();
-      this.header.addBackButton();
+    renderRoute('/product?id=id', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get('id');
+      if (productId) {
+        const product = new DetailedProduct(productId);
+        this.changeMainElement(product.renderMain());
+        await product.getProductInformation();
+        this.createSwiper();
+        this.header.addBackButton();
+      }
     });
 
     renderRoute('/user-profile', async () => {
@@ -148,7 +159,18 @@ export default class App {
   }
 
   changePageAlongThePath() {
-    const startingRoute = window.location.pathname.slice(1);
+    const currentRoute = window.location.pathname;
+    const isProductPage = currentRoute.startsWith('/product');
+    if (isProductPage) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get('id');
+      if (productId) {
+        this.renderPageByRoute(`product?id=${productId}`);
+        return;
+      }
+    }
+
+    const startingRoute = currentRoute.slice(1);
     const { routes } = this.router;
 
     switch (startingRoute) {
@@ -168,9 +190,6 @@ export default class App {
       case 'user-profile':
         this.renderPageByRoute('user-profile');
         break;
-      case 'product':
-        this.renderPageByRoute('product');
-        break;
       default:
         if (routes[startingRoute]) {
           this.renderPageByRoute(startingRoute);
@@ -181,7 +200,7 @@ export default class App {
     }
   }
 
-  renderPageByRoute(route: string, keepURL: boolean = false) {
+  async renderPageByRoute(route: string, keepURL: boolean = false) {
     if (!keepURL) {
       this.router.navigateTo(`/${route}`);
     } else {

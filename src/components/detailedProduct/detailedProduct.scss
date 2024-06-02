@@ -1,20 +1,20 @@
 .detailed__product {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  @include flexbox(column, center);
   align-items: center;
   width: 100vw;
   height: 100%;
 }
+
 .detailed__product-container {
-  height: inherit;
-  max-width: 1200px;
-  padding: 15px;
-  margin: 0 auto;
+  height: 74vh;
+  width: 100vw;
+  padding-top: 20px;
+  overflow-y: auto;
 }
+
 .detailed__product-wrapper {
-  max-width: 1000px;
   margin: 0 auto;
+  @include flexbox(column, center);
 }
 
 .swiper {
@@ -27,6 +27,7 @@
   height: inherit;
   object-fit: cover;
 }
+
 .swiper-pagination {
   position: absolute;
   text-align: center;
@@ -35,6 +36,7 @@
   z-index: 10;
   height: 105px;
 }
+
 .swiper-pagination-bullet {
   background-image: url('./assets/1314467.svg');
   height: 50px;
