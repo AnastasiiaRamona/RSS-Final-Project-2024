@@ -3,16 +3,12 @@ import { Address } from '@commercetools/platform-sdk';
 import HTMLCreator from '../../HTMLCreator';
 import Buttons from './buttons';
 import generalAddressIconSrc from '../../../assets/address-icon.png';
-import UserProfileController from '../userProfileController';
 
 export default class NewAddressForm {
   private buttons: Buttons;
 
-  private controller: UserProfileController;
-
   constructor() {
     this.buttons = new Buttons();
-    this.controller = new UserProfileController();
   }
 
   renderNewAddressForm(address?: Address) {
@@ -36,6 +32,7 @@ export default class NewAddressForm {
       alt: 'shipping icon',
       class: 'address-icon',
       id: 'shipping-address',
+      title: 'Shipping address',
     });
 
     addressIconSrc = this.buttons.getAddressIconSrc('billing');
@@ -44,6 +41,7 @@ export default class NewAddressForm {
       alt: 'billing icon',
       class: 'address-icon',
       id: 'billing-address',
+      title: 'Billing address',
     });
 
     const streetInput = HTMLCreator.createElement('input', {
@@ -122,6 +120,7 @@ export default class NewAddressForm {
           src: generalAddressIconSrc,
           alt: 'general address icon',
           id: 'general-address',
+          title: 'General address',
         }),
       ]),
 
@@ -144,8 +143,6 @@ export default class NewAddressForm {
       form,
       closeButton,
     ]);
-
-    this.triggerInputEvents([streetInput, cityInput, postalCodeInput, countryInput]);
 
     return formContainer;
   }
@@ -182,14 +179,8 @@ export default class NewAddressForm {
       if (addressSection) {
         addressSection.removeChild(formContainer);
         this.buttons.removeInactivityOfNewAddressButton();
+        this.buttons.addActivityOfEditButtons();
       }
-    });
-  }
-
-  triggerInputEvents(inputs: HTMLInputElement[]) {
-    inputs.forEach((input) => {
-      const event = new Event('input', { bubbles: true });
-      input.dispatchEvent(event);
     });
   }
 }

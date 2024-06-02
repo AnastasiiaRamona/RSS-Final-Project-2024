@@ -15,6 +15,7 @@ export default class Buttons {
       type: 'image',
       class: 'reset-img',
       src: resetIconSrc,
+      title: 'Reset',
     });
 
     return resetButton;
@@ -25,6 +26,7 @@ export default class Buttons {
       class: 'submit-img',
       type: 'image',
       src: submitIconSrc,
+      title: 'Submit',
     });
     return submitButton;
   }
@@ -34,12 +36,18 @@ export default class Buttons {
       class: 'delete-img',
       src: deleteButtonSrc,
       alt: 'delete button',
+      title: 'Delete',
     });
     return deleteButton;
   }
 
   renderEditButton() {
-    const editButton = HTMLCreator.createElement('img', { class: 'edit-button', src: editIcon, alt: 'edit button' });
+    const editButton = HTMLCreator.createElement('img', {
+      class: 'edit-button',
+      src: editIcon,
+      alt: 'edit button',
+      title: 'Edit',
+    });
     return editButton;
   }
 
@@ -48,6 +56,7 @@ export default class Buttons {
       class: 'password-icon-img',
       src: passwordIconSrc,
       alt: 'password icon',
+      title: 'Change password',
     });
     const changePasswordButton = HTMLCreator.createElement('button', { class: 'change-password-button' }, [
       'Change password',
@@ -69,6 +78,7 @@ export default class Buttons {
       class: 'close-icon-img',
       src: closeIconSrc,
       alt: 'close button',
+      title: 'Close',
     });
     return closeButton;
   }

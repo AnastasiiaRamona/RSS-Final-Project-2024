@@ -23,6 +23,7 @@ export default class AddressSection {
       src: billingAddressIconSrc,
       alt: `billing icon`,
       class: 'address-icon',
+      title: 'Billing address',
     });
 
     const shippingAddressIconSrc = this.buttons.getAddressIconSrc('shipping');
@@ -30,6 +31,7 @@ export default class AddressSection {
       src: shippingAddressIconSrc,
       alt: `shipping icon`,
       class: 'address-icon',
+      title: 'Shipping address',
     });
 
     const deleteButton = this.buttons.renderDeleteButton();

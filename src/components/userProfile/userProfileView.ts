@@ -85,55 +85,7 @@ export default class UserProfile {
 
       const securitySettingSection = this.securitySettingsSection.renderSecuritySettingsSection();
 
-      const toggleButton = HTMLCreator.createElement('div', { class: 'toggle-button' });
-
-      const addNewAddressButton = this.buttons.renderAddNewAddressButton();
-
-      const addressesSection = HTMLCreator.createElement('div', { class: 'addresses-section' }, [
-        HTMLCreator.createElement('h2', { class: 'saved-addresses-title' }, ['Saved Addresses', toggleButton]),
-      ]);
-
-      if (this.addresses && this.billingAddressIds && this.shippingAddressIds) {
-        this.addresses.forEach((address) => {
-          let addressType: string;
-          let isDefault: boolean = false;
-
-          if (
-            address.id &&
-            this.billingAddressIds?.includes(address.id) &&
-            this.shippingAddressIds?.includes(address.id)
-          ) {
-            addressType = 'general';
-          } else if (address.id && this.billingAddressIds?.includes(address.id)) {
-            addressType = 'billing';
-          } else if (address.id && this.shippingAddressIds?.includes(address.id)) {
-            addressType = 'shipping';
-          } else {
-            addressType = 'unknown';
-          }
-
-          if (
-            (addressType === 'billing' && address.id === this.defaultBillingAddressId) ||
-            (addressType === 'shipping' && address.id === this.defaultShippingAddressId)
-          ) {
-            isDefault = true;
-          }
-
-          if (
-            addressType === 'general' &&
-            address.id === this.defaultBillingAddressId &&
-            address.id === this.defaultShippingAddressId
-          ) {
-            isDefault = true;
-          }
-
-          const addressEntry = this.addressSection.renderAddressSection(address, addressType, isDefault);
-
-          addressesSection.appendChild(addressEntry);
-        });
-      }
-
-      addressesSection.appendChild(addNewAddressButton);
+      const addressesSection = this.renderAddressesSection();
 
       profileContainer.appendChild(personalInfoSection);
       profileContainer.appendChild(securitySettingSection);
@@ -143,10 +95,64 @@ export default class UserProfile {
     return main;
   }
 
+  renderAddressesSection() {
+    const toggleButton = HTMLCreator.createElement('div', { class: 'toggle-button' });
+
+    const addNewAddressButton = this.buttons.renderAddNewAddressButton();
+
+    const addressesSection = HTMLCreator.createElement('div', { class: 'addresses-section' }, [
+      HTMLCreator.createElement('h2', { class: 'saved-addresses-title' }, ['Saved Addresses', toggleButton]),
+    ]);
+
+    if (this.addresses && this.billingAddressIds && this.shippingAddressIds) {
+      this.addresses.forEach((address) => {
+        const { addressType, isDefault } = this.returnAddressType(address);
+
+        const addressEntry = this.addressSection.renderAddressSection(address, addressType, isDefault);
+
+        addressesSection.appendChild(addressEntry);
+      });
+    }
+
+    addressesSection.appendChild(addNewAddressButton);
+    return addressesSection;
+  }
+
+  returnAddressType(address: Address) {
+    let addressType: string;
+    let isDefault: boolean = false;
+
+    if (address.id && this.billingAddressIds?.includes(address.id) && this.shippingAddressIds?.includes(address.id)) {
+      addressType = 'general';
+    } else if (address.id && this.billingAddressIds?.includes(address.id)) {
+      addressType = 'billing';
+    } else if (address.id && this.shippingAddressIds?.includes(address.id)) {
+      addressType = 'shipping';
+    } else {
+      addressType = 'unknown';
+    }
+
+    if (
+      (addressType === 'billing' && address.id === this.defaultBillingAddressId) ||
+      (addressType === 'shipping' && address.id === this.defaultShippingAddressId)
+    ) {
+      isDefault = true;
+    }
+
+    if (
+      addressType === 'general' &&
+      address.id === this.defaultBillingAddressId &&
+      address.id === this.defaultShippingAddressId
+    ) {
+      isDefault = true;
+    }
+    return { addressType, isDefault };
+  }
+
   addEventListeners() {
     this.addEventListenerToTheToggleButton();
 
-    this.addEventListenerToTheEditForm();
+    this.addEventListenerToTheEditForms();
 
     const editButton = document.querySelector('.edit-button') as HTMLElement;
     const personalInfoSection = document.querySelector('.personal-info-section') as HTMLElement;
@@ -172,8 +178,8 @@ export default class UserProfile {
         const closeButton = newAddressFormContainer.querySelector('.close-icon-img') as HTMLElement;
         this.newAddressForm.addEventListenerToTheCloseButton(closeButton, newAddressFormContainer);
         addressesSectionElement.insertBefore(newAddressFormContainer, addNewAddressButton);
-        addNewAddressButton.setAttribute('disabled', 'disabled');
-        addNewAddressButton.classList.add('inactive');
+        this.buttons.addInactivityOfNewAddressButton();
+        this.buttons.addInactivityOfEditButtons();
         const newAddressForm = document.querySelector('.new-address-form') as HTMLFormElement;
         this.addEventListenerToTheNewAddressForm(newAddressForm);
       });
@@ -334,7 +340,8 @@ export default class UserProfile {
                 }
               });
               this.buttons.removeInactivityOfNewAddressButton();
-              this.addEventListenerToTheEditForm();
+              this.buttons.addActivityOfEditButtons();
+              this.addEventListenerToTheEditForm(newAddressEmpty, this.addresses.length - 1);
             } else {
               console.log('newAddressFormContainer is not a child of addressesSection');
             }
@@ -482,124 +489,144 @@ export default class UserProfile {
     });
   }
 
-  addEventListenerToTheEditForm() {
+  addEventListenerToTheEditForms() {
     const addressesEntries = document.querySelectorAll('.address-entry');
 
-    addressesEntries.forEach((entry) => {
-      const editButton = entry.querySelector('.edit-button');
-      if (editButton) {
-        editButton.addEventListener('click', () => {
-          const address = this.addressSection.returnAddress();
-          if (address) {
-            const newAddressFormContainer = this.newAddressForm.renderNewAddressForm(address) as HTMLElement;
-            const newAddressForm = newAddressFormContainer.querySelector('.new-address-form') as HTMLFormElement;
-            const addressSection = document.querySelector('.addresses-section');
-            addressSection?.replaceChild(newAddressFormContainer, entry);
-            this.buttons.addInactivityOfNewAddressButton();
-            this.buttons.addInactivityOfEditButtons();
+    addressesEntries.forEach((entry, index) => {
+      this.addEventListenerToTheEditForm(entry, index);
+    });
+  }
 
-            this.newAddressForm.addEventListenersToTheIconsContainer();
+  addEventListenerToTheEditForm(entry: Element, index: number) {
+    const editButton = entry.querySelector('.edit-button');
+    if (editButton) {
+      editButton.addEventListener('click', () => {
+        const address = this.addresses?.[index];
+        if (address) {
+          const newAddressFormContainer = this.newAddressForm.renderNewAddressForm(address) as HTMLElement;
+          const newAddressForm = newAddressFormContainer.querySelector('.new-address-form') as HTMLFormElement;
+          const addressSection = document.querySelector('.addresses-section');
+          addressSection?.replaceChild(newAddressFormContainer, entry);
+          this.buttons.addInactivityOfNewAddressButton();
+          this.buttons.addInactivityOfEditButtons();
 
-            const id = this.controller.getID();
+          this.newAddressForm.addEventListenersToTheIconsContainer();
 
-            this.controller.checkValidationAddress(newAddressForm);
+          const id = this.controller.getID();
 
-            newAddressForm.addEventListener('submit', async (event) => {
-              event.preventDefault();
+          this.controller.checkValidationAddress(newAddressForm);
 
-              if (newAddressForm.reportValidity()) {
-                const newStreetName = (document.querySelector('.new-address-form .input-street') as HTMLInputElement)
-                  .value;
-                const newCity = (document.querySelector('.new-address-form .input-city') as HTMLInputElement).value;
-                const newPostalCode = (document.querySelector('.new-address-form .input-code') as HTMLInputElement)
-                  .value;
-                const newCountry = (document.querySelector('.new-address-form .input-country') as HTMLInputElement)
-                  .value;
-                let inputCountryCode = iso3166.whereCountry(newCountry)?.alpha2 || 'UNDEFINED';
-                if (newCountry === 'United States') {
-                  inputCountryCode = 'US';
-                }
+          newAddressForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-                let addressType;
-                let isDefault: boolean = false;
-                const iconsAddressContainer = document.querySelector(
-                  '.billing-shipping-icons-container'
-                ) as HTMLElement;
-                const addressId = this.addresses?.find((element) => address.id === element.id)?.id;
+            if (newAddressForm.reportValidity()) {
+              const newStreetName = (document.querySelector('.new-address-form .input-street') as HTMLInputElement)
+                .value;
+              const newCity = (document.querySelector('.new-address-form .input-city') as HTMLInputElement).value;
+              const newPostalCode = (document.querySelector('.new-address-form .input-code') as HTMLInputElement).value;
+              const newCountry = (document.querySelector('.new-address-form .input-country') as HTMLInputElement).value;
+              let inputCountryCode = iso3166.whereCountry(newCountry)?.alpha2 || 'UNDEFINED';
+              if (newCountry === 'United States') {
+                inputCountryCode = 'US';
+              }
 
-                if (this.version && id && addressId) {
-                  await this.controller.changeAddress(
-                    this.version,
-                    id,
-                    addressId,
-                    newStreetName,
-                    newPostalCode,
-                    newCity,
-                    inputCountryCode
-                  );
-                  await this.getCustomerData();
-                  if (this.addresses) {
-                    const allImages = iconsAddressContainer.querySelectorAll('img');
-                    for (const img of allImages) {
-                      if (img.classList.contains('address-clicked') && this.version && addressId) {
-                        if (img.id === 'billing-address') {
-                          await this.controller.setBillingAddress(this.version, id, addressId);
-                          await this.getCustomerData();
-                          addressType = 'billing';
-                          isDefault = await this.checkDefaultAddress(this.version, id, addressId, 'billing');
-                        } else if (img.id === 'shipping-address') {
-                          await this.controller.setShippingAddress(this.version, id, addressId);
-                          await this.getCustomerData();
-                          isDefault = await this.checkDefaultAddress(this.version, id, addressId, 'shipping');
-                          addressType = 'shipping';
-                        } else if (img.id === 'general-address') {
-                          await this.controller.setBillingAddress(this.version, id, addressId);
-                          await this.getCustomerData();
-                          await this.controller.setShippingAddress(this.version, id, addressId);
-                          await this.getCustomerData();
-                          isDefault = await this.checkDefaultAddress(this.version, id, addressId, 'general');
-                          addressType = 'general';
-                        }
+              let addressType;
+              let isDefault: boolean = false;
+              const iconsAddressContainer = document.querySelector('.billing-shipping-icons-container') as HTMLElement;
+              const addressId = this.addresses?.find((element) => address.id === element.id)?.id;
+
+              if (this.version && id && addressId) {
+                await this.controller.changeAddress(
+                  this.version,
+                  id,
+                  addressId,
+                  newStreetName,
+                  newPostalCode,
+                  newCity,
+                  inputCountryCode
+                );
+                await this.getCustomerData();
+                if (this.addresses) {
+                  const allImages = iconsAddressContainer.querySelectorAll('img');
+                  for (const img of allImages) {
+                    if (img.classList.contains('address-clicked') && this.version && addressId) {
+                      if (img.id === 'billing-address') {
+                        await this.controller.setBillingAddress(this.version, id, addressId);
+                        await this.getCustomerData();
+                        addressType = 'billing';
+                        isDefault = await this.checkDefaultAddress(this.version, id, addressId, 'billing');
+                      } else if (img.id === 'shipping-address') {
+                        await this.controller.setShippingAddress(this.version, id, addressId);
+                        await this.getCustomerData();
+                        isDefault = await this.checkDefaultAddress(this.version, id, addressId, 'shipping');
+                        addressType = 'shipping';
+                      } else if (img.id === 'general-address') {
+                        await this.controller.setBillingAddress(this.version, id, addressId);
+                        await this.getCustomerData();
+                        await this.controller.setShippingAddress(this.version, id, addressId);
+                        await this.getCustomerData();
+                        isDefault = await this.checkDefaultAddress(this.version, id, addressId, 'general');
+                        addressType = 'general';
                       }
                     }
-                    this.renderSuccessfulMessage(newAddressForm);
-                    const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
-                    if (addressType && this.addresses) {
-                      if (addressesSection.contains(newAddressFormContainer)) {
-                        const updatedAddress = this.addresses.find((element) => element.id === addressId) as Address;
-                        const newAddressEmpty = this.addressSection.renderAddressSection(
-                          this.addresses[this.addresses.indexOf(updatedAddress)],
-                          addressType,
-                          isDefault
-                        );
-                        newAddressEmpty.classList.remove('hidden');
-                        addressesSection.replaceChild(newAddressEmpty, newAddressFormContainer);
-                        this.addEventListenerToTheToggleButton();
-                        const deleteButton = newAddressEmpty.querySelector('.delete-img');
-                        deleteButton?.addEventListener('click', async () => {
-                          await this.getCustomerData();
-                          if (this.addresses && this.version && id) {
-                            if (addressId) {
-                              await this.controller.removeAddress(this.version, id, addressId);
-                              await this.getCustomerData();
-                              addressesSection.removeChild(newAddressEmpty);
-                            }
+                  }
+                  this.renderSuccessfulMessage(newAddressForm);
+                  const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
+                  if (addressType && this.addresses) {
+                    if (addressesSection.contains(newAddressFormContainer)) {
+                      const updatedAddress = this.addresses.find((element) => element.id === addressId) as Address;
+                      const newAddressEmpty = this.addressSection.renderAddressSection(
+                        this.addresses[this.addresses.indexOf(updatedAddress)],
+                        addressType,
+                        isDefault
+                      );
+                      newAddressEmpty.classList.remove('hidden');
+                      addressesSection.replaceChild(newAddressEmpty, newAddressFormContainer);
+                      this.addEventListenerToTheToggleButton();
+                      const deleteButton = newAddressEmpty.querySelector('.delete-img');
+                      deleteButton?.addEventListener('click', async () => {
+                        await this.getCustomerData();
+                        if (this.addresses && this.version && id) {
+                          if (addressId) {
+                            await this.controller.removeAddress(this.version, id, addressId);
+                            await this.getCustomerData();
+                            addressesSection.removeChild(newAddressEmpty);
                           }
-                        });
-                        this.buttons.removeInactivityOfNewAddressButton();
-                        this.buttons.addActivityOfEditButtons();
-                        this.addEventListenerToTheEditForm();
-                      } else {
-                        console.log('newAddressFormContainer is not a child of addressesSection');
-                      }
+                        }
+                      });
+                      this.buttons.removeInactivityOfNewAddressButton();
+                      this.buttons.addActivityOfEditButtons();
+                      this.getCustomerData();
+                      this.addEventListenerToTheEditForm(newAddressEmpty, this.addresses.indexOf(updatedAddress));
+                    } else {
+                      console.log('newAddressFormContainer is not a child of addressesSection');
                     }
                   }
                 }
               }
+            }
+          });
+          const closeButton = newAddressFormContainer.querySelector('.close-icon-img');
+          if (closeButton) {
+            closeButton.addEventListener('click', () => {
+              const { addressType, isDefault } = this.returnAddressType(address);
+              this.rerenderAddressEntry(newAddressFormContainer, address, addressType, isDefault);
+              this.buttons.removeInactivityOfNewAddressButton();
+              this.buttons.addActivityOfEditButtons();
             });
           }
-        });
-      }
-    });
+        }
+      });
+    }
+  }
+
+  rerenderAddressEntry(form: HTMLElement, address: Address, type: string, isDefault: boolean) {
+    const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
+    const oldAddress = this.addressSection.renderAddressSection(address, type, isDefault);
+    addressesSection.replaceChild(oldAddress, form);
+    oldAddress.classList.remove('hidden');
+    if (this.addresses) {
+      this.addEventListenerToTheEditForm(oldAddress, this.addresses.indexOf(address));
+    }
   }
 }
