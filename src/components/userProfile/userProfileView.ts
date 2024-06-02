@@ -144,35 +144,7 @@ export default class UserProfile {
   }
 
   addEventListeners() {
-    const toggleButton = document.querySelector('.toggle-button');
-    let isRotated = false;
-    const addressEntries = document.querySelectorAll('.address-entry');
-
-    toggleButton?.addEventListener('click', () => {
-      isRotated = !isRotated;
-      toggleButton.classList.toggle('rotate', isRotated);
-
-      // const savedAddressesTitle = document.querySelector('.saved-addresses-title');
-
-      const addNewAddressButton = document.querySelector('.add-new-address-button');
-
-      addressEntries.forEach((entry) => {
-        entry.classList.toggle('hidden', !isRotated);
-      });
-
-      addNewAddressButton?.classList.toggle('hidden', !isRotated);
-
-      // if (isRotated && savedAddressesTitle) {
-      //   const editButton = this.renderEditButton();
-      //   // this.addEventListenerToTheEditButton(editButton, addressEntries[0], addressEntries[1]);
-      //   savedAddressesTitle.appendChild(editButton);
-      // } else if (savedAddressesTitle) {
-      //   const editButton = savedAddressesTitle.querySelector('.edit-button');
-      //   if (editButton) {
-      //     savedAddressesTitle.removeChild(editButton);
-      //   }
-      // }
-    });
+    this.addEventListenerToTheToggleButton();
 
     const editButton = document.querySelector('.edit-button') as HTMLElement;
     const personalInfoSection = document.querySelector('.personal-info-section') as HTMLElement;
@@ -196,6 +168,8 @@ export default class UserProfile {
       addNewAddressButton.addEventListener('click', () => {
         const newAddressFormContainer = this.newAddressForm.renderNewAddressForm();
         addressesSectionElement.insertBefore(newAddressFormContainer, addNewAddressButton);
+        addNewAddressButton.setAttribute('disabled', 'disabled');
+        addNewAddressButton.classList.add('inactive');
         const newAddressForm = document.querySelector('.new-address-form') as HTMLFormElement;
         this.addEventListenerToTheNewAddressForm(newAddressForm);
       });
@@ -204,8 +178,7 @@ export default class UserProfile {
     const id = this.controller.getID();
 
     const deleteButtons = document.querySelectorAll('.delete-img') as NodeListOf<HTMLElement>;
-    for (let i = 0; i < deleteButtons.length; i += 1) {
-      const deleteButton = deleteButtons[i];
+    deleteButtons.forEach((deleteButton, i) => {
       deleteButton.addEventListener('click', async () => {
         await this.getCustomerData();
         if (this.addresses && this.version && id) {
@@ -213,6 +186,7 @@ export default class UserProfile {
           const addressId = address.id;
           if (addressId) {
             await this.controller.removeAddress(this.version, id, addressId);
+            await this.getCustomerData();
 
             const buttonContainer = deleteButton.parentElement;
             const addressItem = buttonContainer?.parentElement;
@@ -225,7 +199,7 @@ export default class UserProfile {
           }
         }
       });
-    }
+    });
   }
 
   addEventListenerToTheEditButton(editButton: HTMLElement, container: Element, secondContainer?: Element) {
@@ -343,15 +317,32 @@ export default class UserProfile {
           this.renderSuccessfulMessage(form);
           const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
           const newAddressFormContainer = document.querySelector('.new-address-form-container') as HTMLElement;
-          if (addressType && isDefault && this.addresses) {
-            addressesSection.replaceChild(
-              this.addressSection.renderAddressSection(
+          if (addressType && this.addresses) {
+            if (addressesSection.contains(newAddressFormContainer)) {
+              const newAddressEmpty = this.addressSection.renderAddressSection(
                 this.addresses[this.addresses.length - 1],
                 addressType,
                 isDefault
-              ),
-              newAddressFormContainer
-            );
+              );
+              newAddressEmpty.classList.remove('hidden');
+              addressesSection.replaceChild(newAddressEmpty, newAddressFormContainer);
+              this.addEventListenerToTheToggleButton();
+              const deleteButton = newAddressEmpty.querySelector('.delete-img');
+              deleteButton?.addEventListener('click', async () => {
+                await this.getCustomerData();
+                if (this.addresses && this.version && id) {
+                  const addressId = this.addresses[this.addresses.length - 1].id;
+                  if (addressId) {
+                    await this.controller.removeAddress(this.version, id, addressId);
+                    await this.getCustomerData();
+                    addressesSection.removeChild(newAddressEmpty);
+                  }
+                }
+              });
+              this.buttons.removeInactivityOfNewAddressButton();
+            } else {
+              console.log('newAddressFormContainer is not a child of addressesSection');
+            }
           }
         }
       }
@@ -475,5 +466,24 @@ export default class UserProfile {
       return true;
     }
     return false;
+  }
+
+  addEventListenerToTheToggleButton() {
+    const toggleButton = document.querySelector('.toggle-button');
+    let isRotated = false;
+    const addressEntries = document.querySelectorAll('.address-entry');
+
+    toggleButton?.addEventListener('click', () => {
+      isRotated = !isRotated;
+      toggleButton.classList.toggle('rotate', isRotated);
+
+      const addNewAddressButton = document.querySelector('.add-new-address-button');
+
+      addressEntries.forEach((entry) => {
+        entry.classList.toggle('hidden', !isRotated);
+      });
+
+      addNewAddressButton?.classList.toggle('hidden', !isRotated);
+    });
   }
 }

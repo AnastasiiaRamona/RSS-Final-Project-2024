@@ -85,4 +85,10 @@ export default class Buttons {
     ]);
     return addNewAddressButton;
   }
+
+  removeInactivityOfNewAddressButton() {
+    const addNewAddressButton = document.querySelector('.add-new-address-button') as HTMLButtonElement;
+    addNewAddressButton.removeAttribute('disabled');
+    addNewAddressButton.classList.remove('inactive');
+  }
 }

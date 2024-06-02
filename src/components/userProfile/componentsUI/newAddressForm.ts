@@ -135,6 +135,7 @@ export default class NewAddressForm {
       const addressesSection = document.querySelector('.addresses-section') as HTMLElement;
       if (addressesSection) {
         addressesSection.removeChild(formContainer);
+        this.buttons.removeInactivityOfNewAddressButton();
       }
     });
 
