@@ -1,24 +1,8 @@
 import Toastify from 'toastify-js';
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
+import { BreadcrumbsInfo, CategoryMap } from './types';
 
-interface Category {
-  id: string;
-  name: { 'en-US': string };
-}
-interface BreadcrumbsInfo {
-  parentCategory: Category | null;
-  category: Category;
-}
-interface CategoryNode {
-  id: string;
-  name: string;
-  parent?: string;
-  children: CategoryMap;
-}
-interface CategoryMap {
-  [key: string]: CategoryNode;
-}
 export default class Catalog {
   controller: CatalogController;
 
@@ -39,19 +23,21 @@ export default class Catalog {
               class: 'catalog__filter',
             },
             [
-              HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
-              HTMLCreator.createElement('form', { class: 'catalog__sorting' }, [
-                HTMLCreator.createElement('label', { for: 'catalog__sorting', class: 'sorting__label' }, ['Sort']),
-                HTMLCreator.createElement(
-                  'select',
-                  { name: 'sort-param', id: 'catalog__sorting', class: 'sorting__select' },
-                  [
-                    HTMLCreator.createElement('option', { value: '' }, ['--sorting--']),
-                    HTMLCreator.createElement('option', { value: 'price desc' }, ['by descending price']),
-                    HTMLCreator.createElement('option', { value: 'price asc' }, ['by ascending price']),
-                    HTMLCreator.createElement('option', { value: 'name.en-US asc' }, ['by name']),
-                  ]
-                ),
+              HTMLCreator.createElement('div', { class: 'search-sort__wrapper' }, [
+                HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
+                HTMLCreator.createElement('form', { class: 'catalog__sorting' }, [
+                  HTMLCreator.createElement('label', { for: 'catalog__sorting', class: 'sorting__label' }, ['Sort']),
+                  HTMLCreator.createElement(
+                    'select',
+                    { name: 'sort-param', id: 'catalog__sorting', class: 'sorting__select' },
+                    [
+                      HTMLCreator.createElement('option', { value: '' }, ['--sorting--']),
+                      HTMLCreator.createElement('option', { value: 'price desc' }, ['by descending price']),
+                      HTMLCreator.createElement('option', { value: 'price asc' }, ['by ascending price']),
+                      HTMLCreator.createElement('option', { value: 'name.en-US asc' }, ['by name']),
+                    ]
+                  ),
+                ]),
               ]),
               (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
             ]

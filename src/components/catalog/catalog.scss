@@ -128,9 +128,8 @@
 .catalog__filter {
   @include flexbox();
   width: 75vw;
-  max-height: 20vh;
   align-items: stretch;
-  justify-content: space-around;
+  justify-content: space-evenly;
   gap: 2vh;
   padding: 10px;
   background-color: rgb(145, 189, 156, 0.8);
@@ -173,7 +172,6 @@
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items:normal;
-  font-size: 20px;
 }
 
 .quantity-or-size {
@@ -209,6 +207,7 @@
 
 .search__button {
   max-height: 5vh;
+  line-height:2vh;
 }
 
 
@@ -279,16 +278,13 @@
         border-left-color:rgba(145, 233, 167, 0.8);
       }
       &:hover{
-        background-color: green;
         box-shadow: 1px 3px 26px 5px rgba(0,0,0,0.81);
         
         &:before{
-          border-color:green;
           border-left-color:transparent;
           transition: all 0.5s linear;
          }
         &:after{
-          border-left-color:green;
           transition: all 0.5s linear;
         }
       }
@@ -371,15 +367,88 @@
   .catalog__category {
     max-width: 50vw;
   }
-}
-@media (max-width: 450px) {
+  .catalog__navigation {
+    max-width: 90vw;
+    flex-direction: column-reverse;
+    margin-left: 0px;
+  }
+  .breadcrumb, .catalog__search {
+    width: 80vw;
+    @include flexbox();
+    justify-content: flex-start;
+  }
+  .catalog__category {
+    font-size: 10px;
+  }
+  .product-card {
+    font-size: 10px;
+  }
+  .product-card__price {
+    font-size: 10px;
+  }
   .catalog__filter {
     font-size: 10px;
+    width: 90vw;
   }
   .catalog__filter h3, label {
     font-size: 10px;
+  }
+  .catalog__aside {
+    margin-left: 0px;
+  }
+}
+
+@media (max-width: 700px) {
+.category__element {
+  min-width: 18vw;
+}
+}
+@media (max-width: 600px) {
+  .quantity-or-size {
+    width: auto;
+  }
+  .catalog__reset-filter {
+    font-size: 8px;
+    height: 35px;
+  }
+  .color-of-toy {
+    min-width: 11vw;
+  }
+  .age {
+    min-width: 5vw;
+  }
+  .checkbox__price {
+    min-width: 15vw;
+  }
+  .checkbox__container {
+    gap: 5px;
+  }
+  .search__button {
+    font-size: 8px;
+  }
+  .search__input {
+    height: 15px;
+    font-size: 10px;
+  }
+  .price__input {
+    font-size: 8px;
+    width: 50px;
+  }
+  .sorting__select {
+   font-size: 10px;
+    width: 80px;
+  }
+}
+
+@media (max-width: 450px) {
+  .catalog__filter {
+    font-size: 8px;
+  }
+  .catalog__filter h3, label {
+    font-size: 8px;
   }
   .catalog__category {
     max-width: 50vw;
   }
 }
+
