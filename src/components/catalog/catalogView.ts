@@ -63,7 +63,9 @@ export default class Catalog {
             ]
           ),
         ]),
-        HTMLCreator.createElement('div', { class: 'breadcrumb' }),
+        HTMLCreator.createElement('div', { class: 'breadcrumb' }, [
+          HTMLCreator.createElement('div', { class: 'breadcrumb__title breadcrumb__element' }, ['🛍️ Catalog']),
+        ]),
         HTMLCreator.createElement('div', { class: 'core__wrapper' }, [
           (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
             HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
