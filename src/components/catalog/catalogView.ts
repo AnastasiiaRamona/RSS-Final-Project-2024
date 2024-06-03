@@ -1,3 +1,4 @@
+import Toastify from 'toastify-js';
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
 
@@ -93,6 +94,7 @@ export default class Catalog {
 
     categoryAll.forEach((category) => {
       category.addEventListener('click', (event) => {
+        console.log(event.target);
         this.showProductsOfCategory(event);
       });
     });
@@ -120,22 +122,28 @@ export default class Catalog {
   }
 
   async showProductsOfCategory(event: Event) {
-    const productOfCategory = await this.controller.getProductsOfCategory(event);
-    const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
-    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
-    const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
-    this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-    if (productOfCategory && Array.isArray(productOfCategory)) {
-      const catalog = document.querySelector('.catalog__gallery');
-      if (catalog) {
-        catalog.innerHTML = '';
-        productOfCategory.forEach((product) => {
-          const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
-          catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
-        });
+    try {
+      const productOfCategory = await this.controller.getProductsOfCategory(event);
+      const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
+      const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+      const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+      this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
+      if (productOfCategory && Array.isArray(productOfCategory)) {
+        const catalog = document.querySelector('.catalog__gallery');
+        if (catalog) {
+          catalog.innerHTML = '';
+          productOfCategory.forEach((product) => {
+            const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
+            catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
+          });
+        }
+      }
+      this.generateBreadcrumbs(event);
+    } catch (error) {
+      if (error instanceof Error) {
+        this.handleResponse(error.message);
       }
     }
-    this.generateBreadcrumbs(event);
   }
 
   async getCategory(category: HTMLElement) {
@@ -188,27 +196,33 @@ export default class Catalog {
       container.append(breadcrumbTitle);
     });
     container.append(breadcrumbTitle);
-    const breadcrumbsOfCategory = (await this.controller.getBreadcrumbsOfCategory(event)) as BreadcrumbsInfo;
-    const breadCrumbsCategory = HTMLCreator.createElement(
-      'div',
-      { class: 'breadcrumbs__category breadcrumb__element', id: breadcrumbsOfCategory.category?.id },
-      [`${breadcrumbsOfCategory.category?.name[`en-US`]}`]
-    );
-    breadCrumbsCategory.addEventListener('click', (eventBreadcrumbs) => {
-      this.showProductsOfCategory(eventBreadcrumbs);
-    });
-    if (breadcrumbsOfCategory.parentCategory) {
-      const breadCrumbsParentCategory = HTMLCreator.createElement(
+    try {
+      const breadcrumbsOfCategory = (await this.controller.getBreadcrumbsOfCategory(event)) as BreadcrumbsInfo;
+      const breadCrumbsCategory = HTMLCreator.createElement(
         'div',
-        { class: 'breadcrumbs__parent-category breadcrumb__element', id: breadcrumbsOfCategory.parentCategory.id },
-        [`${breadcrumbsOfCategory.parentCategory?.name[`en-US`]}`]
+        { class: 'breadcrumbs__category breadcrumb__element', id: breadcrumbsOfCategory.category?.id },
+        [`${breadcrumbsOfCategory.category?.name[`en-US`]}`]
       );
-      breadCrumbsParentCategory.addEventListener('click', (eventBreadcrumbs) => {
+      breadCrumbsCategory.addEventListener('click', (eventBreadcrumbs) => {
         this.showProductsOfCategory(eventBreadcrumbs);
       });
-      container.append(breadCrumbsParentCategory);
+      if (breadcrumbsOfCategory.parentCategory) {
+        const breadCrumbsParentCategory = HTMLCreator.createElement(
+          'div',
+          { class: 'breadcrumbs__parent-category breadcrumb__element', id: breadcrumbsOfCategory.parentCategory.id },
+          [`${breadcrumbsOfCategory.parentCategory?.name[`en-US`]}`]
+        );
+        breadCrumbsParentCategory.addEventListener('click', (eventBreadcrumbs) => {
+          this.showProductsOfCategory(eventBreadcrumbs);
+        });
+        container.append(breadCrumbsParentCategory);
+      }
+      container.append(breadCrumbsCategory);
+    } catch (error) {
+      if (error instanceof Error) {
+        this.handleResponse(error.message);
+      }
     }
-    container.append(breadCrumbsCategory);
   }
 
   async filter(
@@ -344,5 +358,30 @@ export default class Catalog {
       }
     });
     return container;
+  }
+
+  showResponseMessage(text: string) {
+    Toastify({
+      text,
+      newWindow: true,
+      className: 'info',
+      close: true,
+      stopOnFocus: true,
+      offset: {
+        y: 200,
+        x: 0,
+      },
+      duration: 5000,
+    }).showToast();
+  }
+
+  handleResponse(message: string) {
+    if (message) {
+      if (message === 'There is already an existing customer with the provided email.') {
+        this.showResponseMessage(
+          'A user with the specified email already exists. Enter a different email or try to log in.'
+        );
+      } else this.showResponseMessage(message);
+    }
   }
 }
