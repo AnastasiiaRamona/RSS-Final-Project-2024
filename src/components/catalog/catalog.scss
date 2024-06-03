@@ -1,19 +1,24 @@
+
 .catalog__wrapper {
   @include flexbox();
   gap: 5px;
+
+  input {
+    border: none;
+  }
 }
 
 .core__wrapper {
   @include flexbox();
   align-items:flex-start;
   padding: 20px 5px;
-  gap: 5px;
-  width: 95vw;
-  justify-content: flex-start;
+  gap:2vw;
+  width: 97vw;
 }
 
 .catalog__gallery {
   @include flexbox();
+  width: 75vw;
   flex-wrap: wrap;
   gap: 10px;
 }
@@ -117,7 +122,7 @@
 }
 
 .catalog__aside {
-  margin-left: 10px;
+  margin-left: 15vw;
   padding-top: 20px;
   @include flexbox();
   align-items: start;
@@ -125,32 +130,16 @@
 }
 
 .catalog__filter {
-  @include size(95vw, 30vh);
   @include flexbox();
-  max-height: 20vh;
+  width: 75vw;
   align-items: stretch;
-  justify-content: space-around;
+  justify-content: space-evenly;
   gap: 2vh;
   padding: 10px;
   background-color: rgb(145, 189, 156, 0.8);
   border-radius: 40px;
   border: 2px solid rgb(0, 84, 60);
   font-size: 20px;
-}
-
-.catalog__search {
-  width: 10vw;
-  height: 100%;
-}
-
-.search__input {
-  width: 100%;
-  padding-left: 10px;
-  border-radius: 20px;
-}
-
-.search__button {
-  max-height: 7vh;
 }
 
 .catalog__sorting {
@@ -172,68 +161,144 @@
 }
 
 .price__input {
-  width: 100%;
+  width: 60%;
   padding-left: 10px;
   border-radius: 20px;
 }
 
 .checkbox__container {
   @include flexbox();
-  align-items:normal;
+  align-items:flex-start;
   gap: 10px;
+  color: $primary-color;
 }
 .checkbox__element {
   @include flexbox(column);
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items:normal;
-  font-size: 20px;
 }
 
-.breadcrumb {
+.quantity-or-size {
   @include flexbox();
-  width: 90vw;
-  min-height: 10vh;
-  border: 2px solid rgb(0, 84, 60);
-  border-radius: 40px;
-  background-color: rgb(145, 189, 156, 0.8);
-  gap: 2px;
+  width: 10vw;
+  gap: 3px;
+}
+
+.catalog__navigation {
+  margin-left: 15vw;
+  width: 75vw;
+  @include flexbox();
+}
+
+.catalog__search {
+  @include flexbox();
+  width: 30%;
+  height: 100%;
+  font-size: 1.2vw;
+  font-weight: bold;
+}
+
+.search__wrapper {
+  @include flexbox();
+  gap: 10px;
+}
+
+.search__input {
+  width: 50%;
+  padding-left: 10px;
+  margin-right: 20px;
+  border-radius: 20px;
+}
+
+.search__button {
+  max-height: 5vh;
+  line-height:2vh;
+}
+
+
+.breadcrumb {
+  width: 70%;
+  list-style:none;
+  display: inline-block;
 }
 
 .breadcrumb__element {
-  width: 20vw;
-  font-size: 2vw;
   cursor: pointer;
-  padding: 5px;
+  float:left;
+  font-size: 1.5vw;
+  color:black;
+  font-weight: bold;
+  display:block;
+  background-color: rgba(145, 233, 167, 0.8);
+  text-decoration: none;
+  position:relative;
+  height: 50px;
+  line-height:50px;
+  padding: 0 2vw 0 1vw;
+  text-align: center;
+  margin-right: 23px;
   transition: all 0.5s linear;
-  &:hover {
-    transform: scale(1.03);
-    box-shadow: 1px 3px 26px 5px rgba(0,0,0,0.81);
-    background-color: rgba(145, 233, 167, 0.8);
-  }
-}
-
-.breadcrumb__title {
-  border-radius: 50px 0 0 50px; 
-  border: 2px solid rgb(0, 84, 60);
-  padding-left: 15px;
-}
-
-.breadcrumbs__parent-category {
-  border: 2px solid rgb(0, 84, 60);
-}
-
-.breadcrumbs__category {
-  border: 2px solid rgb(0, 84, 60);
-  border-radius: 0 50px 50px 0;
-  padding-right: 15px;
-}
-
-
+    &:nth-child(even){
+        background-color: rgb(0, 84, 60);
+        &:before{
+          border-color:rgb(0, 84, 60);
+          border-left-color:transparent;
+         }
+        &:after{
+          border-left-color:rgb(0, 84, 60);
+        }
+      }
+    &:first-child{
+        padding-left:15px;
+        border-radius: (4px 0 0 4px);
+        &:before{
+          border:none;
+         }
+      }
+    &:last-child{
+        padding-right:15px;
+        border-radius: (0 4px 4px 0);
+        &:after{
+          border:none;
+         }
+    }
+    
+      &:before,
+      &:after{
+        content: "";
+        position:absolute;
+        top: 0;
+        border:0 solid rgba(145, 233, 167, 0.8);
+        border-width:25px 10px;
+        width: 0;
+        height: 0;
+      }
+      &:before{
+        left:-20px;
+        border-left-color:transparent;
+      }
+      &:after{
+        left:100%;
+        border-color:transparent;
+        border-left-color:rgba(145, 233, 167, 0.8);
+      }
+      &:hover{
+        box-shadow: 1px 3px 26px 5px rgba(0,0,0,0.81);
+        
+        &:before{
+          border-left-color:transparent;
+          transition: all 0.5s linear;
+         }
+        &:after{
+          transition: all 0.5s linear;
+        }
+      }
+    }
 
 .catalog__category {
   max-width: 12vw;
-  max-height: 90vh;
+  max-height: 100vh;
   @include flexbox(column);
   justify-content: flex-start;
   gap: 2vh;
@@ -302,5 +367,94 @@
 .category__sub-element:hover {
   color:rgb(129, 18, 112, 0.7);
   background-color: rgba(145, 233, 167);
+}
+
+@media (max-width: 1200px) {
+  .catalog__category {
+    max-width: 50vw;
+  }
+  .catalog__navigation {
+    max-width: 90vw;
+    flex-direction: column-reverse;
+    margin-left: 0px;
+  }
+  .breadcrumb, .catalog__search {
+    width: 80vw;
+    @include flexbox();
+    justify-content: flex-start;
+  }
+  .catalog__category {
+    font-size: 10px;
+  }
+  .product-card {
+    font-size: 10px;
+  }
+  .product-card__price {
+    font-size: 10px;
+  }
+  .catalog__filter {
+    font-size: 10px;
+    width: 90vw;
+  }
+  .catalog__filter h3, label {
+    font-size: 10px;
+  }
+  .catalog__aside {
+    margin-left: 0px;
+  }
+}
+
+@media (max-width: 700px) {
+.category__element {
+  min-width: 18vw;
+}
+}
+@media (max-width: 600px) {
+  .quantity-or-size {
+    width: auto;
+  }
+  .catalog__reset-filter {
+    font-size: 8px;
+    height: 35px;
+  }
+  .color-of-toy {
+    min-width: 11vw;
+  }
+  .age {
+    min-width: 5vw;
+  }
+  .checkbox__price {
+    min-width: 15vw;
+  }
+  .checkbox__container {
+    gap: 5px;
+  }
+  .search__button {
+    font-size: 8px;
+  }
+  .search__input {
+    height: 15px;
+    font-size: 10px;
+  }
+  .price__input {
+    font-size: 8px;
+    width: 50px;
+  }
+  .sorting__select {
+   font-size: 10px;
+    width: 80px;
+  }
+}
+
+@media (max-width: 450px) {
+  .catalog__filter {
+    font-size: 8px;
+  }
+  .catalog__filter h3, label {
+    font-size: 8px;
+  }
+  .catalog__category {
+    max-width: 50vw;
+  }
 }
 
