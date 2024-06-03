@@ -113,6 +113,7 @@ export default class NewAddressForm {
       ]),
 
       HTMLCreator.createElement('div', { class: 'billing-shipping-icons-container' }, [
+        'Change address type:',
         addressIconBilling,
         addressIconShipping,
         HTMLCreator.createElement('img', {
@@ -122,19 +123,18 @@ export default class NewAddressForm {
           id: 'general-address',
           title: 'General address',
         }),
+        HTMLCreator.createElement('div', { class: 'checkbox-container' }, [
+          HTMLCreator.createElement('input', {
+            type: 'checkbox',
+            id: 'defaultAddress',
+            name: 'defaultAddress',
+            class: 'custom-checkbox',
+          }),
+          HTMLCreator.createElement('label', { for: 'defaultAddress', class: 'custom-label' }, ['Default']),
+        ]),
       ]),
 
-      HTMLCreator.createElement('div', { class: 'checkbox-container' }, [
-        HTMLCreator.createElement('input', {
-          type: 'checkbox',
-          id: 'defaultAddress',
-          name: 'defaultAddress',
-          class: 'custom-checkbox',
-        }),
-        HTMLCreator.createElement('label', { for: 'defaultAddress', class: 'custom-label' }, ['Set as default']),
-      ]),
-
-      HTMLCreator.createElement('div', {}, [this.buttons.renderSubmitButton()]),
+      HTMLCreator.createElement('div', {}, ['Submit', this.buttons.renderSubmitButton()]),
     ]) as HTMLFormElement;
 
     const closeButton = this.buttons.renderCloseButton();

@@ -30,19 +30,9 @@ export default class ChangePasswordForm {
         }) as HTMLInputElement,
         resetButton,
         submitButton,
+        closeButton,
       ]),
-      closeButton,
     ]) as HTMLFormElement;
-
-    const securitySettingsSection = document.querySelector('.security-settings-section') as HTMLElement;
-    closeButton.addEventListener('click', () => {
-      const changePasswordButtonResult = this.buttons.renderChangePasswordButton();
-      securitySettingsSection.replaceChild(changePasswordButtonResult, form);
-      changePasswordButtonResult.addEventListener('click', () => {
-        const changePasswordForm = this.renderChangePasswordForm();
-        securitySettingsSection.replaceChild(changePasswordForm, changePasswordButtonResult);
-      });
-    });
 
     const newPasswordInput = form.querySelector('#new-password') as HTMLInputElement;
 
