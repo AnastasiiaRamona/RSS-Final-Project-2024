@@ -1,0 +1,97 @@
+
+.login__main-container {
+  @include size(100vw, auto);
+  @include flexbox(row, center, center);
+}
+
+.login__wrapper {
+  @include flexbox();
+  margin-top: 20svh;
+}
+
+.login__form {
+  @include flexbox(column);
+  gap: 7px;
+  @include size(470px, auto);
+  transition: transform 0.2s ease-in-out;
+}
+
+.login__form:hover,
+.login__main-container__image:hover {
+  transform: translateY(-5px);
+}
+
+.login__password-wrapper {
+  @include flexbox();
+  position: relative;
+  
+}
+.login__password-control {
+  position: absolute;
+  left: 300px;
+  width: 50px;
+}
+
+.login__button-active {
+  color: $primary-color;
+}
+
+.login__input-invalid {
+  border-color: $error-color;
+}
+
+.login__password-hide {
+  fill: $secondary-color;
+}
+
+.login__error-hide {
+  display: none;
+}
+
+.login__password-error,
+.login__email-error {
+  color: $error-color;
+  background-color: $light;
+  padding: 2px;
+  border-radius: 5px;
+}
+
+.login__main-container__image {
+  @include size(auto, 30%);
+  position: absolute;
+  z-index: 100;
+  top: 12%;
+  left: 20%;
+  transform: rotate(10deg);
+  transition: transform 0.2s ease-in-out;
+}
+
+
+@media (max-width: 620px) {
+  .login__password-control {
+    left: 48svw;
+  }
+}
+
+@media (max-width: 512px) {
+  button.login__password-control svg {
+    @include size(2vw, 2vh);
+  }
+
+  button.login__password-control {
+    padding: 0px;
+    @include size(8vw, 5vh);
+  }
+}
+
+@media (max-width: 450px) {
+  button.login__password-control {
+    left: 220px;
+  }
+}
+
+@media (max-width: 409px) {
+  button.login__password-control {
+    left: 220px;
+  }
+}

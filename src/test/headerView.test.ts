@@ -1,0 +1,102 @@
+import Header from '../components/header/headerView';
+import HTMLCreation from '../components/HTMLCreation';
+
+jest.mock('../components/HTMLCreation');
+jest.mock('../assets/dog.png', () => 'dog.png');
+jest.mock('../assets/cat.png', () => 'cat.png');
+
+describe('Header', () => {
+  let header: Header;
+
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    header = new Header();
+  });
+
+  test('Should render the header with login button when not logged in', () => {
+    (HTMLCreation.createElement as jest.Mock).mockImplementation(
+      (tag: string, attrs: Record<string, string>, children: HTMLElement[]) => {
+        const element = document.createElement(tag);
+        if (attrs) {
+          Object.keys(attrs).forEach((key) => {
+            element.setAttribute(key, attrs[key]);
+          });
+        }
+        if (children) {
+          children.forEach((child: HTMLElement | string) => {
+            if (typeof child === 'string') {
+              element.textContent = child;
+            } else {
+              element.appendChild(child);
+            }
+          });
+        }
+        return element;
+      }
+    );
+
+    const headerElement = header.renderHeader(false);
+    document.body.appendChild(headerElement);
+
+    expect(document.querySelector('.upper-dashboard__logout-button')?.textContent).toBe('Login');
+  });
+
+  test('Should render the header with logout button when logged in', () => {
+    const headerElement = header.renderHeader(true);
+    document.body.appendChild(headerElement);
+
+    expect(document.querySelector('.upper-dashboard__logout-button')?.textContent).toBe('Log out');
+  });
+
+  test('Should change login button text to "⬅ Back"', () => {
+    document.body.innerHTML = `
+      <button class="upper-dashboard__logout-button">Login</button>
+    `;
+    header.changeLoginButtonToBackButton();
+    expect(document.querySelector('.upper-dashboard__logout-button')?.textContent).toBe('⬅ Back');
+  });
+
+  test('Should change registration button text to "⬅ Back"', () => {
+    document.body.innerHTML = `
+      <button class="upper-dashboard__register-button">Register</button>
+    `;
+    header.changeRegistrationButtonToBackButton();
+    expect(document.querySelector('.upper-dashboard__register-button')?.textContent).toBe('⬅ Back');
+  });
+
+  test('Should add a main page button and dispatch event on click', () => {
+    document.body.innerHTML = `
+      <div class="upper-dashboard__buttons"></div>
+    `;
+    const dispatchEventMock = jest.fn();
+    document.body.dispatchEvent = dispatchEventMock;
+
+    header.addMainPageButton();
+
+    const mainPageButton = document.querySelector('.main-page-button') as HTMLButtonElement;
+    expect(mainPageButton).not.toBeNull();
+    expect(mainPageButton?.textContent).toBe('Main page 🏠');
+
+    mainPageButton?.click();
+    expect(dispatchEventMock).toHaveBeenCalledWith(expect.objectContaining({ type: 'mainPageEvent' }));
+  });
+
+  test('Should add event listeners to login and registration buttons', () => {
+    document.body.innerHTML = `
+      <button class="upper-dashboard__logout-button">Login</button>
+      <button class="upper-dashboard__register-button">Register</button>
+    `;
+    const dispatchEventMock = jest.fn();
+    document.body.dispatchEvent = dispatchEventMock;
+
+    header.addEventListeners();
+
+    const loginButton = document.querySelector('.upper-dashboard__logout-button') as HTMLButtonElement;
+    loginButton?.click();
+    expect(dispatchEventMock).toHaveBeenCalledWith(expect.objectContaining({ type: 'loginEvent' }));
+
+    const registrationButton = document.querySelector('.upper-dashboard__register-button') as HTMLButtonElement;
+    registrationButton?.click();
+    expect(dispatchEventMock).toHaveBeenCalledWith(expect.objectContaining({ type: 'registrationEvent' }));
+  });
+});

@@ -1,0 +1,4 @@
+.label {
+  @include font($primary-font-family, clamp(10px, 7vw, 20px), 600, 1.5, $white);
+  margin-top: 10px;
+}

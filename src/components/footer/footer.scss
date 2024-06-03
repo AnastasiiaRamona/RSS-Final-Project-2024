@@ -1,0 +1,33 @@
+
+.footer-dashboard {
+  z-index: 100;
+  @include image('./assets/background-image-2.jpg', 100vw, 110px);
+  border-top: 1px solid $white;
+  @include flexbox(row, space-between, center);
+  color: $white;
+  @include font($third-font-family, medium, normal, normal, $white);
+  padding: 5px 20px;
+}
+
+.footer-dashboard__links {
+  @include flexbox(column, center, flex-start);
+}
+
+.footer__link-rsschool {
+  @include flexbox(row, space-between, center);
+  gap: 5px;
+}
+
+.footer__icon {
+  @include size(auto, 8vh);
+}
+
+@media (max-width: 540px) {
+  .footer__icon {
+    height: 4vh;
+  }
+
+  .footer-dashboard {
+    font-size: xx-small;
+  }
+}

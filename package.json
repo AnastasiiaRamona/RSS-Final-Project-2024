@@ -2,12 +2,13 @@
   "devDependencies": {
     "@types/body-parser": "^1.19.5",
     "@types/jest": "^29.5.12",
+    "@types/node-fetch": "^2.6.11",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^6.10.0",
-    "dotenv-webpack": "^8.1.0",
+    "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^18.0.0",
@@ -20,6 +21,8 @@
     "husky": "^9.0.11",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "jest-fetch-mock": "^3.0.3",
+    "jest-transform-stub": "^2.0.0",
     "mini-css-extract-plugin": "^2.9.0",
     "prettier": "^3.2.5",
     "sass": "^1.75.0",
@@ -43,11 +46,20 @@
     "lint": " eslint -c ./.eslintrc.json . --ext .ts --fix ",
     "format": "prettier **/*.ts --write --config ./.prettierrc.json",
     "ci:format": "prettier **/*.ts --check --config ./.prettierrc.json",
-    "test": "jest",
+    "test": "jest --coverage",
     "prepare": "husky"
   },
   "validate-branch-name": {
     "pattern": "^RSS-ECOMM-[1-4]_[0-9]{2}$",
     "errorMsg": "The name of the branch doesn't follow repository rules"
+  },
+  "dependencies": {
+    "@commercetools/platform-sdk": "^7.8.0",
+    "@commercetools/sdk-auth": "^4.0.1",
+    "@commercetools/sdk-client": "^3.0.0",
+    "@commercetools/sdk-client-v2": "^2.5.0",
+    "dotenv-webpack": "^8.1.0",
+    "iso-3166-1": "^2.1.1",
+    "toastify-js": "^1.12.0"
   }
 }
