@@ -230,8 +230,8 @@ export default class CommerceToolsAPI {
   }
 
   async getAttributes() {
-    this.ctpClient = this.createCredentialsClient();
-    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    this.createClient();
+
     let result;
     const priceArr: number[] = [];
     const attributesObject: { [key: string]: (string | number)[] } = {};
@@ -279,8 +279,8 @@ export default class CommerceToolsAPI {
   }
 
   async filter(checkboxChecked: { [key: string]: string[] }, sortingApi: string, minPrice: string, maxPrice: string) {
-    this.ctpClient = this.createCredentialsClient();
-    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    this.createClient();
+
     const localeArr = ['color-of-toy', 'quantity'];
     let result;
     const filters: string[] = [];
@@ -335,8 +335,8 @@ export default class CommerceToolsAPI {
   }
 
   async search(text: string) {
-    this.ctpClient = this.createCredentialsClient();
-    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+    this.createClient();
+
     let result;
     if (this.apiRoot) {
       result = await this.apiRoot

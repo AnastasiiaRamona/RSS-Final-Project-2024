@@ -2,6 +2,10 @@
 .catalog__wrapper {
   @include flexbox();
   gap: 5px;
+
+  input {
+    border: none;
+  }
 }
 
 .core__wrapper {
@@ -9,7 +13,7 @@
   align-items:flex-start;
   padding: 20px 5px;
   gap:2vw;
-  width: 95vw;
+  width: 97vw;
 }
 
 .catalog__gallery {
@@ -166,6 +170,7 @@
   @include flexbox();
   align-items:flex-start;
   gap: 10px;
+  color: $primary-color;
 }
 .checkbox__element {
   @include flexbox(column);
@@ -202,6 +207,7 @@
 .search__input {
   width: 50%;
   padding-left: 10px;
+  margin-right: 20px;
   border-radius: 20px;
 }
 

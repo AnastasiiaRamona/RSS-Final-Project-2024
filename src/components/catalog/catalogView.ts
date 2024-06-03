@@ -308,10 +308,10 @@ export default class Catalog {
 
   async attributesView(form: HTMLElement) {
     const attributes = await this.controller.getAttributes();
-    form.append(this.checboxBultd(attributes));
+    form.append(this.checkboxBuild(attributes));
   }
 
-  checboxBultd(attributes: { [key: string]: string[] }): HTMLElement {
+  checkboxBuild(attributes: { [key: string]: string[] }): HTMLElement {
     const container = HTMLCreator.createElement('div', { class: 'checkbox__container' }) as HTMLElement;
     const minPrice = (Number(attributes.minPrice[0]) / 100).toFixed(0);
     const maxPrice = (Number(attributes.maxPrice[0]) / 100).toFixed(0);
