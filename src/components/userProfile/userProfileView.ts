@@ -160,21 +160,14 @@ export default class UserProfile {
       this.addEventListenerToTheEditButton(editButton, personalInfoSection);
     }
 
-    const changePasswordButton = document.querySelector('.change-password-button') as HTMLButtonElement;
-    const securitySettingsSection = document.querySelector('.security-settings-section') as HTMLElement;
-    if (changePasswordButton && securitySettingsSection) {
-      changePasswordButton.addEventListener('click', () => {
-        const changePasswordForm = this.changePasswordForm.renderChangePasswordForm();
-        this.addEventListenerToTheChangePasswordForm(changePasswordForm);
-        securitySettingsSection.replaceChild(changePasswordForm, changePasswordButton);
-      });
-    }
+    this.addEventListenerToTheChangeButton();
 
     const addNewAddressButton = document.querySelector('.add-new-address-button') as HTMLButtonElement;
     const addressesSectionElement = document.querySelector('.addresses-section') as HTMLElement;
     if (addNewAddressButton && addressesSectionElement) {
       addNewAddressButton.addEventListener('click', () => {
         const newAddressFormContainer = this.newAddressForm.renderNewAddressForm();
+        this.addEventListenerToTheToggleButtonOfElement(newAddressFormContainer);
         const closeButton = newAddressFormContainer.querySelector('.close-icon-img') as HTMLElement;
         this.newAddressForm.addEventListenerToTheCloseButton(closeButton, newAddressFormContainer);
         addressesSectionElement.insertBefore(newAddressFormContainer, addNewAddressButton);
@@ -517,6 +510,7 @@ export default class UserProfile {
         const address = this.addresses?.[index];
         if (address) {
           const newAddressFormContainer = this.newAddressForm.renderNewAddressForm(address) as HTMLElement;
+          this.addEventListenerToTheToggleButtonOfElement(newAddressFormContainer);
           const newAddressForm = newAddressFormContainer.querySelector('.new-address-form') as HTMLFormElement;
           const addressSection = document.querySelector('.addresses-section');
           addressSection?.replaceChild(newAddressFormContainer, entry);
@@ -639,7 +633,33 @@ export default class UserProfile {
     addressesSection.replaceChild(oldAddress, form);
     oldAddress.classList.remove('hidden');
     if (this.addresses) {
+      this.addEventListenerToTheToggleButtonOfElement(oldAddress);
       this.addEventListenerToTheEditForm(oldAddress, this.addresses.indexOf(address));
+    }
+  }
+
+  addEventListenerToTheChangeButton() {
+    const changePasswordButton = document.querySelector('.change-password-button') as HTMLButtonElement;
+    const securitySettingsSection = document.querySelector('.security-settings-section') as HTMLElement;
+    if (changePasswordButton) {
+      changePasswordButton.addEventListener('click', () => {
+        const changePasswordForm = this.changePasswordForm.renderChangePasswordForm();
+        securitySettingsSection.replaceChild(changePasswordForm, changePasswordButton);
+        this.addEventListenerToTheChangePasswordForm(changePasswordForm);
+        this.addEventListenerToTheCloseButton(changePasswordForm);
+      });
+    }
+  }
+
+  addEventListenerToTheCloseButton(form: HTMLFormElement) {
+    const closeButton = form.querySelector('.close-icon-img') as HTMLElement;
+    if (closeButton) {
+      closeButton.addEventListener('click', () => {
+        const changePasswordButton = this.buttons.renderChangePasswordButton();
+        const securitySettingsSection = document.querySelector('.security-settings-section') as HTMLElement;
+        securitySettingsSection.replaceChild(changePasswordButton, form);
+        this.addEventListenerToTheChangeButton();
+      });
     }
   }
 }

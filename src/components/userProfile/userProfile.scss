@@ -5,7 +5,7 @@
   border-radius: 15px;
   overflow-y: auto;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  height: 73vh;
+  height: 80vh;
   position: relative;
 
   &:hover {
@@ -237,30 +237,6 @@
   color: $primary-color;
 }
 
-@media (max-width: 670px) {
-  .success-text-input {
-    font-size: x-small;
-    text-align: justify;
-  }
-
-  .personal-info-section input[type='text'] {
-    width: 140px;
-  }
-
-  .new-address-form input[type='text'] {
-    width: 70px;
-  }
-
-  .new-address-form label {
-    font-size: small;
-  }
-
-  .new-address-form-container .close-icon-img,
-  .new-address-form .reset-img {
-    @include size(auto, 20px);
-  }
-}
-
 .change-password-button,
 .add-new-address-button {
   @include flexbox(column, center, center);
@@ -283,7 +259,6 @@
   margin: 10px 0;
 
   .custom-checkbox {
-    margin-right: 10px;
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -315,5 +290,50 @@
     cursor: pointer;
     font-size: 16px;
     color: #333;
+  }
+}
+
+@media (max-width: 670px) {
+  .new-address-form {
+    @include flexbox(column, center, flex-start);
+    gap: 5px;
+  }
+
+  .default-text {
+    font-size: small;
+  }
+
+  .success-text-input {
+    font-size: x-small;
+    text-align: justify;
+  }
+
+  .personal-info-section input[type='text'] {
+    width: 140px;
+  }
+
+  .new-address-form input[type='text'] {
+    width: 85px;
+  }
+
+  .new-address-form {
+    font-size: small;
+  }
+
+  .checkbox-container .custom-label {
+    font-size: xx-small;
+  }
+
+  .new-address-form div {
+    gap: 5px
+  }
+
+  .new-address-form-container .close-icon-img,
+  .new-address-form .reset-img {
+    @include size(auto, 20px);
+  }
+
+  .new-password-container input[type='password'] {
+    width: 120px;
   }
 }
