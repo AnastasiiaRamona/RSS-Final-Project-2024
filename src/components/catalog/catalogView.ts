@@ -115,21 +115,6 @@ export default class Catalog {
         this.filter(checkboxAll, sortSelect, priceInputAll);
       });
     });
-
-    const catalogGallery = document.querySelector('.catalog__gallery');
-    if (catalogGallery) {
-      catalogGallery.addEventListener('click', (event) => {
-        const target = event.target as HTMLElement;
-        const productCard = target.closest('.product-card');
-        if (productCard) {
-          const productId = productCard.id;
-          const productEvent = new CustomEvent('productEvent', {
-            detail: { id: productId },
-          });
-          document.body.dispatchEvent(productEvent);
-        }
-      });
-    }
   }
 
   async showProductsOfCategory(event: Event) {
@@ -192,7 +177,7 @@ export default class Catalog {
     const container = document.querySelector('.breadcrumb') as HTMLElement;
     container.innerHTML = '';
     const breadcrumbTitle = HTMLCreator.createElement('div', { class: 'breadcrumb__title breadcrumb__element' }, [
-      'Category',
+      '🛍️ Catalog',
     ]);
     breadcrumbTitle?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
