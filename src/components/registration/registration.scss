@@ -42,39 +42,53 @@
   width: 100%;
 }
 
-// input[type='checkbox'] {
-//   width: 60px;
-//   appearance: none;
-//   outline: none;
-//   position: relative;
-//   background: #c6c6c6;
-//   border-radius: 20px;
-//   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-//   transition: 0.5s;
-//   cursor: pointer;
-// }
+.check-default__billing, 
+.input-checkbox__address, 
+.check-default__shipping,
+.check-default__addresses {
+  width: 60px;
+  appearance: none;
+  outline: none;
+  position: relative;
+  background: #c6c6c6;
+  border-radius: 20px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  transition: 0.5s;
+  cursor: pointer;
+}
 
-// input[type='checkbox']:checked {
-//   background: $warning-color;
-// }
+.check-default__billing:checked,
+.input-checkbox__address:checked,
+.check-default__shipping:checked,
+.check-default__addresses:checked {
+  background: $warning-color;
+}
 
-// input[type='checkbox']:before {
-//   content: '';
-//   position: absolute;
-//   width: 25px;
-//   height: 25px;
-//   border-radius: 25px;
-//   background: #fff;
-//   top: -2px;
-//   left: -5px;
-//   transform: scale(1.1);
-//   transition: 0.5s;
-//   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-// }
+.check-default__billing::before,
+.input-checkbox__address::before,
+.check-default__shipping::before,
+.check-default__addresses::before {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  border-radius: 25px;
+  background: #fff;
+  top: -2px;
+  left: -5px;
+  transform: scale(1.1);
+  transition: 0.5s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
 
-// input:checked[type='checkbox']:before {
-//   left: 35px;
-// }
+.check-default__billing:checked::before,
+.input-checkbox__address:checked::before,
+.check-default__shipping:checked::before,
+.check-default__addresses:checked::before{
+  left: 35px;
+  background-color:$secondary-color;
+
+}
 
 .form-registration {
   width: 100%;

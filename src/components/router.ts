@@ -13,6 +13,15 @@ class Router {
 
   private handleRouteChange() {
     const currentRoute = window.location.pathname;
+    const isProductPage = currentRoute.startsWith('/product');
+    if (isProductPage) {
+      const handler = this.routes['/product?id=id'];
+      if (handler) {
+        handler();
+        return;
+      }
+    }
+
     const handler = this.routes[currentRoute];
     if (handler) {
       handler();

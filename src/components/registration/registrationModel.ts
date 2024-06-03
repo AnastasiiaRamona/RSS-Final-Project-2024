@@ -30,9 +30,7 @@ export default class RegistrationModel {
         this.showResponseMessage(
           'A user with the specified email already exists. Enter a different email or try to log in.'
         );
-      } else if (code === 201) {
-        this.showResponseMessage(message);
-      } else if (code === 500 || code === 502 || code === 504 || code === 503) {
+      } else if (String(code).startsWith('5')) {
         this.showResponseMessage(`${message}, try again later`);
       } else this.showResponseMessage(message);
     }

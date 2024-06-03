@@ -1,7 +1,8 @@
 .info {
   position: fixed;
-  padding: 15px;
-  @include font('Arial', clamp(12px, 5vw, 14px), bold, 1, $white);
+  padding: 10px;
+  padding-right: 15px;
+  @include font('Arial', clamp(12px, 5vw, 10px), bold, 1, $white);
   text-transform: uppercase;
   z-index: 1000;
   background: linear-gradient(to right, #0d8e5a, #2e6e42);
@@ -9,11 +10,12 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.622);
   text-align: center;
 }
+
 .toast-close {
   padding: 0;
   width: 0;
   height: 0;
   background-color: none;
   margin: 0;
-  margin-left: 10px;
+  margin-left: 2px;
 }

@@ -25,8 +25,8 @@ export default class UserProfileController {
         lastName: result?.body.lastName,
         dateOfBirth: result?.body.dateOfBirth,
         addresses: result?.body.addresses,
-        billingAddressId: result?.body.billingAddressIds,
-        shippingAddressId: result?.body.shippingAddressIds,
+        billingAddressIds: result?.body.billingAddressIds,
+        shippingAddressIds: result?.body.shippingAddressIds,
         defaultBillingAddressId: result?.body.defaultBillingAddressId,
         defaultShippingAddressId: result?.body.defaultShippingAddressId,
         version: result?.body.version,
@@ -35,8 +35,16 @@ export default class UserProfileController {
     return customerData;
   }
 
-  checkValidate(element: HTMLFormElement) {
-    Validation.checkValidatePersonalInformation(element);
+  checkValidationPersonalInformation(element: HTMLFormElement) {
+    Validation.checkValidationPersonalInformation(element);
+  }
+
+  checkValidationPassword(element: HTMLFormElement) {
+    Validation.checkValidationPassword(element);
+  }
+
+  checkValidationAddress(element: HTMLFormElement) {
+    Validation.checkValidationAddress(element);
   }
 
   async updateEmail(version: number, id: string, newEmail: string) {
@@ -59,9 +67,76 @@ export default class UserProfileController {
     return result;
   }
 
+  async changeUserPassword(version: number, currentPassword: string, newPassword: string, email: string) {
+    const result = await this.model.changeUserPassword(version, currentPassword, newPassword, email);
+    return result;
+  }
+
+  async addNewAddress(
+    version: number,
+    id: string,
+    streetName: string,
+    postalCode: string,
+    city: string,
+    country: string
+  ) {
+    const result = await this.model.addNewAddress(version, id, streetName, postalCode, city, country);
+    return result;
+  }
+
+  async setBillingAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setBillingAddress(version, id, addressId);
+    return result;
+  }
+
+  async setShippingAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setShippingAddress(version, id, addressId);
+    return result;
+  }
+
+  async setDefaultShippingAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setDefaultShippingAddress(version, id, addressId);
+    return result;
+  }
+
+  async setDefaultBillingAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setDefaultBillingAddress(version, id, addressId);
+    return result;
+  }
+
+  async setDefaultGeneralAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.setDefaultGeneralAddress(version, id, addressId);
+    return result;
+  }
+
+  async removeAddress(version: number, id: string, addressId: string) {
+    const result = await this.model.removeAddress(version, id, addressId);
+    return result;
+  }
+
+  async changeAddress(
+    version: number,
+    id: string,
+    addressId: string,
+    streetName: string,
+    postalCode: string,
+    city: string,
+    country: string
+  ) {
+    const result = await this.model.changeAddress(version, id, addressId, streetName, postalCode, city, country);
+    return result;
+  }
+
   parseDateString(dateString: string): string {
     const [day, month, year] = dateString.split('.');
     const date = `${year}-${month}-${day}`;
     return date;
+  }
+
+  formatDate(date: string) {
+    const dateObject = new Date(date);
+    const month = dateObject.getMonth() + 1 < 10 ? `0${dateObject.getMonth() + 1}` : `${dateObject.getMonth() + 1}`;
+    const formattedDate = `${dateObject.getDate()}.${month}.${dateObject.getFullYear()}`;
+    return formattedDate;
   }
 }
