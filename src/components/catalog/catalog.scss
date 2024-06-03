@@ -2,6 +2,7 @@
 .catalog__wrapper {
   @include flexbox();
   gap: 5px;
+  overflow-x: hidden;
 
   input {
     border: none;
@@ -13,7 +14,7 @@
   align-items:flex-start;
   padding: 20px 5px;
   gap:2vw;
-  width: 97vw;
+  width: 100vw;
 }
 
 .catalog__gallery {

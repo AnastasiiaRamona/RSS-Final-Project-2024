@@ -148,10 +148,13 @@ export default class App {
     });
 
     renderRoute('/user-profile', async () => {
-      const userProfile = new UserProfile();
-      this.changeMainElement(await userProfile.renderPage());
-      userProfile.addEventListeners();
-      this.appButtonsMethods?.toggleButton(userProfileButton, this.buttonsArray);
+      this.isLoggedIn = !!localStorage.getItem('userToken');
+      if (this.isLoggedIn) {
+        const userProfile = new UserProfile();
+        this.changeMainElement(await userProfile.renderPage());
+        userProfile.addEventListeners();
+        this.appButtonsMethods?.toggleButton(userProfileButton, this.buttonsArray);
+      }
     });
   }
 
@@ -170,6 +173,8 @@ export default class App {
     const startingRoute = currentRoute.slice(1);
     const { routes } = this.router;
 
+    this.isLoggedIn = !!localStorage.getItem('userToken');
+
     switch (startingRoute) {
       case '':
       case 'main':
@@ -185,7 +190,11 @@ export default class App {
         this.renderPageByRoute('catalog');
         break;
       case 'user-profile':
-        this.renderPageByRoute('user-profile');
+        if (this.isLoggedIn) {
+          this.renderPageByRoute('user-profile');
+        } else {
+          this.renderPageByRoute('404page', true);
+        }
         break;
       default:
         if (routes[startingRoute]) {
