@@ -100,4 +100,10 @@ export default class CatalogController {
     const productOfCategory = this.model.getBreadcrumbsOfCategory(categoryId);
     return productOfCategory;
   }
+
+  formatString(str: string) {
+    let formattedStr = str.replace(/-/g, ' ');
+    formattedStr = formattedStr.charAt(0).toUpperCase() + formattedStr.slice(1);
+    return formattedStr;
+  }
 }
