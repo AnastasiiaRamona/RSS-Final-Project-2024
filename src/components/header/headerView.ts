@@ -111,28 +111,6 @@ export default class Header {
     });
   }
 
-  addMainPageButton() {
-    const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
-    const mainPageButton = HTMLCreator.createElement('button', { class: 'main-page-button' }, ['Main page 🏠']);
-    buttonsDiv?.appendChild(mainPageButton);
-
-    mainPageButton.addEventListener('click', () => {
-      const mainPageEvent = new CustomEvent('mainPageEvent');
-      document.body.dispatchEvent(mainPageEvent);
-    });
-  }
-
-  addBackButton() {
-    const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
-    const backButton = HTMLCreator.createElement('button', { class: 'back-button' }, [this.backButtonTextContent]);
-    buttonsDiv?.appendChild(backButton);
-
-    backButton.addEventListener('click', () => {
-      const backEvent = new CustomEvent('backEvent');
-      document.body.dispatchEvent(backEvent);
-    });
-  }
-
   addEventListeners() {
     const loginButton = document.querySelector('.upper-dashboard__logout-button') as HTMLButtonElement;
     const registrationButton = document.querySelector('.upper-dashboard__register-button') as HTMLButtonElement;

@@ -48,23 +48,6 @@ describe('Header', () => {
     expect(document.querySelector('.upper-dashboard__logout-button')?.textContent).toBe('Log out');
   });
 
-  test('Should add a main page button and dispatch event on click', () => {
-    document.body.innerHTML = `
-      <div class="upper-dashboard__buttons"></div>
-    `;
-    const dispatchEventMock = jest.fn();
-    document.body.dispatchEvent = dispatchEventMock;
-
-    header.addMainPageButton();
-
-    const mainPageButton = document.querySelector('.main-page-button') as HTMLButtonElement;
-    expect(mainPageButton).not.toBeNull();
-    expect(mainPageButton?.textContent).toBe('Main page 🏠');
-
-    mainPageButton?.click();
-    expect(dispatchEventMock).toHaveBeenCalledWith(expect.objectContaining({ type: 'mainPageEvent' }));
-  });
-
   test('Should add event listeners to login and registration buttons', () => {
     document.body.innerHTML = `
       <button class="upper-dashboard__logout-button">Login</button>
