@@ -84,7 +84,6 @@ export default class Catalog {
 
     categoryAll.forEach((category) => {
       category.addEventListener('click', (event) => {
-        console.log(event.target);
         this.showProductsOfCategory(event);
       });
     });
@@ -346,7 +345,9 @@ export default class Catalog {
     Object.keys(attributes).forEach((key) => {
       if (key !== 'minPrice' && key !== 'maxPrice') {
         const div = HTMLCreator.createElement('div', { class: `${key} checkbox__element` }) as HTMLElement;
-        const header = HTMLCreator.createElement('h3', { class: key }, [key]) as HTMLElement;
+        const header = HTMLCreator.createElement('h3', { class: key }, [
+          this.controller.formatString(key),
+        ]) as HTMLElement;
         attributes[key].forEach((value) => {
           const checkbox = HTMLCreator.createElement('input', {
             type: 'checkbox',
