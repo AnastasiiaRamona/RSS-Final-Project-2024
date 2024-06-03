@@ -371,6 +371,24 @@ export default class CommerceToolsAPI {
     return result;
   }
 
+  async getCategory() {
+    this.createClient();
+    let result;
+    if (this.apiRoot) {
+      await this.apiRoot
+        .categories()
+        .get()
+        .execute()
+        .then((response) => {
+          result = response.body.results;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
+
   async getProductByID(id: string) {
     this.createClient();
     let response;
@@ -423,7 +441,6 @@ export default class CommerceToolsAPI {
           })
           .execute();
       } catch (error) {
-        console.log('Error changing password:', error);
         throw new Error('Password change failed');
       }
     }
@@ -439,5 +456,64 @@ export default class CommerceToolsAPI {
     await this.login(email, newPassword);
 
     return response;
+  }
+
+  async getProductsOfCategory(categoryId: string) {
+    this.createClient();
+    let result;
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .productProjections()
+        .search()
+        .get({
+          queryArgs: {
+            filter: [`categories.id:"${categoryId}"`],
+            limit: 40,
+          },
+        })
+        .execute()
+        .then((response) => {
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.name['en-US'],
+              description: product.description?.['en-US'],
+              imageUrl: product.masterVariant.images?.[0]?.url,
+              price: product.masterVariant.prices?.[0]?.value.centAmount,
+              discountedPrice: product.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
+
+  async getBreadcrumbsOfCategory(categoryId: string) {
+    this.createClient();
+    let result;
+    try {
+      if (this.apiRoot) {
+        const categoryResponse = await this.apiRoot.categories().withId({ ID: categoryId }).get().execute();
+        const category = categoryResponse.body;
+        let parentCategory = null;
+        if (category.parent) {
+          const parentCategoryResponse = await this.apiRoot
+            .categories()
+            .withId({ ID: category.parent.id })
+            .get()
+            .execute();
+          parentCategory = parentCategoryResponse.body;
+        }
+        result = { category, parentCategory };
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
   }
 }

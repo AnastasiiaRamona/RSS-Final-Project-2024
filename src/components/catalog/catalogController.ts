@@ -75,4 +75,23 @@ export default class CatalogController {
     const result = this.model.search(text);
     return result;
   }
+
+  async getCategory() {
+    const categories = await this.model.getCategory();
+    return categories;
+  }
+
+  async getProductsOfCategory(event: Event) {
+    const category = event.target as HTMLElement;
+    const categoryId = category.id;
+    const productOfCategory = this.model.getProductsOfCategory(categoryId);
+    return productOfCategory;
+  }
+
+  async getBreadcrumbsOfCategory(event: Event) {
+    const category = event.target as HTMLElement;
+    const categoryId = category.id;
+    const productOfCategory = this.model.getBreadcrumbsOfCategory(categoryId);
+    return productOfCategory;
+  }
 }
