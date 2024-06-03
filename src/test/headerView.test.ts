@@ -48,22 +48,6 @@ describe('Header', () => {
     expect(document.querySelector('.upper-dashboard__logout-button')?.textContent).toBe('Log out');
   });
 
-  test('Should change login button text to "⬅ Back"', () => {
-    document.body.innerHTML = `
-      <button class="upper-dashboard__logout-button">Login</button>
-    `;
-    header.changeLoginButtonToBackButton();
-    expect(document.querySelector('.upper-dashboard__logout-button')?.textContent).toBe('⬅ Back');
-  });
-
-  test('Should change registration button text to "⬅ Back"', () => {
-    document.body.innerHTML = `
-      <button class="upper-dashboard__register-button">Register</button>
-    `;
-    header.changeRegistrationButtonToBackButton();
-    expect(document.querySelector('.upper-dashboard__register-button')?.textContent).toBe('⬅ Back');
-  });
-
   test('Should add a main page button and dispatch event on click', () => {
     document.body.innerHTML = `
       <div class="upper-dashboard__buttons"></div>

@@ -9,7 +9,7 @@ export default class Header {
   renderHeader(isLoggedIn: boolean) {
     const textButton = isLoggedIn ? 'Log out' : 'Login';
 
-    const header = HTMLCreator.createElement('header', { class: 'upper-dashboard' }, [
+    const upperDashboard = HTMLCreator.createElement('header', { class: 'upper-dashboard' }, [
       HTMLCreator.createElement('div', { class: 'heading-and-image' }, [
         HTMLCreator.createElement('img', { class: 'cat-image', src: catPath, alt: 'cat' }),
         HTMLCreator.createElement('div', { class: 'heading' }, [
@@ -34,20 +34,55 @@ export default class Header {
         }),
       ]),
     ]);
+
+    const header = HTMLCreator.createElement('header', { class: 'header' }, [
+      upperDashboard,
+      this.renderLeftDashboard(),
+    ]);
+
     return header;
   }
 
-  changeLoginButtonToBackButton() {
-    const loginButton = document.querySelector('.upper-dashboard__logout-button');
-    if (loginButton) {
-      loginButton.textContent = this.backButtonTextContent;
+  renderLeftDashboard() {
+    const userProfileButton = HTMLCreator.createElement(
+      'button',
+      { class: 'left-dashboard__button user-profile-button inactive', disabled: 'true' },
+      ['User Profile 👤']
+    );
+
+    if (localStorage.getItem('userPetShopId')) {
+      userProfileButton.removeAttribute('disabled');
+      userProfileButton.classList.remove('inactive');
     }
+
+    const mainButton = HTMLCreator.createElement('button', { class: 'left-dashboard__button main-button' }, [
+      'Main page 🏠',
+    ]) as HTMLButtonElement;
+
+    const leftDashboard = HTMLCreator.createElement('section', { class: 'left-dashboard' }, [
+      mainButton,
+      HTMLCreator.createElement('button', { class: 'left-dashboard__button catalog-button' }, ['Catalog Product 📋']),
+      userProfileButton,
+      HTMLCreator.createElement('button', { class: 'left-dashboard__button' }, ['Basket 🧺']),
+      HTMLCreator.createElement('button', { class: 'left-dashboard__button' }, ['About Us 🤙']),
+    ]);
+
+    return leftDashboard;
   }
 
-  changeRegistrationButtonToBackButton() {
-    const registrationButton = document.querySelector('.upper-dashboard__register-button');
-    if (registrationButton) {
-      registrationButton.textContent = this.backButtonTextContent;
+  changeLoginButtonToTheLogOutButton(isLogged: boolean) {
+    const loginButton = document.querySelector('.upper-dashboard__logout-button');
+    const userPageButton = document.querySelector('.user-profile-button');
+    if (loginButton && userPageButton) {
+      if (isLogged) {
+        loginButton.textContent = 'Log out';
+        userPageButton.removeAttribute('disabled');
+        userPageButton.classList.remove('inactive');
+      } else {
+        loginButton.textContent = 'Login';
+        userPageButton?.setAttribute('disabled', 'true');
+        userPageButton?.classList.add('inactive');
+      }
     }
   }
 
@@ -99,33 +134,31 @@ export default class Header {
   }
 
   addEventListeners() {
-    const loginButton = document.querySelector('.upper-dashboard__logout-button');
+    const loginButton = document.querySelector('.upper-dashboard__logout-button') as HTMLButtonElement;
+    const registrationButton = document.querySelector('.upper-dashboard__register-button') as HTMLButtonElement;
+    const mainButton = document.querySelector('.main-button') as HTMLButtonElement;
+    const catalogButton = document.querySelector('.catalog-button') as HTMLButtonElement;
+    const userProfileButton = document.querySelector('.user-profile-button') as HTMLButtonElement;
+
     if (loginButton) {
       loginButton.addEventListener('click', () => {
         if (loginButton.textContent === 'Log out') {
           const loginEvent = new CustomEvent('loginEvent');
           document.body.dispatchEvent(loginEvent);
           localStorage.clear();
+          const isLoggedIn = !!localStorage.getItem('userToken');
+          this.changeLoginButtonToTheLogOutButton(isLoggedIn);
         } else if (loginButton.textContent === 'Login') {
           const loginEvent = new CustomEvent('loginEvent');
           document.body.dispatchEvent(loginEvent);
-        } else {
-          const backEvent = new CustomEvent('backEvent');
-          document.body.dispatchEvent(backEvent);
         }
       });
     }
 
-    const registrationButton = document.querySelector('.upper-dashboard__register-button');
     if (registrationButton) {
       registrationButton.addEventListener('click', () => {
-        if (registrationButton.textContent === 'Register') {
-          const registrationEvent = new CustomEvent('registrationEvent');
-          document.body.dispatchEvent(registrationEvent);
-        } else {
-          const backEvent = new CustomEvent('backEvent');
-          document.body.dispatchEvent(backEvent);
-        }
+        const registrationEvent = new CustomEvent('registrationEvent');
+        document.body.dispatchEvent(registrationEvent);
       });
     }
 
@@ -136,5 +169,20 @@ export default class Header {
         document.body.dispatchEvent(mainPageEvent);
       });
     }
+
+    mainButton?.addEventListener('click', () => {
+      const mainPageEvent = new CustomEvent('mainPageEvent');
+      document.body.dispatchEvent(mainPageEvent);
+    });
+
+    catalogButton?.addEventListener('click', () => {
+      const catalogEvent = new CustomEvent('catalogEvent');
+      document.body.dispatchEvent(catalogEvent);
+    });
+
+    userProfileButton?.addEventListener('click', () => {
+      const userProfileEvent = new CustomEvent('userProfileEvent');
+      document.body.dispatchEvent(userProfileEvent);
+    });
   }
 }
