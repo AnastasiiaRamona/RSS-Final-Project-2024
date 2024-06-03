@@ -24,6 +24,10 @@ button:not(:disabled):hover,
   }
 }
 
+button:disabled {
+  cursor: default;
+}
+
 @media (max-width: 1160px) {
   button {
     font-size: small;

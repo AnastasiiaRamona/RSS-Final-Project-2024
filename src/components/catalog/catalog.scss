@@ -109,7 +109,7 @@
 
 .catalog__wrapper {
   @include flexbox(column);
-  @include size(auto, 74vh);
+  @include size(auto, 85vh);
   align-items: center;
   justify-content: normal;
   position: relative;

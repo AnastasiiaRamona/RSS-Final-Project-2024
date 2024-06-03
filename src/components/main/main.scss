@@ -1,20 +1,12 @@
-
 .main-field {
-  @include flexbox(row, space-between);
+  @include flexbox(row, center);
   @include size(100vw, 100%);
-}
-
-.left-dashboard {
-  @include flexbox(column, center, stretch);
-  gap: 5vh;
-  padding: 2vh;
-  background: $bca-gradient-second;
-  border-left: 1px solid $white;
-  @include size(auto, 100%);
+  overflow: hidden;
+  position: relative;
+  padding-top: 15vh;
 }
 
 .main-area {
-  @include size(80vw, auto);
   @include flexbox(column, center, center);
 }
 
@@ -37,17 +29,5 @@
 @media (max-width: 1160px) {
   .main-area__text {
     font-size: medium;
-  }
-}
-
-@media (max-width: 800px) {
-  .left-dashboard.active {
-    transform: translateX(0%);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-
-  .main-field {
-    overflow: hidden;
-    @include flexbox(row, center);
   }
 }
