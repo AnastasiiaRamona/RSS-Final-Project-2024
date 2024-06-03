@@ -39,13 +39,6 @@ export default class Catalog {
               class: 'catalog__filter',
             },
             [
-              HTMLCreator.createElement('form', { class: 'catalog__search' }, [
-                HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, [
-                  'Search the site:',
-                ]),
-                HTMLCreator.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }),
-                HTMLCreator.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
-              ]),
               HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
               HTMLCreator.createElement('form', { class: 'catalog__sorting' }, [
                 HTMLCreator.createElement('label', { for: 'catalog__sorting', class: 'sorting__label' }, ['Sort']),
@@ -64,8 +57,19 @@ export default class Catalog {
             ]
           ),
         ]),
-        HTMLCreator.createElement('div', { class: 'breadcrumb' }, [
-          HTMLCreator.createElement('div', { class: 'breadcrumb__title breadcrumb__element' }, ['🛍️ Catalog']),
+        HTMLCreator.createElement('navigation', { class: 'catalog__navigation' }, [
+          HTMLCreator.createElement('div', { class: 'breadcrumb' }, [
+            HTMLCreator.createElement('div', { class: 'breadcrumb__title breadcrumb__element' }, ['🛍️ Catalog']),
+          ]),
+          HTMLCreator.createElement('form', { class: 'catalog__search' }, [
+            HTMLCreator.createElement('div', { class: 'search__wrapper' }, [
+              HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, [
+                'Search the site:',
+              ]),
+              HTMLCreator.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }),
+            ]),
+            HTMLCreator.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
+          ]),
         ]),
         HTMLCreator.createElement('div', { class: 'core__wrapper' }, [
           (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
@@ -119,6 +123,21 @@ export default class Catalog {
         this.filter(checkboxAll, sortSelect, priceInputAll);
       });
     });
+
+    const catalogGallery = document.querySelector('.catalog__gallery');
+    if (catalogGallery) {
+      catalogGallery.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        const productCard = target.closest('.product-card');
+        if (productCard) {
+          const productId = productCard.id;
+          const productEvent = new CustomEvent('productEvent', {
+            detail: { id: productId },
+          });
+          document.body.dispatchEvent(productEvent);
+        }
+      });
+    }
   }
 
   async showProductsOfCategory(event: Event) {
