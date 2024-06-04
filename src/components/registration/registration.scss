@@ -6,7 +6,7 @@
 .container {
   @include container($max-width: 1200px, $padding: 15px, $margin: 0 auto);
   @include flexbox(column, center, center);
-  height: 74vh;
+  height: 80vh;
 }
 
 .fieldset-users {
@@ -84,10 +84,8 @@
 .check-default__billing:checked::before,
 .input-checkbox__address:checked::before,
 .check-default__shipping:checked::before,
-.check-default__addresses:checked::before{
+.check-default__addresses:checked::before {
   left: 35px;
-  background-color:$secondary-color;
-
 }
 
 .form-registration {

@@ -84,6 +84,9 @@ export default class CatalogController {
   async getProductsOfCategory(event: Event) {
     const category = event.target as HTMLElement;
     const categoryId = category.id;
+    if (categoryId.length <= 1) {
+      throw new Error('Invalid category ID');
+    }
     const productOfCategory = this.model.getProductsOfCategory(categoryId);
     return productOfCategory;
   }
@@ -91,7 +94,16 @@ export default class CatalogController {
   async getBreadcrumbsOfCategory(event: Event) {
     const category = event.target as HTMLElement;
     const categoryId = category.id;
+    if (categoryId.length <= 1) {
+      throw new Error('Invalid category ID');
+    }
     const productOfCategory = this.model.getBreadcrumbsOfCategory(categoryId);
     return productOfCategory;
+  }
+
+  formatString(str: string) {
+    let formattedStr = str.replace(/-/g, ' ');
+    formattedStr = formattedStr.charAt(0).toUpperCase() + formattedStr.slice(1);
+    return formattedStr;
   }
 }

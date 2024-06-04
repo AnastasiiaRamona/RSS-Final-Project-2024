@@ -1,7 +1,6 @@
 import { Fancybox } from '@fancyapps/ui';
 import Swiper from 'swiper';
 import { Navigation, Pagination, Zoom } from 'swiper/modules';
-import Footer from '../footer/footerView';
 import Header from '../header/headerView';
 import Login from '../login/loginView';
 import Main from '../main/mainView';
@@ -12,11 +11,10 @@ import Catalog from '../catalog/catalogView';
 import DetailedProduct from '../detailedProduct/detailedProductView';
 import HTMLCreator from '../HTMLCreator';
 import UserProfile from '../userProfile/userProfileView';
+import AppButtonsMethods from './appButtonsMethods';
 
 export default class App {
   private header: Header;
-
-  private footer: Footer;
 
   private login: Login;
 
@@ -36,14 +34,18 @@ export default class App {
 
   private productId: string | null = null;
 
+  private appButtonsMethods: AppButtonsMethods | null = null;
+
+  private buttonsArray: HTMLButtonElement[] = [];
+
   constructor() {
     this.header = new Header();
-    this.footer = new Footer();
     this.login = new Login();
     this.registration = new Registration();
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
+    this.appButtonsMethods = new AppButtonsMethods();
   }
 
   render() {
@@ -55,9 +57,10 @@ export default class App {
 
   async renderStartPage() {
     this.body.appendChild(this.header.renderHeader(this.isLoggedIn));
+    this.header.addBurgerButton();
+    this.header.addEventListeners();
     const main = HTMLCreator.createElement('main', { class: 'main-field' });
     this.body.appendChild(main);
-    this.body.appendChild(this.footer.renderFooter());
   }
 
   setupEventListeners() {
@@ -88,13 +91,6 @@ export default class App {
     }) as EventListener);
   }
 
-  changeHeaderElement(element: HTMLElement) {
-    const header = document.querySelector('header');
-    if (header) {
-      header.innerHTML = element.innerHTML;
-    }
-  }
-
   changeMainElement(element: HTMLElement) {
     const main = document.querySelector('main');
     if (main) {
@@ -103,39 +99,40 @@ export default class App {
   }
 
   private setupRouter() {
+    const { loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title } = this.findButtons();
     const renderRoute = (path: string, renderFunction: () => void) => {
       this.router.addRoute(path, () => {
         this.isLoggedIn = !!localStorage.getItem('userToken');
-        this.changeHeaderElement(this.header.renderHeader(this.isLoggedIn));
-        this.header.addEventListeners();
+        this.header.changeLoginButtonToTheLogOutButton(this.isLoggedIn);
         renderFunction();
       });
     };
 
     renderRoute('/main', () => {
       this.changeMainElement(this.main.renderPage());
-      this.header.addBurgerButton();
-      this.main.addEventListeners();
+      if (title) {
+        this.appButtonsMethods?.toggleButton(mainButton, this.buttonsArray, true);
+      } else {
+        this.appButtonsMethods?.toggleButton(mainButton, this.buttonsArray);
+      }
     });
 
     renderRoute('/login', () => {
       this.changeMainElement(this.login.renderPage());
-      this.header.changeLoginButtonToBackButton();
-      this.header.addMainPageButton();
       this.login.addEventListeners();
+      this.appButtonsMethods?.toggleButton(loginButton, this.buttonsArray);
     });
 
     renderRoute('/registration', () => {
       this.changeMainElement(this.registration.renderPage());
-      this.header.changeRegistrationButtonToBackButton();
-      this.header.addMainPageButton();
       this.registration.addEventListeners();
+      this.appButtonsMethods?.toggleButton(registrationButton, this.buttonsArray);
     });
 
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
-      this.header.addMainPageButton();
       this.catalog.addEventListeners();
+      this.appButtonsMethods?.toggleButton(catalogButton, this.buttonsArray);
     });
 
     renderRoute('/product?id=id', async () => {
@@ -146,15 +143,18 @@ export default class App {
         this.changeMainElement(product.renderMain());
         await product.getProductInformation();
         this.createSwiper();
-        this.header.addBackButton();
+        this.appButtonsMethods?.activateButton(catalogButton);
       }
     });
 
     renderRoute('/user-profile', async () => {
-      const userProfile = new UserProfile();
-      this.changeMainElement(await userProfile.renderPage());
-      userProfile.addEventListeners();
-      this.header.addMainPageButton();
+      this.isLoggedIn = !!localStorage.getItem('userToken');
+      if (this.isLoggedIn) {
+        const userProfile = new UserProfile();
+        this.changeMainElement(await userProfile.renderPage());
+        userProfile.addEventListeners();
+        this.appButtonsMethods?.toggleButton(userProfileButton, this.buttonsArray);
+      }
     });
   }
 
@@ -173,6 +173,8 @@ export default class App {
     const startingRoute = currentRoute.slice(1);
     const { routes } = this.router;
 
+    this.isLoggedIn = !!localStorage.getItem('userToken');
+
     switch (startingRoute) {
       case '':
       case 'main':
@@ -188,7 +190,11 @@ export default class App {
         this.renderPageByRoute('catalog');
         break;
       case 'user-profile':
-        this.renderPageByRoute('user-profile');
+        if (this.isLoggedIn) {
+          this.renderPageByRoute('user-profile');
+        } else {
+          this.renderPageByRoute('404page', true);
+        }
         break;
       default:
         if (routes[startingRoute]) {
@@ -203,18 +209,12 @@ export default class App {
   async renderPageByRoute(route: string, keepURL: boolean = false) {
     if (!keepURL) {
       this.router.navigateTo(`/${route}`);
+    } else if (route === '404page') {
+      this.changeMainElement(this.missingPage.renderPage());
     } else {
-      this.changeHeaderElement(this.header.renderHeader(this.isLoggedIn));
-      this.header.addEventListeners();
-      this.header.addMainPageButton();
-      this.header.addBackButton();
-      if (route === '404page') {
-        this.changeMainElement(this.missingPage.renderPage());
-      } else {
-        const { routes } = this.router;
-        if (routes[`/${route}`]) {
-          routes[`/${route}`]();
-        }
+      const { routes } = this.router;
+      if (routes[`/${route}`]) {
+        routes[`/${route}`]();
       }
     }
   }
@@ -242,5 +242,17 @@ export default class App {
     });
 
     return swiper;
+  }
+
+  findButtons() {
+    const loginButton = document.querySelector('.upper-dashboard__logout-button') as HTMLButtonElement;
+    const registrationButton = document.querySelector('.upper-dashboard__register-button') as HTMLButtonElement;
+    const mainButton = document.querySelector('.main-button') as HTMLButtonElement;
+    const catalogButton = document.querySelector('.catalog-button') as HTMLButtonElement;
+    const userProfileButton = document.querySelector('.user-profile-button') as HTMLButtonElement;
+    const title = document.querySelector('.title') as HTMLButtonElement;
+
+    this.buttonsArray.push(loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title);
+    return { loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title };
   }
 }

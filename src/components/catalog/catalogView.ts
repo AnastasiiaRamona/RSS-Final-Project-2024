@@ -1,23 +1,8 @@
+import Toastify from 'toastify-js';
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
+import { BreadcrumbsInfo, CategoryMap } from './types';
 
-interface Category {
-  id: string;
-  name: { 'en-US': string };
-}
-interface BreadcrumbsInfo {
-  parentCategory: Category | null;
-  category: Category;
-}
-interface CategoryNode {
-  id: string;
-  name: string;
-  parent?: string;
-  children: CategoryMap;
-}
-interface CategoryMap {
-  [key: string]: CategoryNode;
-}
 export default class Catalog {
   controller: CatalogController;
 
@@ -38,32 +23,40 @@ export default class Catalog {
               class: 'catalog__filter',
             },
             [
-              HTMLCreator.createElement('form', { class: 'catalog__search' }, [
-                HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, [
-                  'Search the site:',
+              HTMLCreator.createElement('div', { class: 'search-sort__wrapper' }, [
+                HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
+                HTMLCreator.createElement('form', { class: 'catalog__sorting' }, [
+                  HTMLCreator.createElement('label', { for: 'catalog__sorting', class: 'sorting__label' }, ['Sort']),
+                  HTMLCreator.createElement(
+                    'select',
+                    { name: 'sort-param', id: 'catalog__sorting', class: 'sorting__select' },
+                    [
+                      HTMLCreator.createElement('option', { value: '' }, ['--sorting--']),
+                      HTMLCreator.createElement('option', { value: 'price desc' }, ['by descending price']),
+                      HTMLCreator.createElement('option', { value: 'price asc' }, ['by ascending price']),
+                      HTMLCreator.createElement('option', { value: 'name.en-US asc' }, ['by name']),
+                    ]
+                  ),
                 ]),
-                HTMLCreator.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }),
-                HTMLCreator.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
-              ]),
-              HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
-              HTMLCreator.createElement('form', { class: 'catalog__sorting' }, [
-                HTMLCreator.createElement('label', { for: 'catalog__sorting', class: 'sorting__label' }, ['Sort']),
-                HTMLCreator.createElement(
-                  'select',
-                  { name: 'sort-param', id: 'catalog__sorting', class: 'sorting__select' },
-                  [
-                    HTMLCreator.createElement('option', { value: '' }, ['--sorting--']),
-                    HTMLCreator.createElement('option', { value: 'price desc' }, ['by descending price']),
-                    HTMLCreator.createElement('option', { value: 'price asc' }, ['by ascending price']),
-                    HTMLCreator.createElement('option', { value: 'name.en-US asc' }, ['by name']),
-                  ]
-                ),
               ]),
               (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
             ]
           ),
         ]),
-        HTMLCreator.createElement('div', { class: 'breadcrumb' }),
+        HTMLCreator.createElement('navigation', { class: 'catalog__navigation' }, [
+          HTMLCreator.createElement('div', { class: 'breadcrumb' }, [
+            HTMLCreator.createElement('div', { class: 'breadcrumb__title breadcrumb__element' }, ['🛍️ Catalog']),
+          ]),
+          HTMLCreator.createElement('form', { class: 'catalog__search' }, [
+            HTMLCreator.createElement('div', { class: 'search__wrapper' }, [
+              HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, [
+                'Search the site:',
+              ]),
+              HTMLCreator.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }),
+            ]),
+            HTMLCreator.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
+          ]),
+        ]),
         HTMLCreator.createElement('div', { class: 'core__wrapper' }, [
           (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
             HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
@@ -133,22 +126,28 @@ export default class Catalog {
   }
 
   async showProductsOfCategory(event: Event) {
-    const productOfCategory = await this.controller.getProductsOfCategory(event);
-    const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
-    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
-    const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
-    this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-    if (productOfCategory && Array.isArray(productOfCategory)) {
-      const catalog = document.querySelector('.catalog__gallery');
-      if (catalog) {
-        catalog.innerHTML = '';
-        productOfCategory.forEach((product) => {
-          const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
-          catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
-        });
+    try {
+      const productOfCategory = await this.controller.getProductsOfCategory(event);
+      const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
+      const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+      const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+      this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
+      if (productOfCategory && Array.isArray(productOfCategory)) {
+        const catalog = document.querySelector('.catalog__gallery');
+        if (catalog) {
+          catalog.innerHTML = '';
+          productOfCategory.forEach((product) => {
+            const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
+            catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
+          });
+        }
+      }
+      this.generateBreadcrumbs(event);
+    } catch (error) {
+      if (error instanceof Error) {
+        this.handleResponse(error.message);
       }
     }
-    this.generateBreadcrumbs(event);
   }
 
   async getCategory(category: HTMLElement) {
@@ -192,7 +191,7 @@ export default class Catalog {
     const container = document.querySelector('.breadcrumb') as HTMLElement;
     container.innerHTML = '';
     const breadcrumbTitle = HTMLCreator.createElement('div', { class: 'breadcrumb__title breadcrumb__element' }, [
-      'Category',
+      '🛍️ Catalog',
     ]);
     breadcrumbTitle?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
@@ -201,27 +200,33 @@ export default class Catalog {
       container.append(breadcrumbTitle);
     });
     container.append(breadcrumbTitle);
-    const breadcrumbsOfCategory = (await this.controller.getBreadcrumbsOfCategory(event)) as BreadcrumbsInfo;
-    const breadCrumbsCategory = HTMLCreator.createElement(
-      'div',
-      { class: 'breadcrumbs__category breadcrumb__element', id: breadcrumbsOfCategory.category?.id },
-      [`${breadcrumbsOfCategory.category?.name[`en-US`]}`]
-    );
-    breadCrumbsCategory.addEventListener('click', (eventBreadcrumbs) => {
-      this.showProductsOfCategory(eventBreadcrumbs);
-    });
-    if (breadcrumbsOfCategory.parentCategory) {
-      const breadCrumbsParentCategory = HTMLCreator.createElement(
+    try {
+      const breadcrumbsOfCategory = (await this.controller.getBreadcrumbsOfCategory(event)) as BreadcrumbsInfo;
+      const breadCrumbsCategory = HTMLCreator.createElement(
         'div',
-        { class: 'breadcrumbs__parent-category breadcrumb__element', id: breadcrumbsOfCategory.parentCategory.id },
-        [`${breadcrumbsOfCategory.parentCategory?.name[`en-US`]}`]
+        { class: 'breadcrumbs__category breadcrumb__element', id: breadcrumbsOfCategory.category?.id },
+        [`${breadcrumbsOfCategory.category?.name[`en-US`]}`]
       );
-      breadCrumbsParentCategory.addEventListener('click', (eventBreadcrumbs) => {
+      breadCrumbsCategory.addEventListener('click', (eventBreadcrumbs) => {
         this.showProductsOfCategory(eventBreadcrumbs);
       });
-      container.append(breadCrumbsParentCategory);
+      if (breadcrumbsOfCategory.parentCategory) {
+        const breadCrumbsParentCategory = HTMLCreator.createElement(
+          'div',
+          { class: 'breadcrumbs__parent-category breadcrumb__element', id: breadcrumbsOfCategory.parentCategory.id },
+          [`${breadcrumbsOfCategory.parentCategory?.name[`en-US`]}`]
+        );
+        breadCrumbsParentCategory.addEventListener('click', (eventBreadcrumbs) => {
+          this.showProductsOfCategory(eventBreadcrumbs);
+        });
+        container.append(breadCrumbsParentCategory);
+      }
+      container.append(breadCrumbsCategory);
+    } catch (error) {
+      if (error instanceof Error) {
+        this.handleResponse(error.message);
+      }
     }
-    container.append(breadCrumbsCategory);
   }
 
   async filter(
@@ -303,10 +308,10 @@ export default class Catalog {
 
   async attributesView(form: HTMLElement) {
     const attributes = await this.controller.getAttributes();
-    form.append(this.checboxBultd(attributes));
+    form.append(this.checkboxBuild(attributes));
   }
 
-  checboxBultd(attributes: { [key: string]: string[] }): HTMLElement {
+  checkboxBuild(attributes: { [key: string]: string[] }): HTMLElement {
     const container = HTMLCreator.createElement('div', { class: 'checkbox__container' }) as HTMLElement;
     const minPrice = (Number(attributes.minPrice[0]) / 100).toFixed(0);
     const maxPrice = (Number(attributes.maxPrice[0]) / 100).toFixed(0);
@@ -340,7 +345,9 @@ export default class Catalog {
     Object.keys(attributes).forEach((key) => {
       if (key !== 'minPrice' && key !== 'maxPrice') {
         const div = HTMLCreator.createElement('div', { class: `${key} checkbox__element` }) as HTMLElement;
-        const header = HTMLCreator.createElement('h3', { class: key }, [key]) as HTMLElement;
+        const header = HTMLCreator.createElement('h3', { class: key }, [
+          this.controller.formatString(key),
+        ]) as HTMLElement;
         attributes[key].forEach((value) => {
           const checkbox = HTMLCreator.createElement('input', {
             type: 'checkbox',
@@ -357,5 +364,30 @@ export default class Catalog {
       }
     });
     return container;
+  }
+
+  showResponseMessage(text: string) {
+    Toastify({
+      text,
+      newWindow: true,
+      className: 'info',
+      close: true,
+      stopOnFocus: true,
+      offset: {
+        y: 200,
+        x: 0,
+      },
+      duration: 5000,
+    }).showToast();
+  }
+
+  handleResponse(message: string) {
+    if (message) {
+      if (message === 'There is already an existing customer with the provided email.') {
+        this.showResponseMessage(
+          'A user with the specified email already exists. Enter a different email or try to log in.'
+        );
+      } else this.showResponseMessage(message);
+    }
   }
 }
