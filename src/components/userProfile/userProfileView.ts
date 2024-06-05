@@ -582,6 +582,7 @@ export default class UserProfile {
                   if (addressType && this.addresses) {
                     if (addressesSection.contains(newAddressFormContainer)) {
                       const updatedAddress = this.addresses.find((element) => element.id === addressId) as Address;
+                      this.deleteDefaultText(isDefault, addressType);
                       const newAddressEmpty = this.addressSection.renderAddressSection(
                         this.addresses[this.addresses.indexOf(updatedAddress)],
                         addressType,
@@ -659,6 +660,29 @@ export default class UserProfile {
         const securitySettingsSection = document.querySelector('.security-settings-section') as HTMLElement;
         securitySettingsSection.replaceChild(changePasswordButton, form);
         this.addEventListenerToTheChangeButton();
+      });
+    }
+  }
+
+  deleteDefaultText(isDefault: boolean, addressType: string) {
+    if (isDefault) {
+      const addressEntries = document.querySelectorAll('.address-entry');
+      addressEntries.forEach((addressEntry) => {
+        const defaultText = addressEntry.querySelector('.default-text') as HTMLElement;
+        if (defaultText) {
+          const clickedIcons = addressEntry.querySelectorAll('.address-clicked');
+          if (clickedIcons.length === 2) {
+            defaultText.style.display = 'none';
+          } else {
+            const addressIcons = addressEntry.querySelectorAll('.address-icon');
+            const isBillingSelected =
+              addressIcons[0].classList.contains('address-clicked') && addressType === 'billing';
+            const isShippingSelected =
+              addressIcons[1].classList.contains('address-clicked') && addressType === 'shipping';
+            const isGeneralAddress = addressType === 'general';
+            defaultText.style.display = isBillingSelected || isShippingSelected || isGeneralAddress ? 'none' : '';
+          }
+        }
       });
     }
   }
