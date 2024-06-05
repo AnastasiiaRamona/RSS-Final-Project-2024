@@ -104,6 +104,7 @@ export default class App {
       this.router.addRoute(path, () => {
         this.isLoggedIn = !!localStorage.getItem('userToken');
         this.header.changeLoginButtonToTheLogOutButton(this.isLoggedIn);
+        this.header.checkUserProfileButton(this.isLoggedIn, userProfileButton);
         renderFunction();
       });
     };
@@ -193,7 +194,7 @@ export default class App {
         if (this.isLoggedIn) {
           this.renderPageByRoute('user-profile');
         } else {
-          this.renderPageByRoute('404page', true);
+          this.renderPageByRoute('login');
         }
         break;
       default:

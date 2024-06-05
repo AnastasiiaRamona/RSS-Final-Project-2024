@@ -86,6 +86,17 @@ export default class Header {
     }
   }
 
+  checkUserProfileButton(isLogged: boolean, userPageButton: HTMLButtonElement) {
+    if (userPageButton) {
+      const button = userPageButton;
+      if (isLogged) {
+        button.style.display = 'block';
+      } else {
+        button.style.display = 'none';
+      }
+    }
+  }
+
   addBurgerButton() {
     const buttonsDiv = document.querySelector('.upper-dashboard__buttons');
     const burgerButton = HTMLCreator.createElement('button', { class: 'upper-dashboard__burger-menu' }, [
@@ -126,6 +137,7 @@ export default class Header {
           localStorage.clear();
           const isLoggedIn = !!localStorage.getItem('userToken');
           this.changeLoginButtonToTheLogOutButton(isLoggedIn);
+          this.checkUserProfileButton(isLoggedIn, userProfileButton);
         } else if (loginButton.textContent === 'Login') {
           const loginEvent = new CustomEvent('loginEvent');
           document.body.dispatchEvent(loginEvent);
