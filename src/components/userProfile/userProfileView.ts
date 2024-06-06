@@ -369,54 +369,60 @@ export default class UserProfile {
         input.dispatchEvent(inputEvent);
       });
 
-      submitButton.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.controller.checkValidationPersonalInformation(form);
-        if (form.reportValidity()) {
-          const changedParagraph = paragraph;
-          changedParagraph.textContent = input.value;
-
-          const id = this.controller.getID();
-          if (id && this.version) {
-            try {
-              switch (index) {
-                case 0:
-                  this.email = input.value;
-                  await this.controller.updateEmail(this.version, id, this.email);
-                  break;
-                case 1:
-                  this.firstName = input.value;
-                  await this.controller.updateFirstName(this.version, id, this.firstName);
-                  break;
-                case 2:
-                  this.lastName = input.value;
-                  await this.controller.updateLastName(this.version, id, this.lastName);
-                  break;
-                case 3:
-                  this.dateOfBirth = input.value;
-                  await this.controller.updateDateOfBirth(
-                    this.version,
-                    id,
-                    this.controller.parseDateString(this.dateOfBirth)
-                  );
-                  break;
-                default:
-                  break;
-              }
-              await this.getCustomerData();
-              this.renderSuccessfulMessage(form);
-            } catch (error) {
-              console.log('Error updating data:', error);
-            }
-          }
-        }
-      });
-
       form.appendChild(input);
       form.appendChild(resetButton);
       form.appendChild(submitButton);
 
       paragraph.replaceWith(form);
+
+      this.controller.checkValidationPersonalInformation(form);
+
+      submitButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
+        const changedParagraph = paragraph;
+        changedParagraph.textContent = input.value;
+
+        const id = this.controller.getID();
+        if (id && this.version) {
+          try {
+            switch (index) {
+              case 0:
+                this.email = input.value;
+                await this.controller.updateEmail(this.version, id, this.email);
+                break;
+              case 1:
+                this.firstName = input.value;
+                this.controller.checkValidationPersonalInformation(form);
+                await this.controller.updateFirstName(this.version, id, this.firstName);
+                break;
+              case 2:
+                this.lastName = input.value;
+                await this.controller.updateLastName(this.version, id, this.lastName);
+                break;
+              case 3:
+                this.dateOfBirth = input.value;
+                await this.controller.updateDateOfBirth(
+                  this.version,
+                  id,
+                  this.controller.parseDateString(this.dateOfBirth)
+                );
+                break;
+              default:
+                break;
+            }
+            await this.getCustomerData();
+            this.renderSuccessfulMessage(form);
+          } catch (error) {
+            console.log('Error updating data:', error);
+          }
+        }
+      });
     });
   }
 
