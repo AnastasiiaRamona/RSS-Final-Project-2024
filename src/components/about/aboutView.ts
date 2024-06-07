@@ -116,7 +116,7 @@ export default class AboutPage {
         'anastasiarchm@gmail.com',
         'https://maps.app.goo.gl/SfK7FF9ofzPKe3ZZ7',
         'Serbia, Belgrade',
-        'https://www.uniyar.ac.ru/',
+        'https://www.uniyar.ac.en/',
         'P.G. Demidov Yaroslavl State University'
       ),
       HTMLCreator.createElement('h4', { class: 'about-bio' }, ['BIO']),
