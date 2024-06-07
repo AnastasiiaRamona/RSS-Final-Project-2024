@@ -12,8 +12,11 @@ import AppButtonsMethods from './appButtonsMethods';
 import AppSwiper from './swiper';
 import AboutPage from '../about/aboutView';
 import Footer from '../footer/footerView';
+import Preload from './preloadLink';
 
 export default class App {
+  private preload: Preload | null = null;
+
   private header: Header;
 
   private login: Login;
@@ -62,6 +65,7 @@ export default class App {
     this.changePageAlongThePath();
     this.setupEventListeners();
     this.setupRouter();
+    this.preload = new Preload();
   }
 
   async renderStartPage() {

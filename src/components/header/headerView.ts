@@ -1,18 +1,18 @@
 import HTMLCreator from '../HTMLCreator';
-import dogPath from '../../assets/dog.png';
-import catPath from '../../assets/cat.png';
-import pawPath from '../../assets/paw.png';
-import catalogIconSrc from '../../assets/catalog-icon.png';
-import basketIconSrc from '../../assets/basket-icon.png';
-import userProfileIconSrc from '../../assets/user-icon.png';
-import mainIconSrc from '../../assets/main-icon.png';
-import aboutUsIconSrc from '../../assets/about-us-icon.png';
+import dogPath from '../../assets/dog.webp';
+import catPath from '../../assets/cat.webp';
+import pawPath from '../../assets/paw.webp';
+import catalogIconSrc from '../../assets/catalog-icon.webp';
+import basketIconSrc from '../../assets/basket-icon.webp';
+import userProfileIconSrc from '../../assets/user-icon.webp';
+import mainIconSrc from '../../assets/main-icon.webp';
+import aboutUsIconSrc from '../../assets/about-us-icon.webp';
 
 export default class Header {
   renderHeader(isLoggedIn: boolean) {
     const textButton = isLoggedIn ? 'Log out' : 'Login';
 
-    const upperDashboard = HTMLCreator.createElement('header', { class: 'upper-dashboard' }, [
+    const upperDashboard = HTMLCreator.createElement('section', { class: 'upper-dashboard' }, [
       HTMLCreator.createElement('div', { class: 'heading-and-image' }, [
         HTMLCreator.createElement('img', { class: 'cat-image', src: catPath, alt: 'cat' }),
         HTMLCreator.createElement('div', { class: 'heading' }, [
