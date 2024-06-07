@@ -22,13 +22,17 @@ export default class AboutPage {
   ) {
     const aboutList = HTMLCreator.createElement('ul', { class: 'about-list' }, [
       HTMLCreator.createElement('li', { class: 'about-item about-email' }, [
-        HTMLCreator.createElement('a', { class: 'about-item__link', href: linkEmail }, [textEmail]),
+        HTMLCreator.createElement('a', { class: 'about-item__link', href: linkEmail, target: '_blank' }, [textEmail]),
       ]),
       HTMLCreator.createElement('li', { class: 'about-item about-location' }, [
-        HTMLCreator.createElement('a', { class: 'about-item__link', href: linkLocation }, [textLocation]),
+        HTMLCreator.createElement('a', { class: 'about-item__link', href: linkLocation, target: '_blank' }, [
+          textLocation,
+        ]),
       ]),
       HTMLCreator.createElement('li', { class: 'about-item about-education' }, [
-        HTMLCreator.createElement('a', { class: 'about-item__link', href: linkEducation }, [textEducation]),
+        HTMLCreator.createElement('a', { class: 'about-item__link', href: linkEducation, target: '_blank' }, [
+          textEducation,
+        ]),
       ]),
     ]);
     return aboutList;
