@@ -103,6 +103,15 @@
   transform: translateX(0);
 }
 
+.left-dashboard__button {
+  @include flexbox(row, center, center);
+  gap: 5px;
+}
+
+.left-dashboard__image {
+  @include size(auto, 20px);
+}
+
 @media (max-width: 1160px) {
   .title {
     font-size: x-large;

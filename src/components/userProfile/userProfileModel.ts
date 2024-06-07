@@ -42,6 +42,7 @@ export default class UserProfileModel {
         },
       ],
     };
+
     await this.commerceToolsAPI.updateCustomer(id, updateData);
   }
 

@@ -1,6 +1,3 @@
-import { Fancybox } from '@fancyapps/ui';
-import Swiper from 'swiper';
-import { Navigation, Pagination, Zoom } from 'swiper/modules';
 import Header from '../header/headerView';
 import Login from '../login/loginView';
 import Main from '../main/mainView';
@@ -12,6 +9,7 @@ import DetailedProduct from '../detailedProduct/detailedProductView';
 import HTMLCreator from '../HTMLCreator';
 import UserProfile from '../userProfile/userProfileView';
 import AppButtonsMethods from './appButtonsMethods';
+import AppSwiper from './swiper';
 
 export default class App {
   private header: Header;
@@ -38,6 +36,8 @@ export default class App {
 
   private buttonsArray: HTMLButtonElement[] = [];
 
+  private appSwiper: AppSwiper;
+
   constructor() {
     this.header = new Header();
     this.login = new Login();
@@ -46,6 +46,7 @@ export default class App {
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
     this.appButtonsMethods = new AppButtonsMethods();
+    this.appSwiper = new AppSwiper();
   }
 
   render() {
@@ -104,6 +105,7 @@ export default class App {
       this.router.addRoute(path, () => {
         this.isLoggedIn = !!localStorage.getItem('userToken');
         this.header.changeLoginButtonToTheLogOutButton(this.isLoggedIn);
+        this.header.checkUserProfileButton(this.isLoggedIn, userProfileButton);
         renderFunction();
       });
     };
@@ -142,7 +144,7 @@ export default class App {
         const product = new DetailedProduct(productId);
         this.changeMainElement(product.renderMain());
         await product.getProductInformation();
-        this.createSwiper();
+        this.appSwiper.createSwiper();
         this.appButtonsMethods?.activateButton(catalogButton);
       }
     });
@@ -193,7 +195,7 @@ export default class App {
         if (this.isLoggedIn) {
           this.renderPageByRoute('user-profile');
         } else {
-          this.renderPageByRoute('404page', true);
+          this.renderPageByRoute('login');
         }
         break;
       default:
@@ -217,31 +219,6 @@ export default class App {
         routes[`/${route}`]();
       }
     }
-  }
-
-  createSwiper() {
-    const swiper = new Swiper('.swiper', {
-      // configure Swiper to use modules
-      modules: [Navigation, Pagination, Zoom],
-      grabCursor: true,
-      loop: true,
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-        type: 'bullets',
-      },
-
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-    });
-
-    Fancybox.bind('[data-fancybox]', {
-      // Your custom options
-    });
-
-    return swiper;
   }
 
   findButtons() {
