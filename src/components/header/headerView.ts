@@ -81,9 +81,9 @@ export default class Header {
         'Basket',
         HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: basketIconSrc, alt: 'basket icon' }),
       ]),
-      HTMLCreator.createElement('button', { class: 'left-dashboard__button' }, [
+      HTMLCreator.createElement('button', { class: 'left-dashboard__button about-us-button' }, [
         'About Us',
-        HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: aboutUsIconSrc, alt: 'catalog icon' }),
+        HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: aboutUsIconSrc, alt: 'about us icon' }),
       ]),
     ]);
 
@@ -148,6 +148,7 @@ export default class Header {
     const mainButton = document.querySelector('.main-button') as HTMLButtonElement;
     const catalogButton = document.querySelector('.catalog-button') as HTMLButtonElement;
     const userProfileButton = document.querySelector('.user-profile-button') as HTMLButtonElement;
+    const aboutUsButton = document.querySelector('.about-us-button') as HTMLButtonElement;
 
     if (loginButton) {
       loginButton.addEventListener('click', () => {
@@ -193,6 +194,11 @@ export default class Header {
     userProfileButton?.addEventListener('click', () => {
       const userProfileEvent = new CustomEvent('userProfileEvent');
       document.body.dispatchEvent(userProfileEvent);
+    });
+
+    aboutUsButton?.addEventListener('click', () => {
+      const aboutUsEvent = new CustomEvent('aboutUsEvent');
+      document.body.dispatchEvent(aboutUsEvent);
     });
   }
 }

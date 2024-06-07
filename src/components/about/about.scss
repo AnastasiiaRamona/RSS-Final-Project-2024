@@ -1,18 +1,20 @@
 .about-container {
-  @include container(1400px);
   height: 100%;
+  overflow-x: hidden;
 }
 .about-wrapper {
   display: flex;
   justify-content: center;
   gap: 40px;
+  width: 100vw;
   height: auto;
   flex-wrap: wrap;
 }
 .about-title {
-  @include font('Arial', clamp(18px, 5vw, 36px), bold, 1, #000);
+  @include font($secondary-font-family, clamp(18px, 5vw, 36px), bold, 1, $white);
   text-align: center;
   margin-top: 20px;
+  text-shadow: $primary-color 0 4px 6px;
 }
 .about-content {
   @include flexbox(column);
@@ -20,7 +22,7 @@
   flex-basis: 350px;
   padding: 10px 20px;
   border-radius: 10px;
-  border: 2px solid $success-color;
+  border: 1px solid $light;
   background-image: $bca-gradient-second;
   transition: all 0.6s linear;
   &:hover {
@@ -30,7 +32,7 @@
   }
   &:hover .about-photo {
     transform: translateY(-10px);
-    filter: drop-shadow(0 0 14px rgb(110, 219, 138));
+    filter: drop-shadow(0 0 14px $success-color);
   }
 }
 .about-image {
@@ -43,7 +45,7 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  filter: drop-shadow(0 0 0.75rem crimson);
+  filter: drop-shadow(0 0 0.75rem $light);
   transition: all 0.6s linear;
 }
 .about-link img {
@@ -59,13 +61,14 @@
 
 .about-name {
   margin-top: 10px;
-  @include font('Arial', clamp(16px, 5vw, 28px), bold, 1, #000);
+  @include font($secondary-font-family, clamp(16px, 5vw, 28px), bold, 1, #d3f7d8);
+  text-shadow: $primary-color 1px 6px 10px;
   text-align: center;
 }
 
 .about-position {
   margin-top: 5px;
-  @include font($primary-font-family, clamp(14px, 4vw, 20px), 700, 1, #130303);
+  @include font($primary-font-family, clamp(14px, 4vw, 18px), 700, 1, $primary-color);
   opacity: 0.9;
 }
 
@@ -125,11 +128,12 @@
   margin-top: 10px;
   text-align: justify;
   @include font($primary-font-family, clamp(14px, 4vw, 16px), 400, 1, #130303);
+  height: 144px;
 }
 .about-bio,
 .about-contact {
   margin-top: 10px;
-  @include font($primary-font-family, clamp(14px, 4vw, 20px), 700, 1, #130303);
+  @include font($secondary-font-family, clamp(14px, 4vw, 20px), 700, 1, $black);
 }
 .about-icons {
   display: flex;

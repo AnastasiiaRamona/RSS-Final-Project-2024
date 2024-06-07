@@ -10,6 +10,8 @@ import HTMLCreator from '../HTMLCreator';
 import UserProfile from '../userProfile/userProfileView';
 import AppButtonsMethods from './appButtonsMethods';
 import AppSwiper from './swiper';
+import AboutPage from '../about/aboutView';
+import Footer from '../footer/footerView';
 
 export default class App {
   private header: Header;
@@ -21,6 +23,10 @@ export default class App {
   private main: Main;
 
   private catalog: Catalog;
+
+  private aboutUs: AboutPage;
+
+  private footer: Footer;
 
   private isLoggedIn: boolean = !!localStorage.getItem('userToken');
 
@@ -45,6 +51,8 @@ export default class App {
     this.main = new Main();
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
+    this.aboutUs = new AboutPage();
+    this.footer = new Footer();
     this.appButtonsMethods = new AppButtonsMethods();
     this.appSwiper = new AppSwiper();
   }
@@ -90,6 +98,9 @@ export default class App {
         this.router.navigateTo(`/product?id=${this.productId}`);
       }
     }) as EventListener);
+    this.body.addEventListener('aboutUsEvent', () => {
+      this.router.navigateTo('/about-us');
+    });
   }
 
   changeMainElement(element: HTMLElement) {
@@ -100,7 +111,8 @@ export default class App {
   }
 
   private setupRouter() {
-    const { loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title } = this.findButtons();
+    const { loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title, aboutUsButton } =
+      this.findButtons();
     const renderRoute = (path: string, renderFunction: () => void) => {
       this.router.addRoute(path, () => {
         this.isLoggedIn = !!localStorage.getItem('userToken');
@@ -158,6 +170,11 @@ export default class App {
         this.appButtonsMethods?.toggleButton(userProfileButton, this.buttonsArray);
       }
     });
+
+    renderRoute('/about-us', () => {
+      this.changeMainElement(this.aboutUs.renderAboutPage());
+      this.appButtonsMethods?.toggleButton(aboutUsButton, this.buttonsArray);
+    });
   }
 
   changePageAlongThePath() {
@@ -198,6 +215,9 @@ export default class App {
           this.renderPageByRoute('login');
         }
         break;
+      case 'about-us':
+        this.renderPageByRoute('about-us');
+        break;
       default:
         if (routes[startingRoute]) {
           this.renderPageByRoute(startingRoute);
@@ -228,8 +248,17 @@ export default class App {
     const catalogButton = document.querySelector('.catalog-button') as HTMLButtonElement;
     const userProfileButton = document.querySelector('.user-profile-button') as HTMLButtonElement;
     const title = document.querySelector('.title') as HTMLButtonElement;
+    const aboutUsButton = document.querySelector('.about-us-button') as HTMLButtonElement;
 
-    this.buttonsArray.push(loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title);
-    return { loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title };
+    this.buttonsArray.push(
+      loginButton,
+      registrationButton,
+      mainButton,
+      catalogButton,
+      userProfileButton,
+      title,
+      aboutUsButton
+    );
+    return { loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title, aboutUsButton };
   }
 }
