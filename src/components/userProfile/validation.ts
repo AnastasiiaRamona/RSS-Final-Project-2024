@@ -45,6 +45,7 @@ export default class Validation {
           }
         }
       }
+      element.reportValidity();
     });
   }
 
