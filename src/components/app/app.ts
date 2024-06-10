@@ -68,20 +68,20 @@ export default class App {
     this.appButtonsMethods = new AppButtonsMethods();
     this.appSwiper = new AppSwiper();
     this.commerceToolsAPI = new CommerceToolsAPI();
+    if (this.userId) {
+      this.commerceToolsAPI.createCart(this.userId).then(() => {});
+    } else {
+      this.commerceToolsAPI.createCart().then(() => {});
+    }
   }
 
-  async render() {
+  render() {
     this.userId = localStorage.getItem('userPetShopId');
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
     this.setupRouter();
     this.preload = new Preload();
-    if (this.userId) {
-      await this.commerceToolsAPI.createCart(this.userId);
-    } else {
-      await this.commerceToolsAPI.createCart();
-    }
   }
 
   async renderStartPage() {
