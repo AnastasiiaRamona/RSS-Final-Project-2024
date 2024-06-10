@@ -124,7 +124,7 @@ export default class AboutPage {
       ),
       HTMLCreator.createElement('h4', { class: 'about-bio' }, ['BIO']),
       HTMLCreator.createElement('p', { class: 'about-description' }, [
-        'Anastasiia Kabanova was born on September 12, 1996. She holds a degree in law but is currently pursuing a career in frontend development, aspiring to become a skilled professional in the field. Besides her passion for coding, Anastasiia is deeply involved in music. She produces and releases her own music across all major streaming platforms.',
+        'Anastasiia Kabanova was born on September 12, 1996. She holds a degree in law but is currently pursuing a career in frontend development, aspiring to become a skilled professional in the field. Besides her passion for coding, Anastasiia is deeply involved in music. She releases her own music across all streaming platforms.',
       ]),
       HTMLCreator.createElement('h4', { class: 'about-contact' }, ['Contact']),
       this.renderContact(
@@ -157,7 +157,7 @@ export default class AboutPage {
       ),
       HTMLCreator.createElement('h4', { class: 'about-bio' }, ['BIO']),
       HTMLCreator.createElement('p', { class: 'about-description' }, [
-        `Yuri has five years of experience working as a network engineer. He is currently pursuing a career in frontend development. Eventually would like to become a fullstack developer. Passionate about running and swimming, wants to improve cycling skills and do triathlons.He's into history, movies and travel.`,
+        `Yuri has five years of experience working as a network engineer. He is currently pursuing a career in frontend development. Eventually would like to become a fullstack developer. Passionate about running and swimming, wants to improve cycling skills and do triathlons. He's into history, movies and travel.`,
       ]),
       HTMLCreator.createElement('h4', { class: 'about-contact' }, ['Contact']),
       this.renderContact(
