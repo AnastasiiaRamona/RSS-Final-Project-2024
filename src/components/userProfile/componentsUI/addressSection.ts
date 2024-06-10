@@ -2,9 +2,9 @@ import iso3166 from 'iso-3166-1-alpha-2';
 import { Address } from '@commercetools/platform-sdk';
 import HTMLCreator from '../../HTMLCreator';
 import Buttons from './buttons';
-import germanyFlag from '../../../assets/germany.png';
+import germanyFlag from '../../../assets/germany.webp';
 import usaFlag from '../../../assets/usa.svg';
-import italyFlag from '../../../assets/italy.png';
+import italyFlag from '../../../assets/italy.webp';
 
 export default class AddressSection {
   private buttons: Buttons;

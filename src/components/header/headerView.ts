@@ -1,18 +1,18 @@
 import HTMLCreator from '../HTMLCreator';
-import dogPath from '../../assets/dog.png';
-import catPath from '../../assets/cat.png';
-import pawPath from '../../assets/paw.png';
-import catalogIconSrc from '../../assets/catalog-icon.png';
-import basketIconSrc from '../../assets/basket-icon.png';
-import userProfileIconSrc from '../../assets/user-icon.png';
-import mainIconSrc from '../../assets/main-icon.png';
-import aboutUsIconSrc from '../../assets/about-us-icon.png';
+import dogPath from '../../assets/dog.webp';
+import catPath from '../../assets/cat.webp';
+import pawPath from '../../assets/paw.webp';
+import catalogIconSrc from '../../assets/catalog-icon.webp';
+import basketIconSrc from '../../assets/basket-icon.webp';
+import userProfileIconSrc from '../../assets/user-icon.webp';
+import mainIconSrc from '../../assets/main-icon.webp';
+import aboutUsIconSrc from '../../assets/about-us-icon.webp';
 
 export default class Header {
   renderHeader(isLoggedIn: boolean) {
     const textButton = isLoggedIn ? 'Log out' : 'Login';
 
-    const upperDashboard = HTMLCreator.createElement('header', { class: 'upper-dashboard' }, [
+    const upperDashboard = HTMLCreator.createElement('section', { class: 'upper-dashboard' }, [
       HTMLCreator.createElement('div', { class: 'heading-and-image' }, [
         HTMLCreator.createElement('img', { class: 'cat-image', src: catPath, alt: 'cat' }),
         HTMLCreator.createElement('div', { class: 'heading' }, [
@@ -49,7 +49,7 @@ export default class Header {
   renderLeftDashboard() {
     const userProfileButton = HTMLCreator.createElement(
       'button',
-      { class: 'left-dashboard__button user-profile-button inactive', disabled: 'true' },
+      { class: 'left-dashboard__button user-profile-button' },
       [
         'User Profile',
         HTMLCreator.createElement('img', {
@@ -81,9 +81,9 @@ export default class Header {
         'Basket',
         HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: basketIconSrc, alt: 'basket icon' }),
       ]),
-      HTMLCreator.createElement('button', { class: 'left-dashboard__button' }, [
+      HTMLCreator.createElement('button', { class: 'left-dashboard__button about-us-button' }, [
         'About Us',
-        HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: aboutUsIconSrc, alt: 'catalog icon' }),
+        HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: aboutUsIconSrc, alt: 'about us icon' }),
       ]),
     ]);
 
@@ -110,7 +110,7 @@ export default class Header {
     if (userPageButton) {
       const button = userPageButton;
       if (isLogged) {
-        button.style.display = 'flex-column';
+        button.style.display = 'flex';
       } else {
         button.style.display = 'none';
       }
@@ -148,6 +148,7 @@ export default class Header {
     const mainButton = document.querySelector('.main-button') as HTMLButtonElement;
     const catalogButton = document.querySelector('.catalog-button') as HTMLButtonElement;
     const userProfileButton = document.querySelector('.user-profile-button') as HTMLButtonElement;
+    const aboutUsButton = document.querySelector('.about-us-button') as HTMLButtonElement;
 
     if (loginButton) {
       loginButton.addEventListener('click', () => {
@@ -193,6 +194,11 @@ export default class Header {
     userProfileButton?.addEventListener('click', () => {
       const userProfileEvent = new CustomEvent('userProfileEvent');
       document.body.dispatchEvent(userProfileEvent);
+    });
+
+    aboutUsButton?.addEventListener('click', () => {
+      const aboutUsEvent = new CustomEvent('aboutUsEvent');
+      document.body.dispatchEvent(aboutUsEvent);
     });
   }
 }

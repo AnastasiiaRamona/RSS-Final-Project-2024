@@ -1,6 +1,6 @@
 import HTMLCreator from '../HTMLCreator';
-import petPath from '../../assets/dogs.png';
-import errorPath from '../../assets/404Error.png';
+import petPath from '../../assets/dogs.webp';
+import errorPath from '../../assets/404Error.webp';
 
 export default class MissingPage {
   renderPage() {

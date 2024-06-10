@@ -2,7 +2,7 @@ import iso3166 from 'iso-3166-1-alpha-2';
 import { Address } from '@commercetools/platform-sdk';
 import HTMLCreator from '../../HTMLCreator';
 import Buttons from './buttons';
-import generalAddressIconSrc from '../../../assets/address-icon.png';
+import generalAddressIconSrc from '../../../assets/address-icon.webp';
 
 export default class NewAddressForm {
   private buttons: Buttons;
