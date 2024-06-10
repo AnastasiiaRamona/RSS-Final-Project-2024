@@ -17,6 +17,10 @@
   }
 }
 
+.left-dashboard__text {
+  width: 101px;
+}
+
 .paw__image {
   @include size(auto, 4vh);
 }

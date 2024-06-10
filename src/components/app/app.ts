@@ -13,6 +13,8 @@ import AppSwiper from './swiper';
 import AboutPage from '../about/aboutView';
 import Footer from '../footer/footerView';
 import Preload from './preloadLink';
+import CommerceToolsAPI from '../commerceToolsAPI';
+import Basket from '../basket/basketView';
 
 export default class App {
   private preload: Preload | null = null;
@@ -28,6 +30,8 @@ export default class App {
   private catalog: Catalog;
 
   private aboutUs: AboutPage;
+
+  private basket: Basket;
 
   private footer: Footer;
 
@@ -47,6 +51,10 @@ export default class App {
 
   private appSwiper: AppSwiper;
 
+  private commerceToolsAPI: CommerceToolsAPI;
+
+  private userId: string | null = null;
+
   constructor() {
     this.header = new Header();
     this.login = new Login();
@@ -55,17 +63,25 @@ export default class App {
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
     this.aboutUs = new AboutPage();
+    this.basket = new Basket();
     this.footer = new Footer();
     this.appButtonsMethods = new AppButtonsMethods();
     this.appSwiper = new AppSwiper();
+    this.commerceToolsAPI = new CommerceToolsAPI();
   }
 
-  render() {
+  async render() {
+    this.userId = localStorage.getItem('userPetShopId');
     this.renderStartPage();
     this.changePageAlongThePath();
     this.setupEventListeners();
     this.setupRouter();
     this.preload = new Preload();
+    if (this.userId) {
+      await this.commerceToolsAPI.createCart(this.userId);
+    } else {
+      await this.commerceToolsAPI.createCart();
+    }
   }
 
   async renderStartPage() {
@@ -105,6 +121,9 @@ export default class App {
     this.body.addEventListener('aboutUsEvent', () => {
       this.router.navigateTo('/about-us');
     });
+    this.body.addEventListener('basketEvent', () => {
+      this.router.navigateTo('/basket');
+    });
   }
 
   changeMainElement(element: HTMLElement) {
@@ -115,10 +134,18 @@ export default class App {
   }
 
   private setupRouter() {
-    const { loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title, aboutUsButton } =
-      this.findButtons();
+    const {
+      loginButton,
+      registrationButton,
+      mainButton,
+      catalogButton,
+      userProfileButton,
+      title,
+      aboutUsButton,
+      basketButton,
+    } = this.findButtons();
     const renderRoute = (path: string, renderFunction: () => void) => {
-      this.router.addRoute(path, () => {
+      this.router.addRoute(path, async () => {
         this.isLoggedIn = !!localStorage.getItem('userToken');
         this.header.changeLoginButtonToTheLogOutButton(this.isLoggedIn);
         this.header.checkUserProfileButton(this.isLoggedIn, userProfileButton);
@@ -179,6 +206,11 @@ export default class App {
       this.changeMainElement(this.aboutUs.renderAboutPage());
       this.appButtonsMethods?.toggleButton(aboutUsButton, this.buttonsArray);
     });
+
+    renderRoute('/basket', () => {
+      this.changeMainElement(this.basket.renderPage());
+      this.appButtonsMethods?.toggleButton(basketButton, this.buttonsArray);
+    });
   }
 
   changePageAlongThePath() {
@@ -222,6 +254,9 @@ export default class App {
       case 'about-us':
         this.renderPageByRoute('about-us');
         break;
+      case 'basket':
+        this.renderPageByRoute('basket');
+        break;
       default:
         if (routes[startingRoute]) {
           this.renderPageByRoute(startingRoute);
@@ -253,6 +288,7 @@ export default class App {
     const userProfileButton = document.querySelector('.user-profile-button') as HTMLButtonElement;
     const title = document.querySelector('.title') as HTMLButtonElement;
     const aboutUsButton = document.querySelector('.about-us-button') as HTMLButtonElement;
+    const basketButton = document.querySelector('.basket-button') as HTMLButtonElement;
 
     this.buttonsArray.push(
       loginButton,
@@ -261,8 +297,18 @@ export default class App {
       catalogButton,
       userProfileButton,
       title,
-      aboutUsButton
+      aboutUsButton,
+      basketButton
     );
-    return { loginButton, registrationButton, mainButton, catalogButton, userProfileButton, title, aboutUsButton };
+    return {
+      loginButton,
+      registrationButton,
+      mainButton,
+      catalogButton,
+      userProfileButton,
+      title,
+      aboutUsButton,
+      basketButton,
+    };
   }
 }
