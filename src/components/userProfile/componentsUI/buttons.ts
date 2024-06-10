@@ -1,13 +1,13 @@
 import HTMLCreator from '../../HTMLCreator';
 import editIcon from '../../../assets/edit.svg';
-import passwordIconSrc from '../../../assets/password-icon.png';
-import resetIconSrc from '../../../assets/reset-button.png';
-import submitIconSrc from '../../../assets/submit-button.png';
-import shippingAddressIconSrc from '../../../assets/shipping-address-icon.png';
-import billingAddressIconSrc from '../../../assets/billing-address-icon.png';
-import closeIconSrc from '../../../assets/close-icon.png';
-import newAddressSrc from '../../../assets/new-address.png';
-import deleteButtonSrc from '../../../assets/delete-icon.png';
+import passwordIconSrc from '../../../assets/password-icon.webp';
+import resetIconSrc from '../../../assets/reset-button.webp';
+import submitIconSrc from '../../../assets/submit-button.webp';
+import shippingAddressIconSrc from '../../../assets/shipping-address-icon.webp';
+import billingAddressIconSrc from '../../../assets/billing-address-icon.webp';
+import closeIconSrc from '../../../assets/close-icon.webp';
+import newAddressSrc from '../../../assets/new-address.webp';
+import deleteButtonSrc from '../../../assets/delete-icon.webp';
 
 export default class Buttons {
   renderResetButton() {

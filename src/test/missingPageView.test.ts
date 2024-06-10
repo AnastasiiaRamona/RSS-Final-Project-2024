@@ -1,7 +1,7 @@
 import MissingPage from '../components/missingPage/missingPageView';
 import HTMLCreator from '../components/HTMLCreator';
-import petPath from '../../assets/dogs.png';
-import errorPath from '../../assets/404Error.png';
+import petPath from '../../assets/dogs.webp';
+import errorPath from '../../assets/404Error.webp';
 
 jest.mock('../components/HTMLCreator');
 

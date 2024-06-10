@@ -369,54 +369,60 @@ export default class UserProfile {
         input.dispatchEvent(inputEvent);
       });
 
-      submitButton.addEventListener('click', async (event) => {
-        event.preventDefault();
-        this.controller.checkValidationPersonalInformation(form);
-        if (form.reportValidity()) {
-          const changedParagraph = paragraph;
-          changedParagraph.textContent = input.value;
-
-          const id = this.controller.getID();
-          if (id && this.version) {
-            try {
-              switch (index) {
-                case 0:
-                  this.email = input.value;
-                  await this.controller.updateEmail(this.version, id, this.email);
-                  break;
-                case 1:
-                  this.firstName = input.value;
-                  await this.controller.updateFirstName(this.version, id, this.firstName);
-                  break;
-                case 2:
-                  this.lastName = input.value;
-                  await this.controller.updateLastName(this.version, id, this.lastName);
-                  break;
-                case 3:
-                  this.dateOfBirth = input.value;
-                  await this.controller.updateDateOfBirth(
-                    this.version,
-                    id,
-                    this.controller.parseDateString(this.dateOfBirth)
-                  );
-                  break;
-                default:
-                  break;
-              }
-              await this.getCustomerData();
-              this.renderSuccessfulMessage(form);
-            } catch (error) {
-              console.log('Error updating data:', error);
-            }
-          }
-        }
-      });
-
       form.appendChild(input);
       form.appendChild(resetButton);
       form.appendChild(submitButton);
 
       paragraph.replaceWith(form);
+
+      this.controller.checkValidationPersonalInformation(form);
+
+      submitButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
+        const changedParagraph = paragraph;
+        changedParagraph.textContent = input.value;
+
+        const id = this.controller.getID();
+        if (id && this.version) {
+          try {
+            switch (index) {
+              case 0:
+                this.email = input.value;
+                await this.controller.updateEmail(this.version, id, this.email);
+                break;
+              case 1:
+                this.firstName = input.value;
+                this.controller.checkValidationPersonalInformation(form);
+                await this.controller.updateFirstName(this.version, id, this.firstName);
+                break;
+              case 2:
+                this.lastName = input.value;
+                await this.controller.updateLastName(this.version, id, this.lastName);
+                break;
+              case 3:
+                this.dateOfBirth = input.value;
+                await this.controller.updateDateOfBirth(
+                  this.version,
+                  id,
+                  this.controller.parseDateString(this.dateOfBirth)
+                );
+                break;
+              default:
+                break;
+            }
+            await this.getCustomerData();
+            this.renderSuccessfulMessage(form);
+          } catch (error) {
+            console.log('Error updating data:', error);
+          }
+        }
+      });
     });
   }
 
@@ -582,6 +588,7 @@ export default class UserProfile {
                   if (addressType && this.addresses) {
                     if (addressesSection.contains(newAddressFormContainer)) {
                       const updatedAddress = this.addresses.find((element) => element.id === addressId) as Address;
+                      this.deleteDefaultText(isDefault, addressType);
                       const newAddressEmpty = this.addressSection.renderAddressSection(
                         this.addresses[this.addresses.indexOf(updatedAddress)],
                         addressType,
@@ -659,6 +666,29 @@ export default class UserProfile {
         const securitySettingsSection = document.querySelector('.security-settings-section') as HTMLElement;
         securitySettingsSection.replaceChild(changePasswordButton, form);
         this.addEventListenerToTheChangeButton();
+      });
+    }
+  }
+
+  deleteDefaultText(isDefault: boolean, addressType: string) {
+    if (isDefault) {
+      const addressEntries = document.querySelectorAll('.address-entry');
+      addressEntries.forEach((addressEntry) => {
+        const defaultText = addressEntry.querySelector('.default-text') as HTMLElement;
+        if (defaultText) {
+          const clickedIcons = addressEntry.querySelectorAll('.address-clicked');
+          if (clickedIcons.length === 2) {
+            defaultText.style.display = 'none';
+          } else {
+            const addressIcons = addressEntry.querySelectorAll('.address-icon');
+            const isBillingSelected =
+              addressIcons[0].classList.contains('address-clicked') && addressType === 'billing';
+            const isShippingSelected =
+              addressIcons[1].classList.contains('address-clicked') && addressType === 'shipping';
+            const isGeneralAddress = addressType === 'general';
+            defaultText.style.display = isBillingSelected || isShippingSelected || isGeneralAddress ? 'none' : '';
+          }
+        }
       });
     }
   }

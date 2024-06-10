@@ -1,6 +1,6 @@
 import HTMLCreator from '../HTMLCreator';
 import LoginController from './loginController';
-import parrotPath from '../../assets/parrot.png';
+import parrotPath from '../../assets/parrot.webp';
 
 export default class Login {
   controller: LoginController;

@@ -1,5 +1,5 @@
 body {
-  @include image('./assets/background-image.jpg', 100vw, 100vh, top, no-repeat, cover, );
+  @include image('./assets/background-image.webp', 100vw, 100vh, top, no-repeat, cover, );
   background-attachment: scroll;
   margin: 0;
   @include flexbox(column, space-between);
