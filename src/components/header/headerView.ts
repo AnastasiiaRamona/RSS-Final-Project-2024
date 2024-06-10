@@ -51,7 +51,7 @@ export default class Header {
       'button',
       { class: 'left-dashboard__button user-profile-button' },
       [
-        'User Profile',
+        HTMLCreator.createElement('p', { class: 'left-dashboard__text' }, ['User Profile']),
         HTMLCreator.createElement('img', {
           class: 'left-dashboard__image',
           src: userProfileIconSrc,
@@ -66,23 +66,23 @@ export default class Header {
     }
 
     const mainButton = HTMLCreator.createElement('button', { class: 'left-dashboard__button main-button' }, [
-      'Main page',
+      HTMLCreator.createElement('p', { class: 'left-dashboard__text' }, ['Main']),
       HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: mainIconSrc, alt: 'main icon' }),
     ]) as HTMLButtonElement;
 
     const leftDashboard = HTMLCreator.createElement('section', { class: 'left-dashboard' }, [
       mainButton,
       HTMLCreator.createElement('button', { class: 'left-dashboard__button catalog-button' }, [
-        'Catalog Product',
+        HTMLCreator.createElement('p', { class: 'left-dashboard__text' }, ['Catalog Product']),
         HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: catalogIconSrc, alt: 'catalog icon' }),
       ]),
       userProfileButton,
-      HTMLCreator.createElement('button', { class: 'left-dashboard__button' }, [
-        'Basket',
+      HTMLCreator.createElement('button', { class: 'left-dashboard__button basket-button' }, [
+        HTMLCreator.createElement('p', { class: 'left-dashboard__text' }, ['Basket']),
         HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: basketIconSrc, alt: 'basket icon' }),
       ]),
       HTMLCreator.createElement('button', { class: 'left-dashboard__button about-us-button' }, [
-        'About Us',
+        HTMLCreator.createElement('p', { class: 'left-dashboard__text' }, ['About Us']),
         HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: aboutUsIconSrc, alt: 'about us icon' }),
       ]),
     ]);
@@ -149,6 +149,7 @@ export default class Header {
     const catalogButton = document.querySelector('.catalog-button') as HTMLButtonElement;
     const userProfileButton = document.querySelector('.user-profile-button') as HTMLButtonElement;
     const aboutUsButton = document.querySelector('.about-us-button') as HTMLButtonElement;
+    const basketButton = document.querySelector('.basket-button') as HTMLButtonElement;
 
     if (loginButton) {
       loginButton.addEventListener('click', () => {
@@ -199,6 +200,11 @@ export default class Header {
     aboutUsButton?.addEventListener('click', () => {
       const aboutUsEvent = new CustomEvent('aboutUsEvent');
       document.body.dispatchEvent(aboutUsEvent);
+    });
+
+    basketButton?.addEventListener('click', () => {
+      const basketEvent = new CustomEvent('basketEvent');
+      document.body.dispatchEvent(basketEvent);
     });
   }
 }

@@ -6,7 +6,13 @@ import {
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
-import { BaseAddress, CustomerDraft, CustomerUpdate, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import {
+  BaseAddress,
+  CartDraft,
+  CustomerDraft,
+  CustomerUpdate,
+  createApiBuilderFromCtpClient,
+} from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import {
   clientId,
@@ -516,4 +522,45 @@ export default class CommerceToolsAPI {
     }
     return result;
   }
+
+  async createCart(customerId?: string) {
+    this.createClient();
+
+    const cartDraft: CartDraft = {
+      currency: 'EUR',
+      country: 'US',
+      customerId: customerId || undefined,
+    };
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .carts()
+        .post({
+          body: cartDraft,
+        })
+        .execute();
+    }
+    console.log(response);
+    return response;
+  }
+
+  // async updateCart(cartId: string, customerId: string, cartVersion: number) {
+  //   this.createClient();
+
+  //   let response;
+  //   if (this.apiRoot) {
+  //     response = await this.apiRoot
+  //       .carts()
+  //       .withId({ ID: cartId })
+  //       .post({
+  //         body: {
+  //           version: cartVersion,
+  //           actions: [{ action: 'setCustomerId', customerId }],
+  //         },
+  //       })
+  //       .execute();
+  //   }
+  //   return response;
+  // }
 }
