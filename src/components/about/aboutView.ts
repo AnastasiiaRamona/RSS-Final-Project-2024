@@ -145,29 +145,27 @@ export default class AboutPage {
         HTMLCreator.createElement('source', { class: 'about-photo', srcset: photoMartiJpg, type: 'image/jpeg' }),
         HTMLCreator.createElement('img', { class: 'about-photo', src: photoMartiJpg, alt: 'developer' }),
       ]),
-      HTMLCreator.createElement('div', { class: 'about-name' }, ['Marti']),
+      HTMLCreator.createElement('div', { class: 'about-name' }, ['Yuri Porokhin']),
       HTMLCreator.createElement('div', { class: 'about-position' }, ['Frontend Developer']),
       this.renderAboutList(
-        'mailto:aleks6699@gmail.com',
-        'aleks6699@gmail.com',
-        'https://maps.app.goo.gl/Vnmd1gsDFsWz113S8',
+        'mailto:marti.iden.cod@gmail.com',
+        'marti.iden.cod@gmail.com',
+        'https://maps.app.goo.gl/CX35KjdbiRBSfpMD7',
         'Russia, Novosibirsk',
-        'https://www.knutd.edu.ua/',
-        'Kyiv National University of Technologies and Design (KNUTD)'
+        'https://sibsutis.ru/',
+        'Siberian State University of Telecommunications and Informatics'
       ),
       HTMLCreator.createElement('h4', { class: 'about-bio' }, ['BIO']),
       HTMLCreator.createElement('p', { class: 'about-description' }, [
-        `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magni recusandae consectetur eum voluptate culpa
-      nemo. Dolor eius totam repellat voluptatem at, dolore inventore est praesentium nam quae hic,
-      exercitationem quos.`,
+        `Yuri has five years of experience working as a network engineer. He is currently pursuing a career in frontend development. Eventually would like to become a fullstack developer. Passionate about running and swimming, wants to improve cycling skills and do triathlons.He's into history, movies and travel.`,
       ]),
       HTMLCreator.createElement('h4', { class: 'about-contact' }, ['Contact']),
       this.renderContact(
-        'https://github.com/aleks6699',
-        'https://www.linkedin.com/in/aleks6699/',
+        'https://github.com/MartiP54/',
+        'https://www.linkedin.com/',
         'https://www.facebook.com/',
-        'https://www.instagram.com/alex._tsurkan/',
-        'https://t.me/AleksTsurkan'
+        'https://www.instagram.com/',
+        'https://t.me/'
       ),
     ]);
     return content;
