@@ -49,7 +49,7 @@ export default class Header {
   renderLeftDashboard() {
     const userProfileButton = HTMLCreator.createElement(
       'button',
-      { class: 'left-dashboard__button user-profile-button inactive', disabled: 'true' },
+      { class: 'left-dashboard__button user-profile-button' },
       [
         'User Profile',
         HTMLCreator.createElement('img', {
@@ -110,7 +110,7 @@ export default class Header {
     if (userPageButton) {
       const button = userPageButton;
       if (isLogged) {
-        button.style.display = 'flex-column';
+        button.style.display = 'flex';
       } else {
         button.style.display = 'none';
       }
