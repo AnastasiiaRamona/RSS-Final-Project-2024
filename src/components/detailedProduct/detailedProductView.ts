@@ -33,6 +33,7 @@ export default class DetailedProduct {
       ]),
 
       HTMLCreator.createElement('button', { class: 'detailed__product-basket' }, ['Add to Basket']),
+      HTMLCreator.createElement('button', { class: 'detailed__product-remove' }, ['Remove to Basket']),
     ]);
 
     detailedProductWrapper.appendChild(swiper);

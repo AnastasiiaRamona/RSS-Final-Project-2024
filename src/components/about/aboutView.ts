@@ -78,9 +78,12 @@ export default class AboutPage {
       ),
       HTMLCreator.createElement('h4', { class: 'about-bio' }, ['BIO']),
       HTMLCreator.createElement('p', { class: 'about-description' }, [
-        `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magni recusandae consectetur eum voluptate culpa
-      nemo. Dolor eius totam repellat voluptatem at, dolore inventore est praesentium nam quae hic,
-      exercitationem quos.`,
+        `Oleksandr Tsurkan was born on December 6, 1993. He enjoys engaging in sports and spends his free time at the gym. 
+        He loves watching movies and TV series. Oleksandr also enjoys traveling and discovering new things.
+         With extensive experience in development,
+         he is committed to advancing and growing further in this field.
+
+`,
       ]),
       HTMLCreator.createElement('h4', { class: 'about-contact' }, ['Contact']),
       this.renderContact(
