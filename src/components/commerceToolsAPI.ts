@@ -551,7 +551,7 @@ export default class CommerceToolsAPI {
     return response;
   }
 
-  async addToCart(cardId: string, productId: string, variantId: number, quantity: number) {
+  async addToCart(cardId: string, productId: string, variantId: number, quantity: number, version: number) {
     this.createClient();
     let result;
     try {
@@ -567,7 +567,7 @@ export default class CommerceToolsAPI {
       };
 
       const cartUpdate: CartUpdate = {
-        version: 1,
+        version,
         actions: [updateAction],
       };
 
@@ -577,8 +577,19 @@ export default class CommerceToolsAPI {
     } catch (error) {
       result = error;
     }
-    console.log(result);
     return result;
+  }
+
+  async getCart(cartId: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.carts().withId({ ID: cartId }).get().execute();
+    }
+
+    console.log(response);
+    return response;
   }
 
   // async updateCart(cartId: string, customerId: string, cartVersion: number) {

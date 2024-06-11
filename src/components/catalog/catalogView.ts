@@ -87,7 +87,6 @@ export default class Catalog {
         this.showProductsOfCategory(event);
       });
     });
-
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
         this.filter(checkboxAll, sortSelect, priceInputAll);
@@ -113,15 +112,29 @@ export default class Catalog {
     if (catalogGallery) {
       catalogGallery.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
-        const productCard = target.closest('.product-card');
-        if (productCard) {
-          const productId = productCard.id;
-          const productEvent = new CustomEvent('productEvent', {
-            detail: { id: productId },
-          });
-          document.body.dispatchEvent(productEvent);
+        if (target.classList.contains('product-card__addtocard')) {
+          this.addToCard(event);
+        } else {
+          const productCard = target.closest('.product-card');
+          if (productCard) {
+            const productId = productCard.id;
+            const productEvent = new CustomEvent('productEvent', {
+              detail: { id: productId },
+            });
+            document.body.dispatchEvent(productEvent);
+          }
         }
       });
+    }
+  }
+
+  async addToCard(event: Event) {
+    try {
+      await this.controller.addToCard(event);
+    } catch (error) {
+      if (error instanceof Error) {
+        this.handleResponse(error.message);
+      }
     }
   }
 
