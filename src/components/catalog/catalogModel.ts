@@ -108,9 +108,9 @@ export default class CatalogModel {
 
   async addToCart(productId: string) {
     const cartId = localStorage.getItem('cartPetShopId') as string;
-    const currentCard = await this.commerceToolsAPI.getCart(cartId);
-    const currentCardId = Number(currentCard?.body.version);
-    const result = await this.commerceToolsAPI.addToCart(cartId, productId, 1, 1, currentCardId);
+    const currentCart = await this.commerceToolsAPI.getCart(cartId);
+    const currentCartVersion = Number(currentCart?.body.version);
+    const result = await this.commerceToolsAPI.addToCart(cartId, productId, 1, 1, currentCartVersion);
     return result;
   }
 

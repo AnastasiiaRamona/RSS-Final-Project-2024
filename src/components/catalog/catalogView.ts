@@ -70,7 +70,6 @@ export default class Catalog {
     await this.productView(catalog);
     await this.attributesView(form);
     await this.getCategory(category);
-    await this.toggleAllButtonsToCard();
     return catalogWrapper;
   }
 
@@ -142,7 +141,6 @@ export default class Catalog {
 
   async toggleAllButtonsToCard() {
     const listProductInCart = await this.controller.getProductInCart();
-    console.log(listProductInCart);
     const allButtonsCart = document.querySelectorAll('.product-card__addtocard') as NodeListOf<HTMLButtonElement>;
     allButtonsCart.forEach((buttonCart) => {
       const button = buttonCart as HTMLButtonElement;
@@ -322,7 +320,6 @@ export default class Catalog {
         )
       );
     });
-    await this.toggleAllButtonsToCard();
   }
 
   productCard(id: string, name: string, description: string, img: string, price: number, discountedPrice?: number) {
