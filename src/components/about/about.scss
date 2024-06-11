@@ -11,7 +11,7 @@
   flex-wrap: wrap;
 }
 .about-title {
-  @include font($secondary-font-family, clamp(18px, 5vw, 36px), bold, 1, $white);
+  @include font('Arial', clamp(18px, 5vw, 36px), bold, 1, $white);
   text-align: center;
   margin-top: 20px;
   text-shadow: $primary-color 0 4px 6px;
@@ -27,7 +27,7 @@
   transition: all 0.6s linear;
   &:hover {
     background-image: $btn-bca-color;
-    transform: scale(1.05);
+    transform: scale(1.03);
     box-shadow: 5px 5px 10px 5px #000000;
   }
   &:hover .about-photo {
@@ -68,7 +68,7 @@
 
 .about-position {
   margin-top: 5px;
-  @include font($primary-font-family, clamp(14px, 4vw, 18px), 700, 1, $primary-color);
+  @include font($primary-font-family, clamp(14px, 4vw, 24px), 700, 1, $primary-color);
   opacity: 0.9;
 }
 
@@ -127,13 +127,13 @@
 .about-description {
   margin-top: 10px;
   text-align: justify;
-  @include font($primary-font-family, clamp(14px, 4vw, 16px), 400, 1, #130303);
-  height: 144px;
+  @include font($primary-font-family, clamp(14px, 4vw, 16px), 400, 1, #f3eded);
+  height: 130px;
 }
 .about-bio,
 .about-contact {
   margin-top: 10px;
-  @include font($secondary-font-family, clamp(14px, 4vw, 20px), 700, 1, $black);
+  @include font($primary-font-family, clamp(14px, 4vw, 24px), 700, 1, $primary-color);
 }
 .about-icons {
   display: flex;
@@ -145,42 +145,46 @@
 
 .about-contributions {
   text-align: center;
-  margin-top: 35px;
+  margin-top: 32px;
+  transition: all 0.6s linear;
+  padding: 10px;
+
   &__title {
-    @include font('Arial', clamp(18px, 5vw, 36px), bold, 1, #000);
+    @include font('Arial', clamp(18px, 5vw, 36px), bold, 1, $white);
   }
   &__text {
-    max-width: 700px;
-    text-align: center;
+    max-width: 1200px;  
+    text-align: justify;
+    @include font($primary-font-family, clamp(14px, 4vw, 20px), 600, 1, #ffff);
     margin: 10px auto;
   }
 }
 
 .about-footer {
-  padding: 20px;
+  padding: 10px;
   width: 100vw;
   background-image: $bca-gradient-second;
 }
 
 .footer-wrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
 }
 
 .footer-title {
   position: relative;
-  padding: 10px;
+  padding: 10px 10px 10px 40px;
   @include font('Arial', clamp(18px, 5vw, 24px), bold, 1, $white);
 
   &::after {
     content: '';
     position: absolute;
     background: url('./assets/github-svgrepo-com.svg');
-    left: -10px;
+    left: 15px;
     display: block;
-    width: 34px;
-    height: 34px;
+    width: 33px;
+    height: 33px;
     top: 50%;
     transform: translate(-50%, -50%);
   }
@@ -191,13 +195,10 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-
-  &::marker {
-    font-size: 1px;
-    color: $success-color;
-  }
 }
-
+.footer-item::marker{
+  color:#1fda38;
+}
 .footer-link {
   transition: all 0.6s linear;
   @include font($primary-font-family, clamp(14px, 4vw, 20px), 700, 1, $white);
@@ -209,7 +210,6 @@
 
 .footer-logo__link svg {
   transition: all 0.6s linear;
-
 }
 .footer-logo__link:hover svg {
   fill: #70b306a6;
