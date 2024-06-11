@@ -301,6 +301,7 @@ export default class Catalog {
         HTMLCreator.createElement('h3', { class: 'product-card__name' }, [name]),
         HTMLCreator.createElement('p', { class: 'product-card__description' }, [description]),
         HTMLCreator.createElement('div', { class: 'product-card__prices' }, prices),
+        HTMLCreator.createElement('button', { class: 'product-card__addtocard' }, ['🛒 Add to Cart']),
       ]),
     ]);
     return productCard;
