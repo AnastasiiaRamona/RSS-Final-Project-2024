@@ -12,6 +12,9 @@ import {
   CustomerDraft,
   CustomerUpdate,
   createApiBuilderFromCtpClient,
+  CartUpdateAction,
+  CartUpdate,
+  LineItemDraft,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import {
@@ -541,6 +544,50 @@ export default class CommerceToolsAPI {
         })
         .execute();
     }
+    if (response) {
+      localStorage.setItem('cartPetShopId', response.body.id);
+    }
+    console.log(response);
+    return response;
+  }
+
+  async addToCart(cardId: string, productId: string, variantId: number, quantity: number, version: number) {
+    this.createClient();
+    let result;
+    try {
+      const lineItemDraft: LineItemDraft = {
+        productId,
+        variantId,
+        quantity,
+      };
+
+      const updateAction: CartUpdateAction = {
+        action: 'addLineItem',
+        ...lineItemDraft,
+      };
+
+      const cartUpdate: CartUpdate = {
+        version,
+        actions: [updateAction],
+      };
+
+      if (this.apiRoot) {
+        result = await this.apiRoot.carts().withId({ ID: cardId }).post({ body: cartUpdate }).execute();
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
+
+  async getCart(cartId: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.carts().withId({ ID: cartId }).get().execute();
+    }
+
     console.log(response);
     return response;
   }
