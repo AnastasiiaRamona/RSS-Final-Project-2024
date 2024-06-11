@@ -588,7 +588,6 @@ export default class CommerceToolsAPI {
       response = await this.apiRoot.carts().withId({ ID: cartId }).get().execute();
     }
 
-    console.log(response);
     return response;
   }
 
