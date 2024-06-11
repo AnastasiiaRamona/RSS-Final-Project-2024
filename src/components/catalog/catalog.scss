@@ -73,7 +73,7 @@
 
 .product-card__prices {
   @include flexbox();
-  gap: 10px;
+  gap: 1px;
 }
 
 .product-card__price {
@@ -370,6 +370,11 @@
   background-color: rgba(145, 233, 167);
 }
 
+.product-card__actions {
+  @include flexbox(column);
+  gap: 1vw;
+}
+
 @media (max-width: 1200px) {
   .catalog__category {
     max-width: 50vw;
@@ -387,6 +392,9 @@
   .catalog__category {
     font-size: 10px;
   }
+  .product-card__addtocard {
+    font-size: 10px;
+  }
   .product-card {
     font-size: 10px;
   }
@@ -396,6 +404,7 @@
   .catalog__filter {
     font-size: 10px;
     width: 90vw;
+    justify-content: flex-start;
   }
   .catalog__filter h3, label {
     font-size: 10px;
