@@ -70,6 +70,7 @@ export default class Catalog {
     await this.productView(catalog);
     await this.attributesView(form);
     await this.getCategory(category);
+    await this.toggleAllButtonsToCard();
     return catalogWrapper;
   }
 
@@ -113,7 +114,7 @@ export default class Catalog {
       catalogGallery.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
         if (target.classList.contains('product-card__addtocard')) {
-          this.addToCard(event);
+          this.addToCart(event);
         } else {
           const productCard = target.closest('.product-card');
           if (productCard) {
@@ -128,14 +129,40 @@ export default class Catalog {
     }
   }
 
-  async addToCard(event: Event) {
+  async addToCart(event: Event) {
     try {
-      await this.controller.addToCard(event);
+      await this.controller.addToCart(event);
     } catch (error) {
       if (error instanceof Error) {
         this.handleResponse(error.message);
       }
     }
+    await this.toggleAllButtonsToCard();
+  }
+
+  async toggleAllButtonsToCard() {
+    const listProductInCart = await this.controller.getProductInCart();
+    console.log(listProductInCart);
+    const allButtonsCart = document.querySelectorAll('.product-card__addtocard') as NodeListOf<HTMLButtonElement>;
+    allButtonsCart.forEach((buttonCart) => {
+      const button = buttonCart as HTMLButtonElement;
+      button.disabled = false;
+    });
+    const productCartDiv = document.querySelectorAll('.product-card') as NodeListOf<HTMLElement>;
+    listProductInCart?.forEach((productInCart) => {
+      this.toggleButtonToCard(productInCart, productCartDiv);
+    });
+  }
+
+  toggleButtonToCard(productId: string, productCartDiv: NodeListOf<HTMLElement>) {
+    productCartDiv.forEach((productCart) => {
+      if (productCart.id === productId) {
+        const button = productCart.querySelector('.product-card__addtocard') as HTMLButtonElement;
+        if (button) {
+          button.disabled = true;
+        }
+      }
+    });
   }
 
   async showProductsOfCategory(event: Event) {
@@ -155,7 +182,8 @@ export default class Catalog {
           });
         }
       }
-      this.generateBreadcrumbs(event);
+      await this.generateBreadcrumbs(event);
+      await this.toggleAllButtonsToCard();
     } catch (error) {
       if (error instanceof Error) {
         this.handleResponse(error.message);
@@ -258,6 +286,7 @@ export default class Catalog {
         });
       }
     }
+    await this.toggleAllButtonsToCard();
   }
 
   async search(event: Event, searchInput: HTMLInputElement) {
@@ -276,6 +305,7 @@ export default class Catalog {
         });
       }
     }
+    await this.toggleAllButtonsToCard();
   }
 
   async productView(catalog: HTMLElement) {
@@ -292,6 +322,7 @@ export default class Catalog {
         )
       );
     });
+    await this.toggleAllButtonsToCard();
   }
 
   productCard(id: string, name: string, description: string, img: string, price: number, discountedPrice?: number) {
