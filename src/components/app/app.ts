@@ -68,10 +68,13 @@ export default class App {
     this.appButtonsMethods = new AppButtonsMethods();
     this.appSwiper = new AppSwiper();
     this.commerceToolsAPI = new CommerceToolsAPI();
-    if (this.userId) {
-      this.commerceToolsAPI.createCart(this.userId).then(() => {});
-    } else {
-      this.commerceToolsAPI.createCart().then(() => {});
+    const isCartIdExist = !!localStorage.getItem('cartPetShopId');
+    if (!isCartIdExist) {
+      if (this.userId) {
+        this.commerceToolsAPI.createCart(this.userId).then(() => {});
+      } else {
+        this.commerceToolsAPI.createCart().then(() => {});
+      }
     }
   }
 
@@ -271,6 +274,9 @@ export default class App {
     if (!keepURL) {
       this.router.navigateTo(`/${route}`);
     } else if (route === '404page') {
+      this.isLoggedIn = !!localStorage.getItem('userToken');
+      const userProfileButton = document.querySelector('.user-profile-button') as HTMLButtonElement;
+      this.header.checkUserProfileButton(this.isLoggedIn, userProfileButton);
       this.changeMainElement(this.missingPage.renderPage());
     } else {
       const { routes } = this.router;

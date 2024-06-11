@@ -9,6 +9,7 @@ export default class BasketController {
 
   async getCart(cartId: string) {
     const cart = await this.model.getCart(cartId);
-    return cart;
+    const cartData = cart?.body.lineItems;
+    return cartData;
   }
 }

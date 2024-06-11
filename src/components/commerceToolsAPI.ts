@@ -455,7 +455,7 @@ export default class CommerceToolsAPI {
     }
 
     localStorage.removeItem('userPetShopId');
-    localStorage.removeItem('userPetShopToken');
+    localStorage.removeItem('userToken');
 
     this.ctpClient = null;
     this.apiRoot = null;

@@ -60,11 +60,6 @@ export default class Header {
       ]
     );
 
-    if (localStorage.getItem('userPetShopId')) {
-      userProfileButton.removeAttribute('disabled');
-      userProfileButton.classList.remove('inactive');
-    }
-
     const mainButton = HTMLCreator.createElement('button', { class: 'left-dashboard__button main-button' }, [
       HTMLCreator.createElement('p', { class: 'left-dashboard__text' }, ['Main']),
       HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: mainIconSrc, alt: 'main icon' }),
@@ -157,7 +152,7 @@ export default class Header {
           const loginEvent = new CustomEvent('loginEvent');
           document.body.dispatchEvent(loginEvent);
           localStorage.removeItem('userPetShopId');
-          localStorage.removeItem('userPetShopToken');
+          localStorage.removeItem('userToken');
           const isLoggedIn = !!localStorage.getItem('userToken');
           this.changeLoginButtonToTheLogOutButton(isLoggedIn);
           this.checkUserProfileButton(isLoggedIn, userProfileButton);
