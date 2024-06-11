@@ -102,7 +102,15 @@ export default class CatalogModel {
   }
 
   async getBreadcrumbsOfCategory(categoryId: string) {
-    const productOfCategory = this.commerceToolsAPI.getBreadcrumbsOfCategory(categoryId);
-    return productOfCategory;
+    const breadcrumbsOfCategory = this.commerceToolsAPI.getBreadcrumbsOfCategory(categoryId);
+    return breadcrumbsOfCategory;
+  }
+
+  async addToCard(productId: string) {
+    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const currentCard = await this.commerceToolsAPI.getCart(cartId);
+    const currentCardId = Number(currentCard?.body.version);
+    const result = await this.commerceToolsAPI.addToCart(cartId, productId, 1, 1, currentCardId);
+    return result;
   }
 }
