@@ -78,7 +78,7 @@ export default class Header {
       ]),
       userProfileButton,
       HTMLCreator.createElement('button', { class: 'left-dashboard__button basket-button' }, [
-        HTMLCreator.createElement('p', { class: 'left-dashboard__text' }, ['Basket']),
+        HTMLCreator.createElement('p', { class: 'left-dashboard__text' }, ['Cart']),
         HTMLCreator.createElement('img', { class: 'left-dashboard__image', src: basketIconSrc, alt: 'basket icon' }),
       ]),
       HTMLCreator.createElement('button', { class: 'left-dashboard__button about-us-button' }, [
@@ -156,7 +156,8 @@ export default class Header {
         if (loginButton.textContent === 'Log out') {
           const loginEvent = new CustomEvent('loginEvent');
           document.body.dispatchEvent(loginEvent);
-          localStorage.clear();
+          localStorage.removeItem('userPetShopId');
+          localStorage.removeItem('userPetShopToken');
           const isLoggedIn = !!localStorage.getItem('userToken');
           this.changeLoginButtonToTheLogOutButton(isLoggedIn);
           this.checkUserProfileButton(isLoggedIn, userProfileButton);

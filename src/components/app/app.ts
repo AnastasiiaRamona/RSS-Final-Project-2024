@@ -207,8 +207,8 @@ export default class App {
       this.appButtonsMethods?.toggleButton(aboutUsButton, this.buttonsArray);
     });
 
-    renderRoute('/basket', () => {
-      this.changeMainElement(this.basket.renderPage());
+    renderRoute('/basket', async () => {
+      this.changeMainElement(await this.basket.renderPage());
       this.appButtonsMethods?.toggleButton(basketButton, this.buttonsArray);
     });
   }

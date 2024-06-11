@@ -32,8 +32,8 @@ export default class DetailedProduct {
         HTMLCreator.createElement('div', { class: 'detailed__product-discount' }),
       ]),
 
-      HTMLCreator.createElement('button', { class: 'detailed__product-basket' }, ['Add to Basket']),
-      HTMLCreator.createElement('button', { class: 'detailed__product-remove' }, ['Remove to Basket']),
+      HTMLCreator.createElement('button', { class: 'detailed__product-basket' }, ['Add to Cart']),
+      HTMLCreator.createElement('button', { class: 'detailed__product-remove' }, ['Remove from Cart']),
     ]);
 
     detailedProductWrapper.appendChild(swiper);

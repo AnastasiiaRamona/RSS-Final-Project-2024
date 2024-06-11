@@ -451,7 +451,8 @@ export default class CommerceToolsAPI {
       }
     }
 
-    localStorage.clear();
+    localStorage.removeItem('userPetShopId');
+    localStorage.removeItem('userPetShopToken');
 
     this.ctpClient = null;
     this.apiRoot = null;
@@ -541,7 +542,10 @@ export default class CommerceToolsAPI {
         })
         .execute();
     }
-    console.log(response);
+
+    if (response) {
+      localStorage.setItem('cartPetShopId', response.body.id);
+    }
     return response;
   }
 
@@ -563,4 +567,16 @@ export default class CommerceToolsAPI {
   //   }
   //   return response;
   // }
+
+  async getCart(cartId: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.carts().withId({ ID: cartId }).get().execute();
+    }
+
+    console.log(response);
+    return response;
+  }
 }
