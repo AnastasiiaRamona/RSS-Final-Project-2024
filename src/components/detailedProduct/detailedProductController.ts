@@ -49,4 +49,33 @@ export default class DetailedProductController {
       }
     });
   }
+
+  async addToCart(productId: string) {
+    if (productId) {
+      await this.model.addToCart(productId);
+    }
+    this.getProductInCart(productId);
+  }
+
+  async removeProductCart(productId: string) {
+    if (productId) {
+      await this.model.removeProductCart(productId);
+    }
+    this.getProductInCart(productId);
+  }
+
+  async getProductInCart(productId: string) {
+    const addBtnCart = document.querySelector('.detailed__product-basket') as HTMLButtonElement;
+    const removeBtnCart = document.querySelector('.detailed__product-remove') as HTMLButtonElement;
+    const listProductInCart = await this.model.getProductInCart();
+    if (listProductInCart?.includes(productId)) {
+      addBtnCart.disabled = true;
+      removeBtnCart.disabled = false;
+    } else {
+      addBtnCart.disabled = false;
+      removeBtnCart.disabled = true;
+    }
+
+    return console.log(listProductInCart);
+  }
 }
