@@ -6,4 +6,10 @@ export default class BasketController {
   constructor() {
     this.model = new BasketModel();
   }
+
+  async getCart(cartId: string) {
+    const cart = await this.model.getCart(cartId);
+    const cartData = cart?.body.lineItems;
+    return cartData;
+  }
 }
