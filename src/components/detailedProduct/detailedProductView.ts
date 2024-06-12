@@ -44,6 +44,8 @@ export default class DetailedProduct {
 
   async getProductInformation() {
     const result = await this.controller.getProductByID(this.id);
+    const addBtnCart = document.querySelector('.detailed__product-basket') as HTMLButtonElement;
+    const removeBtnCart = document.querySelector('.detailed__product-remove') as HTMLButtonElement;
     if (result) {
       const productData = {
         name: result.body.masterData.current.name['en-US'],
@@ -64,5 +66,8 @@ export default class DetailedProduct {
         this.controller.renderSlideImages(productData.images);
       }
     }
+    await this.controller.getProductInCart(this.id);
+    addBtnCart?.addEventListener('click', () => this.controller.addToCart(this.id));
+    removeBtnCart?.addEventListener('click', () => this.controller.removeProductCart(this.id));
   }
 }

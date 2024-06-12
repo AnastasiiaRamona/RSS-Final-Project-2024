@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Client,
   ClientBuilder,
@@ -591,6 +592,32 @@ export default class CommerceToolsAPI {
     return response;
   }
 
+  async removeProductCart(cardId: string, lineItem: any, version: number) {
+    this.createClient();
+    let result;
+    try {
+      if (this.apiRoot) {
+        result = await this.apiRoot
+          .carts()
+          .withId({ ID: cardId })
+          .post({
+            body: {
+              version,
+              actions: [
+                {
+                  action: 'removeLineItem',
+                  lineItemId: lineItem.id,
+                },
+              ],
+            },
+          })
+          .execute();
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
   // async updateCart(cartId: string, customerId: string, cartVersion: number) {
   //   this.createClient();
 
