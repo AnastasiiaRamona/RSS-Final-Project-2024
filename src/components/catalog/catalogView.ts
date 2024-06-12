@@ -113,7 +113,7 @@ export default class Catalog {
       catalogGallery.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
         if (target.classList.contains('product-card__addtocard')) {
-          this.addToCard(event);
+          this.addToCart(event);
         } else {
           const productCard = target.closest('.product-card');
           if (productCard) {
@@ -128,47 +128,39 @@ export default class Catalog {
     }
   }
 
-  renderProductCard(
-    id: string,
-    name: string,
-    description: string,
-    img: string,
-    price: number,
-    discountedPrice?: number
-  ) {
-    const priceClasses =
-      discountedPrice != null ? 'product-card__price product-card__price-discounted' : 'product-card__price';
-    const prices = [HTMLCreator.createElement('div', { class: priceClasses }, [`${(price / 100).toFixed(2)} €`])];
-
-    if (discountedPrice != null) {
-      prices.push(
-        HTMLCreator.createElement('div', { class: 'product-card__price-discount' }, [
-          `${(discountedPrice / 100).toFixed(2)} €`,
-        ])
-      );
-    }
-    const productCard = HTMLCreator.createElement('div', { class: 'product-card', id }, [
-      HTMLCreator.createElement('div', { class: 'product-card__box' }, [
-        HTMLCreator.createElement('img', { class: 'product-card__img', src: img, alt: `image ${name} product` }),
-      ]),
-      HTMLCreator.createElement('div', { class: 'product-card__title' }, [
-        HTMLCreator.createElement('h3', { class: 'product-card__name' }, [name]),
-        HTMLCreator.createElement('p', { class: 'product-card__description' }, [description]),
-        HTMLCreator.createElement('div', { class: 'product-card__prices' }, prices),
-        HTMLCreator.createElement('button', { class: 'product-card__addtocard' }, ['🛒 Add to Cart']),
-      ]),
-    ]);
-    return productCard;
-  }
-
-  async addToCard(event: Event) {
+  async addToCart(event: Event) {
     try {
-      await this.controller.addToCard(event);
+      await this.controller.addToCart(event);
     } catch (error) {
       if (error instanceof Error) {
         this.handleResponse(error.message);
       }
     }
+    await this.toggleAllButtonsToCard();
+  }
+
+  async toggleAllButtonsToCard() {
+    const listProductInCart = await this.controller.getProductInCart();
+    const allButtonsCart = document.querySelectorAll('.product-card__addtocard') as NodeListOf<HTMLButtonElement>;
+    allButtonsCart.forEach((buttonCart) => {
+      const button = buttonCart as HTMLButtonElement;
+      button.disabled = false;
+    });
+    const productCartDiv = document.querySelectorAll('.product-card') as NodeListOf<HTMLElement>;
+    listProductInCart?.forEach((productInCart) => {
+      this.toggleButtonToCard(productInCart, productCartDiv);
+    });
+  }
+
+  toggleButtonToCard(productId: string, productCartDiv: NodeListOf<HTMLElement>) {
+    productCartDiv.forEach((productCart) => {
+      if (productCart.id === productId) {
+        const button = productCart.querySelector('.product-card__addtocard') as HTMLButtonElement;
+        if (button) {
+          button.disabled = true;
+        }
+      }
+    });
   }
 
   async showProductsOfCategory(event: Event) {
@@ -184,11 +176,12 @@ export default class Catalog {
           catalog.innerHTML = '';
           productOfCategory.forEach((product) => {
             const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
-            catalog.append(this.renderProductCard(id, name, description, imageUrl, price, discountedPrice));
+            catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
           });
         }
       }
-      this.generateBreadcrumbs(event);
+      await this.generateBreadcrumbs(event);
+      await this.toggleAllButtonsToCard();
     } catch (error) {
       if (error instanceof Error) {
         this.handleResponse(error.message);
@@ -287,10 +280,11 @@ export default class Catalog {
         catalog.innerHTML = '';
         filterProduct.forEach((product) => {
           const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
-          catalog.append(this.renderProductCard(id, name, description, imageUrl, price, discountedPrice));
+          catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
         });
       }
     }
+    await this.toggleAllButtonsToCard();
   }
 
   async search(event: Event, searchInput: HTMLInputElement) {
@@ -305,17 +299,18 @@ export default class Catalog {
         catalog.innerHTML = '';
         searchProduct.forEach((product) => {
           const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
-          catalog.append(this.renderProductCard(id, name, description, imageUrl, price, discountedPrice));
+          catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
         });
       }
     }
+    await this.toggleAllButtonsToCard();
   }
 
   async productView(catalog: HTMLElement) {
     const products = await this.controller.getProducts();
     products.forEach((product) => {
       catalog.append(
-        this.renderProductCard(
+        this.productCard(
           product.id,
           product.name,
           product.description,
@@ -325,6 +320,32 @@ export default class Catalog {
         )
       );
     });
+  }
+
+  productCard(id: string, name: string, description: string, img: string, price: number, discountedPrice?: number) {
+    const priceClasses =
+      discountedPrice != null ? 'product-card__price product-card__price-discounted' : 'product-card__price';
+    const prices = [HTMLCreator.createElement('div', { class: priceClasses }, [`${(price / 100).toFixed(2)} €`])];
+
+    if (discountedPrice != null) {
+      prices.push(
+        HTMLCreator.createElement('div', { class: 'product-card__price-discount' }, [
+          `${(discountedPrice / 100).toFixed(2)} €`,
+        ])
+      );
+    }
+    const productCard = HTMLCreator.createElement('div', { class: 'product-card', id }, [
+      HTMLCreator.createElement('div', { class: 'product-card__box' }, [
+        HTMLCreator.createElement('img', { class: 'product-card__img', src: img, alt: `image ${name} product` }),
+      ]),
+      HTMLCreator.createElement('div', { class: 'product-card__title' }, [
+        HTMLCreator.createElement('h3', { class: 'product-card__name' }, [name]),
+        HTMLCreator.createElement('p', { class: 'product-card__description' }, [description]),
+        HTMLCreator.createElement('div', { class: 'product-card__prices' }, prices),
+        HTMLCreator.createElement('button', { class: 'product-card__addtocard' }, ['🛒 Add to Cart']),
+      ]),
+    ]);
+    return productCard;
   }
 
   async attributesView(form: HTMLElement) {

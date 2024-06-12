@@ -107,9 +107,14 @@ export default class CatalogController {
     return formattedStr;
   }
 
-  async addToCard(event: Event) {
+  async addToCart(event: Event) {
     const target = event.target as HTMLElement;
     const productId = target.parentElement?.parentElement?.id as string;
-    await this.model.addToCard(productId);
+    await this.model.addToCart(productId);
+  }
+
+  async getProductInCart() {
+    const listProductInCart = await this.model.getProductInCart();
+    return listProductInCart;
   }
 }
