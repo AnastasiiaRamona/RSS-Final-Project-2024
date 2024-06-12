@@ -212,6 +212,7 @@ export default class App {
 
     renderRoute('/basket', async () => {
       this.changeMainElement(await this.basket.renderPage());
+      this.basket.addEventListeners();
       this.appButtonsMethods?.toggleButton(basketButton, this.buttonsArray);
     });
   }
