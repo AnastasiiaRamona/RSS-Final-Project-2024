@@ -34,4 +34,31 @@ export default class DetailedProductModel {
       return undefined;
     }
   }
+
+  async addToCart(productId: string) {
+    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const currentCart = await this.commerceToolsAPI.getCart(cartId);
+    const currentCartVersion = Number(currentCart?.body.version);
+    const result = await this.commerceToolsAPI.addToCart(cartId, productId, 1, 1, currentCartVersion);
+    return result;
+  }
+
+  async getProductInCart() {
+    const cartId = localStorage.getItem('cartPetShopId') as string;
+    let listProductInCart;
+    const currentCard = await this.commerceToolsAPI.getCart(cartId);
+    if (currentCard) {
+      listProductInCart = currentCard?.body.lineItems.map((lineItem) => lineItem.productId);
+    }
+    return listProductInCart;
+  }
+
+  async removeProductCart(productId: string) {
+    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const currentCart = await this.commerceToolsAPI.getCart(cartId);
+    const currentCartVersion = Number(currentCart?.body.version);
+    const lineItem = currentCart?.body.lineItems.find((item) => item.productId === productId);
+    const result = await this.commerceToolsAPI.removeProductCart(cartId, lineItem, currentCartVersion);
+    return result;
+  }
 }

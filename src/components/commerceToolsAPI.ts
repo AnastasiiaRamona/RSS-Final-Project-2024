@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Client,
   ClientBuilder,
@@ -581,25 +582,6 @@ export default class CommerceToolsAPI {
     return result;
   }
 
-  // async updateCart(cartId: string, customerId: string, cartVersion: number) {
-  //   this.createClient();
-
-  //   let response;
-  //   if (this.apiRoot) {
-  //     response = await this.apiRoot
-  //       .carts()
-  //       .withId({ ID: cartId })
-  //       .post({
-  //         body: {
-  //           version: cartVersion,
-  //           actions: [{ action: 'setCustomerId', customerId }],
-  //         },
-  //       })
-  //       .execute();
-  //   }
-  //   return response;
-  // }
-
   async getCart(cartId: string) {
     this.createClient();
 
@@ -608,7 +590,51 @@ export default class CommerceToolsAPI {
       response = await this.apiRoot.carts().withId({ ID: cartId }).get().execute();
     }
 
-    console.log(response);
     return response;
   }
+
+  async removeProductCart(cardId: string, lineItem: any, version: number) {
+    this.createClient();
+    let result;
+    try {
+      if (this.apiRoot) {
+        result = await this.apiRoot
+          .carts()
+          .withId({ ID: cardId })
+          .post({
+            body: {
+              version,
+              actions: [
+                {
+                  action: 'removeLineItem',
+                  lineItemId: lineItem.id,
+                },
+              ],
+            },
+          })
+          .execute();
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
 }
+// async updateCart(cartId: string, customerId: string, cartVersion: number) {
+//   this.createClient();
+
+//   let response;
+//   if (this.apiRoot) {
+//     response = await this.apiRoot
+//       .carts()
+//       .withId({ ID: cartId })
+//       .post({
+//         body: {
+//           version: cartVersion,
+//           actions: [{ action: 'setCustomerId', customerId }],
+//         },
+//       })
+//       .execute();
+//   }
+//   return response;
+// }

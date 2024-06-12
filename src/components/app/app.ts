@@ -180,6 +180,7 @@ export default class App {
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
       this.catalog.addEventListeners();
+      this.catalog.toggleAllButtonsToCard();
       this.appButtonsMethods?.toggleButton(catalogButton, this.buttonsArray);
     });
 
@@ -189,9 +190,11 @@ export default class App {
       if (productId) {
         const product = new DetailedProduct(productId);
         this.changeMainElement(product.renderMain());
-        await product.getProductInformation();
+        await product.addEventListeners();
         this.appSwiper.createSwiper();
-        this.appButtonsMethods?.activateButton(catalogButton);
+        this.buttonsArray.forEach((button) => {
+          this.appButtonsMethods?.activateButton(button);
+        });
       }
     });
 
