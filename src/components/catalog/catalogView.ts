@@ -1,4 +1,5 @@
 import Toastify from 'toastify-js';
+import lottie from 'lottie-web';
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
 import { BreadcrumbsInfo, CategoryMap } from './types';
@@ -11,7 +12,6 @@ export default class Catalog {
   }
 
   async renderPage() {
-    let catalog: HTMLElement | null = null;
     let form: HTMLElement | null = null;
     let category: HTMLElement | null = null;
     const catalogWrapper = HTMLCreator.createElement('main', { class: 'catalog__main' }, [
@@ -58,16 +58,17 @@ export default class Catalog {
           ]),
         ]),
         HTMLCreator.createElement('div', { class: 'core__wrapper' }, [
-          (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
-            HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
-          ])),
-          (catalog = HTMLCreator.createElement('section', {
-            class: 'catalog__gallery',
-          })),
+          HTMLCreator.createElement('div', { class: 'product__wrapper' }, [
+            (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
+              HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
+            ])),
+            HTMLCreator.createElement('section', {
+              class: 'catalog__gallery',
+            }),
+          ]),
         ]),
       ]),
     ]);
-    await this.productView(catalog);
     await this.attributesView(form);
     await this.getCategory(category);
     return catalogWrapper;
@@ -126,6 +127,48 @@ export default class Catalog {
         }
       });
     }
+  }
+
+  infiniteScrollPage() {
+    const pageSize = 10;
+    let currentPage = 1;
+    let isLoading = false;
+    const wrapper = document.querySelector('.core__wrapper');
+    const catalog = document.querySelector('.catalog__gallery') as HTMLElement;
+    const loadingContainer = HTMLCreator.createElement('div', { class: 'catalog__loading' });
+    const sentinel = HTMLCreator.createElement('div', { class: 'sentinel' });
+    lottie.loadAnimation({
+      container: loadingContainer,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'https://lottie.host/2c005af7-a27d-42ee-92f1-91e68e7e6df0/guBNZp8sp3.json',
+    });
+    loadingContainer.style.display = 'none';
+
+    const initInfiniteScroll = async () => {
+      const observer = new IntersectionObserver(
+        async (entries) => {
+          if (entries[0].isIntersecting && !isLoading) {
+            isLoading = true;
+            currentPage += 1;
+            loadingContainer.style.display = 'block';
+            await this.productView(catalog, currentPage, pageSize).then(() => {
+              isLoading = false;
+              loadingContainer.style.display = 'none';
+            });
+          }
+        },
+        { threshold: 1.0 }
+      );
+      observer.observe(sentinel);
+      await this.productView(catalog, currentPage, pageSize).then(() => {
+        isLoading = false;
+      });
+    };
+    initInfiniteScroll();
+    wrapper?.append(sentinel);
+    wrapper?.append(loadingContainer);
   }
 
   async addToCart(event: Event) {
@@ -306,8 +349,8 @@ export default class Catalog {
     await this.toggleAllButtonsToCard();
   }
 
-  async productView(catalog: HTMLElement) {
-    const products = await this.controller.getProducts();
+  async productView(catalog: HTMLElement, page: number, limitPage: number) {
+    const products = await this.controller.getProducts(page, limitPage);
     products.forEach((product) => {
       catalog.append(
         this.productCard(

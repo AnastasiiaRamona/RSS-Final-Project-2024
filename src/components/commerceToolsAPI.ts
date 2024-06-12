@@ -204,7 +204,7 @@ export default class CommerceToolsAPI {
     return response;
   }
 
-  async getProducts() {
+  async getProducts(page: number, limit: number) {
     this.createClient();
 
     let result;
@@ -213,7 +213,8 @@ export default class CommerceToolsAPI {
         .products()
         .get({
           queryArgs: {
-            limit: 100,
+            limit,
+            offset: (page - 1) * limit,
           },
         })
         .execute()

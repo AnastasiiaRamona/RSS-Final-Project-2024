@@ -178,6 +178,7 @@ export default class App {
       this.changeMainElement(await this.catalog.renderPage());
       this.catalog.addEventListeners();
       this.catalog.toggleAllButtonsToCard();
+      this.catalog.infiniteScrollPage();
       this.appButtonsMethods?.toggleButton(catalogButton, this.buttonsArray);
     });
 

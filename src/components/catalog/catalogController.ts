@@ -7,8 +7,8 @@ export default class CatalogController {
     this.model = new CatalogModel();
   }
 
-  async getProducts() {
-    const result = await this.model.getProducts();
+  async getProducts(page: number, limitPage: number) {
+    const result = await this.model.getProducts(page, limitPage);
     return result;
   }
 

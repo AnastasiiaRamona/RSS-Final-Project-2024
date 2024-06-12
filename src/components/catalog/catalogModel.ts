@@ -7,8 +7,8 @@ export default class CatalogModel {
     this.commerceToolsAPI = new CommerceToolsAPI();
   }
 
-  async getProducts() {
-    const products = (await this.commerceToolsAPI.getProducts()) as unknown as [
+  async getProducts(page: number, limitPage: number) {
+    const products = (await this.commerceToolsAPI.getProducts(page, limitPage)) as unknown as [
       {
         id: string;
         name: string;

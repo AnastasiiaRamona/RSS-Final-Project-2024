@@ -8,8 +8,11 @@
     border: none;
   }
 }
-
 .core__wrapper {
+  @include flexbox(column);
+  justify-content: flex-start;
+}
+.product__wrapper {
   @include flexbox();
   align-items:flex-start;
   padding: 20px 5px;
@@ -373,6 +376,15 @@
 .product-card__actions {
   @include flexbox(column);
   gap: 1vw;
+}
+
+.catalog__loading {
+  max-width: 10vw;
+  margin: 10px auto;
+  display: block;
+}
+.sentinel {
+  height: 1px;
 }
 
 @media (max-width: 1200px) {
