@@ -9,6 +9,8 @@ export default class Basket {
 
   cartId: string | null = null;
 
+  totalPrice: number = 0;
+
   constructor() {
     this.controller = new BasketController();
   }
@@ -37,6 +39,11 @@ export default class Basket {
         const imageUrl = item.variant.images?.[0]?.url as string;
         const price = item.price?.value.centAmount;
         const discountedPrice = item.price?.discounted?.value.centAmount;
+        if (discountedPrice) {
+          this.totalPrice += discountedPrice;
+        } else {
+          this.totalPrice += price;
+        }
         const quantity = item?.quantity;
         const card = this.renderProductCard(id, name, imageUrl, price, quantity, discountedPrice);
         return cardsSection.append(card);
@@ -115,8 +122,7 @@ export default class Basket {
   }
 
   calculateTotalPrice() {
-    // Здесь должна быть логика для расчета общей суммы корзины
-    return 0;
+    return this.totalPrice;
   }
 
   addEventListeners() {
