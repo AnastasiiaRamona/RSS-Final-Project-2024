@@ -192,7 +192,9 @@ export default class App {
         this.changeMainElement(product.renderMain());
         await product.addEventListeners();
         this.appSwiper.createSwiper();
-        this.appButtonsMethods?.activateButton(catalogButton);
+        this.buttonsArray.forEach((button) => {
+          this.appButtonsMethods?.activateButton(button);
+        });
       }
     });
 
