@@ -14,6 +14,7 @@ export default class Catalog {
   async renderPage() {
     let form: HTMLElement | null = null;
     let category: HTMLElement | null = null;
+    let catalog: HTMLElement | null = null;
     const catalogWrapper = HTMLCreator.createElement('main', { class: 'catalog__main' }, [
       HTMLCreator.createElement('div', { class: 'catalog__wrapper' }, [
         HTMLCreator.createElement('section', { class: 'catalog__aside' }, [
@@ -62,13 +63,14 @@ export default class Catalog {
             (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
               HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
             ])),
-            HTMLCreator.createElement('section', {
+            (catalog = HTMLCreator.createElement('section', {
               class: 'catalog__gallery',
-            }),
+            })),
           ]),
         ]),
       ]),
     ]);
+    await this.productView(catalog, 1, 10);
     await this.attributesView(form);
     await this.getCategory(category);
     return catalogWrapper;
@@ -90,22 +92,22 @@ export default class Catalog {
     });
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
-        this.filter(checkboxAll, sortSelect, priceInputAll);
+        this.infiniteScrollPage(true);
       });
     });
     resetFilter?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-      this.filter(checkboxAll, sortSelect, priceInputAll);
+      this.infiniteScrollPage();
     });
     searchButton?.addEventListener('click', (event) => {
       this.search(event, searchInput);
     });
     sortSelect?.addEventListener('change', () => {
-      this.filter(checkboxAll, sortSelect, priceInputAll);
+      this.infiniteScrollPage(true);
     });
     priceInputAll.forEach((priceInput) => {
       priceInput.addEventListener('change', () => {
-        this.filter(checkboxAll, sortSelect, priceInputAll);
+        this.infiniteScrollPage(true);
       });
     });
 
@@ -129,7 +131,7 @@ export default class Catalog {
     }
   }
 
-  infiniteScrollPage() {
+  async infiniteScrollPage(isFilter?: boolean) {
     const pageSize = 10;
     let currentPage = 1;
     let isLoading = false;
@@ -153,18 +155,22 @@ export default class Catalog {
             isLoading = true;
             currentPage += 1;
             loadingContainer.style.display = 'block';
-            await this.productView(catalog, currentPage, pageSize).then(() => {
-              isLoading = false;
-              loadingContainer.style.display = 'none';
-            });
+            if (!isFilter) {
+              await this.productView(catalog, currentPage, pageSize).then(() => {
+                isLoading = false;
+                loadingContainer.style.display = 'none';
+              });
+            } else {
+              await this.filter(currentPage, pageSize).then(() => {
+                isLoading = false;
+                loadingContainer.style.display = 'none';
+              });
+            }
           }
         },
         { threshold: 1.0 }
       );
       observer.observe(sentinel);
-      await this.productView(catalog, currentPage, pageSize).then(() => {
-        isLoading = false;
-      });
     };
     initInfiniteScroll();
     wrapper?.append(sentinel);
@@ -183,8 +189,10 @@ export default class Catalog {
   }
 
   async toggleAllButtonsToCard() {
+    console.log('hhh');
     const listProductInCart = await this.controller.getProductInCart();
     const allButtonsCart = document.querySelectorAll('.product-card__addtocard') as NodeListOf<HTMLButtonElement>;
+    console.log(allButtonsCart);
     allButtonsCart.forEach((buttonCart) => {
       const button = buttonCart as HTMLButtonElement;
       button.disabled = false;
@@ -277,7 +285,7 @@ export default class Catalog {
     ]);
     breadcrumbTitle?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-      this.filter(checkboxAll, sortSelect, priceInputAll);
+      this.filter();
       container.innerHTML = '';
       container.append(breadcrumbTitle);
     });
@@ -311,12 +319,17 @@ export default class Catalog {
     }
   }
 
-  async filter(
-    checkboxAll: NodeListOf<HTMLInputElement>,
-    sortSelect: HTMLSelectElement,
-    priceInputAll: NodeListOf<HTMLInputElement>
-  ) {
-    const filterProduct = await this.controller.checkboxChecked(checkboxAll, sortSelect, priceInputAll);
+  async filter(page?: number, limitPage?: number) {
+    const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+    const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
+    const filterProduct = await this.controller.checkboxChecked(
+      checkboxAll,
+      sortSelect,
+      priceInputAll,
+      page,
+      limitPage
+    );
     if (filterProduct && Array.isArray(filterProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
       if (catalog) {

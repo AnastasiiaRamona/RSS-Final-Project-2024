@@ -176,9 +176,9 @@ export default class App {
 
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
+      this.catalog.infiniteScrollPage();
       this.catalog.addEventListeners();
       this.catalog.toggleAllButtonsToCard();
-      this.catalog.infiniteScrollPage();
       this.appButtonsMethods?.toggleButton(catalogButton, this.buttonsArray);
     });
 

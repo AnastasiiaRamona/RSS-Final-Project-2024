@@ -288,7 +288,14 @@ export default class CommerceToolsAPI {
     return result;
   }
 
-  async filter(checkboxChecked: { [key: string]: string[] }, sortingApi: string, minPrice: string, maxPrice: string) {
+  async filter(
+    checkboxChecked: { [key: string]: string[] },
+    sortingApi: string,
+    minPrice: string,
+    maxPrice: string,
+    page?: number,
+    limitPage?: number
+  ) {
     this.createClient();
 
     const localeArr = ['color-of-toy', 'quantity'];
