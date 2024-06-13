@@ -48,7 +48,7 @@ export default class EmptyBasket {
         'click',
         () => {
           video.load();
-          video.play();
+          video.play().catch(() => {});
         },
         { once: true }
       );
