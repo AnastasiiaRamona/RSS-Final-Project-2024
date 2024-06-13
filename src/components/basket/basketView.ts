@@ -9,6 +9,8 @@ export default class Basket {
 
   cartId: string | null = null;
 
+  totalPrice: number = 0;
+
   constructor() {
     this.controller = new BasketController();
   }
@@ -29,6 +31,7 @@ export default class Basket {
   async getCardsSection() {
     const cardsSection = HTMLCreator.createElement('section', { class: 'basket__cards' });
     this.cartId = localStorage.getItem('cartPetShopId');
+    this.totalPrice = 0;
     if (this.cartId) {
       const cartData = await this.controller.getCart(this.cartId);
       cartData?.map((item) => {
@@ -38,6 +41,11 @@ export default class Basket {
         const price = item.price?.value.centAmount;
         const discountedPrice = item.price?.discounted?.value.centAmount;
         const quantity = item?.quantity;
+        if (discountedPrice) {
+          this.totalPrice += discountedPrice * quantity;
+        } else {
+          this.totalPrice += price * quantity;
+        }
         const card = this.renderProductCard(id, name, imageUrl, price, quantity, discountedPrice);
         return cardsSection.append(card);
       });
@@ -115,8 +123,7 @@ export default class Basket {
   }
 
   calculateTotalPrice() {
-    // Здесь должна быть логика для расчета общей суммы корзины
-    return 0;
+    return this.totalPrice;
   }
 
   addEventListeners() {
@@ -127,19 +134,83 @@ export default class Basket {
       const increaseButton = container.querySelector('.increase-button') as HTMLButtonElement;
       const quantityDisplay = container.querySelector('.quantity-display') as HTMLSpanElement;
 
-      decreaseButton.addEventListener('click', () => {
+      decreaseButton.addEventListener('click', async () => {
         let currentQuantity = Number(quantityDisplay.textContent);
         if (currentQuantity > 1) {
           currentQuantity -= 1;
           quantityDisplay.textContent = `${currentQuantity}`;
+          const parent = container.parentElement;
+
+          // Отключаем кнопки
+          decreaseButton.disabled = true;
+          increaseButton.disabled = true;
+
+          try {
+            await this.controller.updateQuantity((parent as HTMLElement).dataset.id as string, currentQuantity);
+            await this.updateTotalPrice();
+          } finally {
+            // Включаем кнопки
+            decreaseButton.disabled = false;
+            increaseButton.disabled = false;
+          }
         }
       });
 
-      increaseButton.addEventListener('click', () => {
+      increaseButton.addEventListener('click', async () => {
         let currentQuantity = Number(quantityDisplay.textContent);
         currentQuantity += 1;
         quantityDisplay.textContent = `${currentQuantity}`;
+        const parent = container.parentElement;
+
+        // Отключаем кнопки
+        decreaseButton.disabled = true;
+        increaseButton.disabled = true;
+
+        try {
+          await this.controller.updateQuantity((parent as HTMLElement).dataset.id as string, currentQuantity);
+          await this.updateTotalPrice();
+        } finally {
+          // Включаем кнопки
+          decreaseButton.disabled = false;
+          increaseButton.disabled = false;
+        }
       });
     });
+
+    const removeButtons = document.querySelectorAll('.basket-remove-button');
+    removeButtons.forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const parent = button.parentElement;
+        if (parent) {
+          await this.controller.removeProductCart(parent.dataset.id as string);
+          parent.remove();
+          await this.updateTotalPrice();
+        }
+      });
+    });
+  }
+
+  async updateTotalPrice() {
+    this.cartId = localStorage.getItem('cartPetShopId');
+    this.totalPrice = 0;
+    if (this.cartId) {
+      const cartData = await this.controller.getCart(this.cartId);
+      cartData?.map((item) => {
+        const price = item.price?.value.centAmount;
+        const discountedPrice = item.price?.discounted?.value.centAmount;
+        const quantity = item?.quantity;
+        if (discountedPrice) {
+          this.totalPrice += discountedPrice * quantity;
+        } else {
+          this.totalPrice += price * quantity;
+        }
+        return this.totalPrice;
+      });
+    }
+    const totalElement = document.querySelector('.total-price');
+    if (totalElement) {
+      totalElement.textContent = `Total: ${this.totalPrice / 100} €`;
+    }
   }
 }

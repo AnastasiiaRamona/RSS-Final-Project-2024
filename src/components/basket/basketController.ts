@@ -12,4 +12,15 @@ export default class BasketController {
     const cartData = cart?.body.lineItems;
     return cartData;
   }
+
+  async removeProductCart(productId: string) {
+    if (productId) {
+      await this.model.removeProductCart(productId);
+    }
+  }
+
+  async updateQuantity(productId: string, quantity: number) {
+    const result = await this.model.updateQuantity(productId, quantity);
+    return result;
+  }
 }
