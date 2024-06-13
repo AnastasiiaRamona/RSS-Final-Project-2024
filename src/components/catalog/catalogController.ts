@@ -7,8 +7,8 @@ export default class CatalogController {
     this.model = new CatalogModel();
   }
 
-  async getProducts() {
-    const result = await this.model.getProducts();
+  async getProducts(page: number, limitPage: number) {
+    const result = await this.model.getProducts(page, limitPage);
     return result;
   }
 
@@ -20,7 +20,9 @@ export default class CatalogController {
   checkboxChecked(
     checkboxAll: NodeListOf<HTMLInputElement>,
     sortSelect: HTMLSelectElement,
-    priceInputAll: NodeListOf<HTMLInputElement>
+    priceInputAll: NodeListOf<HTMLInputElement>,
+    page: number,
+    limitPage: number
   ) {
     const checkboxChecked: { [key: string]: string[] } = {};
     const sorting = sortSelect.value;
@@ -42,7 +44,7 @@ export default class CatalogController {
         }
       }
     });
-    const result = this.model.checkboxChecked(checkboxChecked, sorting, minPrice, maxPrice);
+    const result = this.model.checkboxChecked(checkboxChecked, sorting, minPrice, maxPrice, page, limitPage);
     return result;
   }
 
