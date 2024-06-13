@@ -186,31 +186,29 @@ export default class AboutPage {
 
   renderFooter() {
     const footer = HTMLCreator.createElement('section', { class: 'about-footer' }, [
-      HTMLCreator.createElement('div', { class: 'about-container' }, [
-        HTMLCreator.createElement('div', { class: 'footer-wrapper' }, [
-          HTMLCreator.createElement('div', { class: 'footer-inner' }, [
-            HTMLCreator.createElement('h4', { class: 'footer-title' }, ['Development Team:']),
-            HTMLCreator.createElement('ul', { class: 'footer-list' }, [
-              HTMLCreator.createElement('li', { class: 'footer-item' }, [
-                HTMLCreator.createElement('a', { class: 'footer-link', href: 'https://github.com/aleks6699' }, [
-                  'Oleksandr Tsurkan',
-                ]),
+      HTMLCreator.createElement('div', { class: 'footer-wrapper' }, [
+        HTMLCreator.createElement('div', { class: 'footer-inner' }, [
+          HTMLCreator.createElement('h4', { class: 'footer-title' }, ['Development Team:']),
+          HTMLCreator.createElement('ul', { class: 'footer-list' }, [
+            HTMLCreator.createElement('li', { class: 'footer-item' }, [
+              HTMLCreator.createElement('a', { class: 'footer-link', href: 'https://github.com/aleks6699' }, [
+                'Oleksandr Tsurkan',
               ]),
-              HTMLCreator.createElement('li', { class: 'footer-item' }, [
-                HTMLCreator.createElement('a', { class: 'footer-link', href: 'https://github.com/AnastasiiaRamona' }, [
-                  'Anastasiia Kabanova',
-                ]),
+            ]),
+            HTMLCreator.createElement('li', { class: 'footer-item' }, [
+              HTMLCreator.createElement('a', { class: 'footer-link', href: 'https://github.com/AnastasiiaRamona' }, [
+                'Anastasiia Kabanova',
               ]),
-              HTMLCreator.createElement('li', { class: 'footer-item' }, [
-                HTMLCreator.createElement('a', { class: 'footer-link', href: 'https://github.com/MartiP54/' }, [
-                  'Yuri Porokhin',
-                ]),
+            ]),
+            HTMLCreator.createElement('li', { class: 'footer-item' }, [
+              HTMLCreator.createElement('a', { class: 'footer-link', href: 'https://github.com/MartiP54/' }, [
+                'Yuri Porokhin',
               ]),
             ]),
           ]),
-          HTMLCreator.createElement('div', { class: 'footer-copyright' }, ['2024 ©']),
-          HTMLCreator.createElement('a', { class: 'footer-logo__link', href: 'https://rs.school/' }),
         ]),
+        HTMLCreator.createElement('div', { class: 'footer-copyright' }, ['2024 ©']),
+        HTMLCreator.createElement('a', { class: 'footer-logo__link', href: 'https://rs.school/' }),
       ]),
     ]);
     const logoLink = footer.querySelector('.footer-logo__link');
@@ -245,9 +243,10 @@ export default class AboutPage {
           ]),
         ]),
         this.renderCollaborationSection(),
+        this.renderFooter(),
       ]),
     ]);
-    document.body.appendChild(this.renderFooter());
+
     return main;
   }
 }
