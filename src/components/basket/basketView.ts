@@ -3,6 +3,7 @@ import BasketController from './basketController';
 import deleteButtonSrc from '../../assets/delete-icon.webp';
 import promocodeIconSrc from '../../assets/promocode-icon.webp';
 import clearIconSrc from '../../assets/clear-icon.webp';
+import EmptyBasket from './componentsUA/emptyBasket';
 
 export default class Basket {
   controller: BasketController;
@@ -11,8 +12,11 @@ export default class Basket {
 
   totalPrice: number = 0;
 
+  emptyBasket: EmptyBasket;
+
   constructor() {
     this.controller = new BasketController();
+    this.emptyBasket = new EmptyBasket();
   }
 
   async renderPage() {
@@ -141,7 +145,6 @@ export default class Basket {
           quantityDisplay.textContent = `${currentQuantity}`;
           const parent = container.parentElement;
 
-          // Отключаем кнопки
           decreaseButton.disabled = true;
           increaseButton.disabled = true;
 
@@ -149,7 +152,6 @@ export default class Basket {
             await this.controller.updateQuantity((parent as HTMLElement).dataset.id as string, currentQuantity);
             await this.updateTotalPrice();
           } finally {
-            // Включаем кнопки
             decreaseButton.disabled = false;
             increaseButton.disabled = false;
           }
@@ -162,7 +164,6 @@ export default class Basket {
         quantityDisplay.textContent = `${currentQuantity}`;
         const parent = container.parentElement;
 
-        // Отключаем кнопки
         decreaseButton.disabled = true;
         increaseButton.disabled = true;
 
@@ -170,7 +171,6 @@ export default class Basket {
           await this.controller.updateQuantity((parent as HTMLElement).dataset.id as string, currentQuantity);
           await this.updateTotalPrice();
         } finally {
-          // Включаем кнопки
           decreaseButton.disabled = false;
           increaseButton.disabled = false;
         }
