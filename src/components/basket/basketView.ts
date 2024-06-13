@@ -188,8 +188,8 @@ export default class Basket {
         if (parent) {
           await this.controller.removeProductCart(parent.dataset.id as string);
           parent.remove();
-          await this.updateTotalPrice();
           this.checkQuantityOfItems();
+          await this.updateTotalPrice();
         }
       });
     });
