@@ -21,9 +21,7 @@ export default class AppSwiper {
       },
     });
 
-    Fancybox.bind('[data-fancybox]', {
-      // Your custom options
-    });
+    Fancybox.bind('[data-fancybox]', {});
 
     return swiper;
   }
