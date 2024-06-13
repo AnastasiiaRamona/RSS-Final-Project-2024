@@ -57,8 +57,11 @@ export default class DetailedProductModel {
     const cartId = localStorage.getItem('cartPetShopId') as string;
     const currentCart = await this.commerceToolsAPI.getCart(cartId);
     const currentCartVersion = Number(currentCart?.body.version);
-    const lineItem = currentCart?.body.lineItems.find((item) => item.productId === productId);
-    const result = await this.commerceToolsAPI.removeProductCart(cartId, lineItem, currentCartVersion);
-    return result;
+    const lineItemId = currentCart?.body.lineItems.find((item) => item.productId === productId)?.id;
+    if (lineItemId) {
+      const result = await this.commerceToolsAPI.removeProductCart(cartId, lineItemId, currentCartVersion);
+      return result;
+    }
+    return undefined;
   }
 }

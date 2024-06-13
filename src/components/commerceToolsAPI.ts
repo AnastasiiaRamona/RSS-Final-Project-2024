@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Client,
   ClientBuilder,
@@ -549,7 +548,7 @@ export default class CommerceToolsAPI {
     if (response) {
       localStorage.setItem('cartPetShopId', response.body.id);
     }
-    console.log(response);
+
     return response;
   }
 
@@ -593,7 +592,7 @@ export default class CommerceToolsAPI {
     return response;
   }
 
-  async removeProductCart(cardId: string, lineItem: any, version: number) {
+  async removeProductCart(cardId: string, lineItemId: string, version: number) {
     this.createClient();
     let result;
     try {
@@ -607,7 +606,7 @@ export default class CommerceToolsAPI {
               actions: [
                 {
                   action: 'removeLineItem',
-                  lineItemId: lineItem.id,
+                  lineItemId,
                 },
               ],
             },
@@ -619,22 +618,20 @@ export default class CommerceToolsAPI {
     }
     return result;
   }
-}
-// async updateCart(cartId: string, customerId: string, cartVersion: number) {
-//   this.createClient();
 
-//   let response;
-//   if (this.apiRoot) {
-//     response = await this.apiRoot
-//       .carts()
-//       .withId({ ID: cartId })
-//       .post({
-//         body: {
-//           version: cartVersion,
-//           actions: [{ action: 'setCustomerId', customerId }],
-//         },
-//       })
-//       .execute();
-//   }
-//   return response;
-// }
+  async updateCart(cartId: string, updateData: CartUpdate) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .carts()
+        .withId({ ID: cartId })
+        .post({
+          body: updateData,
+        })
+        .execute();
+    }
+    return response;
+  }
+}
