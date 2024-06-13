@@ -175,7 +175,7 @@
 .footer-title {
   position: relative;
   padding: 10px 10px 10px 40px;
-  @include font('Arial', clamp(18px, 5vw, 24px), bold, 1, $white);
+  @include font('Arial', clamp(18px, 4vw, 24px), bold, 1, $white);
 
   &::after {
     content: '';
