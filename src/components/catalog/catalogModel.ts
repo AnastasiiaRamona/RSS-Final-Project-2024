@@ -7,8 +7,8 @@ export default class CatalogModel {
     this.commerceToolsAPI = new CommerceToolsAPI();
   }
 
-  async getProducts() {
-    const products = (await this.commerceToolsAPI.getProducts()) as unknown as [
+  async getProducts(page: number, limitPage: number) {
+    const products = (await this.commerceToolsAPI.getProducts(page, limitPage)) as unknown as [
       {
         id: string;
         name: string;
@@ -39,10 +39,12 @@ export default class CatalogModel {
     checkboxChecked: { [key: string]: string[] },
     sorting: string,
     minPrice: string,
-    maxPrice: string
+    maxPrice: string,
+    page: number,
+    limitPage: number
   ) {
     const sortingApi = sorting;
-    const filter = await this.commerceToolsAPI.filter(checkboxChecked, sortingApi, minPrice, maxPrice);
+    const filter = await this.commerceToolsAPI.filter(checkboxChecked, sortingApi, minPrice, maxPrice, page, limitPage);
     return filter;
   }
 
