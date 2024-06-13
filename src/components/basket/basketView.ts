@@ -189,9 +189,12 @@ export default class Basket {
           await this.controller.removeProductCart(parent.dataset.id as string);
           parent.remove();
           await this.updateTotalPrice();
+          this.checkQuantityOfItems();
         }
       });
     });
+
+    this.emptyBasket.addEventListeners();
   }
 
   async updateTotalPrice() {
@@ -214,6 +217,18 @@ export default class Basket {
     const totalElement = document.querySelector('.total-price');
     if (totalElement) {
       totalElement.textContent = `Total: ${this.totalPrice / 100} €`;
+    }
+  }
+
+  checkQuantityOfItems() {
+    const basketCards = document.querySelector('.basket__cards');
+    if (basketCards && basketCards.childElementCount === 0) {
+      const basketMain = document.querySelector('.basket-main') as HTMLElement;
+      if (basketMain) {
+        basketMain.innerHTML = '';
+        basketMain.appendChild(this.emptyBasket.renderEmptyBasket());
+        this.emptyBasket.addEventListeners();
+      }
     }
   }
 }
