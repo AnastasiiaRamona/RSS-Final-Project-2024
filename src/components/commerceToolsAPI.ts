@@ -462,7 +462,8 @@ export default class CommerceToolsAPI {
       }
     }
 
-    localStorage.clear();
+    localStorage.removeItem('userPetShopId');
+    localStorage.removeItem('userToken');
 
     this.ctpClient = null;
     this.apiRoot = null;
@@ -555,7 +556,7 @@ export default class CommerceToolsAPI {
     if (response) {
       localStorage.setItem('cartPetShopId', response.body.id);
     }
-    console.log(response);
+
     return response;
   }
 
@@ -599,22 +600,46 @@ export default class CommerceToolsAPI {
     return response;
   }
 
-  // async updateCart(cartId: string, customerId: string, cartVersion: number) {
-  //   this.createClient();
+  async removeProductCart(cardId: string, lineItemId: string, version: number) {
+    this.createClient();
+    let result;
+    try {
+      if (this.apiRoot) {
+        result = await this.apiRoot
+          .carts()
+          .withId({ ID: cardId })
+          .post({
+            body: {
+              version,
+              actions: [
+                {
+                  action: 'removeLineItem',
+                  lineItemId,
+                },
+              ],
+            },
+          })
+          .execute();
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
 
-  //   let response;
-  //   if (this.apiRoot) {
-  //     response = await this.apiRoot
-  //       .carts()
-  //       .withId({ ID: cartId })
-  //       .post({
-  //         body: {
-  //           version: cartVersion,
-  //           actions: [{ action: 'setCustomerId', customerId }],
-  //         },
-  //       })
-  //       .execute();
-  //   }
-  //   return response;
-  // }
+  async updateCart(cartId: string, updateData: CartUpdate) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .carts()
+        .withId({ ID: cartId })
+        .post({
+          body: updateData,
+        })
+        .execute();
+    }
+    return response;
+  }
 }
