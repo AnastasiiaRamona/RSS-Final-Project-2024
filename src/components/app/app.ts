@@ -68,10 +68,13 @@ export default class App {
     this.appButtonsMethods = new AppButtonsMethods();
     this.appSwiper = new AppSwiper();
     this.commerceToolsAPI = new CommerceToolsAPI();
-    if (this.userId) {
-      this.commerceToolsAPI.createCart(this.userId).then(() => {});
-    } else {
-      this.commerceToolsAPI.createCart().then(() => {});
+    const isCartIdExist = !!localStorage.getItem('cartPetShopId');
+    if (!isCartIdExist) {
+      if (this.userId) {
+        this.commerceToolsAPI.createCart(this.userId).then(() => {});
+      } else {
+        this.commerceToolsAPI.createCart().then(() => {});
+      }
     }
   }
 
@@ -177,6 +180,7 @@ export default class App {
     renderRoute('/catalog', async () => {
       this.changeMainElement(await this.catalog.renderPage());
       this.catalog.addEventListeners();
+      this.catalog.toggleAllButtonsToCard();
       this.appButtonsMethods?.toggleButton(catalogButton, this.buttonsArray);
     });
 
@@ -186,9 +190,11 @@ export default class App {
       if (productId) {
         const product = new DetailedProduct(productId);
         this.changeMainElement(product.renderMain());
-        await product.getProductInformation();
+        await product.addEventListeners();
         this.appSwiper.createSwiper();
-        this.appButtonsMethods?.activateButton(catalogButton);
+        this.buttonsArray.forEach((button) => {
+          this.appButtonsMethods?.activateButton(button);
+        });
       }
     });
 
@@ -207,8 +213,9 @@ export default class App {
       this.appButtonsMethods?.toggleButton(aboutUsButton, this.buttonsArray);
     });
 
-    renderRoute('/basket', () => {
-      this.changeMainElement(this.basket.renderPage());
+    renderRoute('/basket', async () => {
+      this.changeMainElement(await this.basket.renderPage());
+      this.basket.addEventListeners();
       this.appButtonsMethods?.toggleButton(basketButton, this.buttonsArray);
     });
   }
@@ -271,6 +278,9 @@ export default class App {
     if (!keepURL) {
       this.router.navigateTo(`/${route}`);
     } else if (route === '404page') {
+      this.isLoggedIn = !!localStorage.getItem('userToken');
+      const userProfileButton = document.querySelector('.user-profile-button') as HTMLButtonElement;
+      this.header.checkUserProfileButton(this.isLoggedIn, userProfileButton);
       this.changeMainElement(this.missingPage.renderPage());
     } else {
       const { routes } = this.router;

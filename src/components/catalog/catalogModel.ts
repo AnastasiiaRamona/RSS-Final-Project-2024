@@ -102,7 +102,25 @@ export default class CatalogModel {
   }
 
   async getBreadcrumbsOfCategory(categoryId: string) {
-    const productOfCategory = this.commerceToolsAPI.getBreadcrumbsOfCategory(categoryId);
-    return productOfCategory;
+    const breadcrumbsOfCategory = this.commerceToolsAPI.getBreadcrumbsOfCategory(categoryId);
+    return breadcrumbsOfCategory;
+  }
+
+  async addToCart(productId: string) {
+    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const currentCart = await this.commerceToolsAPI.getCart(cartId);
+    const currentCartVersion = Number(currentCart?.body.version);
+    const result = await this.commerceToolsAPI.addToCart(cartId, productId, 1, 1, currentCartVersion);
+    return result;
+  }
+
+  async getProductInCart() {
+    const cartId = localStorage.getItem('cartPetShopId') as string;
+    let listProductInCart;
+    const currentCard = await this.commerceToolsAPI.getCart(cartId);
+    if (currentCard) {
+      listProductInCart = currentCard?.body.lineItems.map((lineItem) => lineItem.productId);
+    }
+    return listProductInCart;
   }
 }

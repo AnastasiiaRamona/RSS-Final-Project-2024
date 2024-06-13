@@ -12,6 +12,9 @@ import {
   CustomerDraft,
   CustomerUpdate,
   createApiBuilderFromCtpClient,
+  CartUpdateAction,
+  CartUpdate,
+  LineItemDraft,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import {
@@ -451,7 +454,8 @@ export default class CommerceToolsAPI {
       }
     }
 
-    localStorage.clear();
+    localStorage.removeItem('userPetShopId');
+    localStorage.removeItem('userToken');
 
     this.ctpClient = null;
     this.apiRoot = null;
@@ -541,26 +545,93 @@ export default class CommerceToolsAPI {
         })
         .execute();
     }
-    console.log(response);
+    if (response) {
+      localStorage.setItem('cartPetShopId', response.body.id);
+    }
+
     return response;
   }
 
-  // async updateCart(cartId: string, customerId: string, cartVersion: number) {
-  //   this.createClient();
+  async addToCart(cardId: string, productId: string, variantId: number, quantity: number, version: number) {
+    this.createClient();
+    let result;
+    try {
+      const lineItemDraft: LineItemDraft = {
+        productId,
+        variantId,
+        quantity,
+      };
 
-  //   let response;
-  //   if (this.apiRoot) {
-  //     response = await this.apiRoot
-  //       .carts()
-  //       .withId({ ID: cartId })
-  //       .post({
-  //         body: {
-  //           version: cartVersion,
-  //           actions: [{ action: 'setCustomerId', customerId }],
-  //         },
-  //       })
-  //       .execute();
-  //   }
-  //   return response;
-  // }
+      const updateAction: CartUpdateAction = {
+        action: 'addLineItem',
+        ...lineItemDraft,
+      };
+
+      const cartUpdate: CartUpdate = {
+        version,
+        actions: [updateAction],
+      };
+
+      if (this.apiRoot) {
+        result = await this.apiRoot.carts().withId({ ID: cardId }).post({ body: cartUpdate }).execute();
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
+
+  async getCart(cartId: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.carts().withId({ ID: cartId }).get().execute();
+    }
+
+    return response;
+  }
+
+  async removeProductCart(cardId: string, lineItemId: string, version: number) {
+    this.createClient();
+    let result;
+    try {
+      if (this.apiRoot) {
+        result = await this.apiRoot
+          .carts()
+          .withId({ ID: cardId })
+          .post({
+            body: {
+              version,
+              actions: [
+                {
+                  action: 'removeLineItem',
+                  lineItemId,
+                },
+              ],
+            },
+          })
+          .execute();
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
+
+  async updateCart(cartId: string, updateData: CartUpdate) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .carts()
+        .withId({ ID: cartId })
+        .post({
+          body: updateData,
+        })
+        .execute();
+    }
+    return response;
+  }
 }

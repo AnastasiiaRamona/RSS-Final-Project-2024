@@ -106,4 +106,15 @@ export default class CatalogController {
     formattedStr = formattedStr.charAt(0).toUpperCase() + formattedStr.slice(1);
     return formattedStr;
   }
+
+  async addToCart(event: Event) {
+    const target = event.target as HTMLElement;
+    const productId = target.parentElement?.parentElement?.id as string;
+    await this.model.addToCart(productId);
+  }
+
+  async getProductInCart() {
+    const listProductInCart = await this.model.getProductInCart();
+    return listProductInCart;
+  }
 }

@@ -154,3 +154,8 @@
 .detailed__product-remove:hover {
   font-size: 0;
 }
+.detailed__product-basket:disabled,
+.detailed__product-remove:disabled {
+ background-color:#d4c6c6;
+ pointer-events: none;
+}

@@ -87,7 +87,6 @@ export default class Catalog {
         this.showProductsOfCategory(event);
       });
     });
-
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
         this.filter(checkboxAll, sortSelect, priceInputAll);
@@ -113,16 +112,55 @@ export default class Catalog {
     if (catalogGallery) {
       catalogGallery.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
-        const productCard = target.closest('.product-card');
-        if (productCard) {
-          const productId = productCard.id;
-          const productEvent = new CustomEvent('productEvent', {
-            detail: { id: productId },
-          });
-          document.body.dispatchEvent(productEvent);
+        if (target.classList.contains('product-card__addtocard')) {
+          this.addToCart(event);
+        } else {
+          const productCard = target.closest('.product-card');
+          if (productCard) {
+            const productId = productCard.id;
+            const productEvent = new CustomEvent('productEvent', {
+              detail: { id: productId },
+            });
+            document.body.dispatchEvent(productEvent);
+          }
         }
       });
     }
+  }
+
+  async addToCart(event: Event) {
+    try {
+      await this.controller.addToCart(event);
+    } catch (error) {
+      if (error instanceof Error) {
+        this.handleResponse(error.message);
+      }
+    }
+    await this.toggleAllButtonsToCard();
+  }
+
+  async toggleAllButtonsToCard() {
+    const listProductInCart = await this.controller.getProductInCart();
+    const allButtonsCart = document.querySelectorAll('.product-card__addtocard') as NodeListOf<HTMLButtonElement>;
+    allButtonsCart.forEach((buttonCart) => {
+      const button = buttonCart as HTMLButtonElement;
+      button.disabled = false;
+    });
+    const productCartDiv = document.querySelectorAll('.product-card') as NodeListOf<HTMLElement>;
+    listProductInCart?.forEach((productInCart) => {
+      this.toggleButtonToCard(productInCart, productCartDiv);
+    });
+  }
+
+  toggleButtonToCard(productId: string, productCartDiv: NodeListOf<HTMLElement>) {
+    productCartDiv.forEach((productCart) => {
+      if (productCart.id === productId) {
+        const button = productCart.querySelector('.product-card__addtocard') as HTMLButtonElement;
+        if (button) {
+          button.disabled = true;
+        }
+      }
+    });
   }
 
   async showProductsOfCategory(event: Event) {
@@ -142,7 +180,8 @@ export default class Catalog {
           });
         }
       }
-      this.generateBreadcrumbs(event);
+      await this.generateBreadcrumbs(event);
+      await this.toggleAllButtonsToCard();
     } catch (error) {
       if (error instanceof Error) {
         this.handleResponse(error.message);
@@ -245,6 +284,7 @@ export default class Catalog {
         });
       }
     }
+    await this.toggleAllButtonsToCard();
   }
 
   async search(event: Event, searchInput: HTMLInputElement) {
@@ -263,6 +303,7 @@ export default class Catalog {
         });
       }
     }
+    await this.toggleAllButtonsToCard();
   }
 
   async productView(catalog: HTMLElement) {
@@ -301,6 +342,7 @@ export default class Catalog {
         HTMLCreator.createElement('h3', { class: 'product-card__name' }, [name]),
         HTMLCreator.createElement('p', { class: 'product-card__description' }, [description]),
         HTMLCreator.createElement('div', { class: 'product-card__prices' }, prices),
+        HTMLCreator.createElement('button', { class: 'product-card__addtocard' }, ['🛒 Add to Cart']),
       ]),
     ]);
     return productCard;
