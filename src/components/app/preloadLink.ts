@@ -1,3 +1,5 @@
+import backgroundImage from '../../assets/background-image.webp';
+
 export default class Preload {
   constructor() {
     const preloadImages = document.querySelectorAll('img');
@@ -7,6 +9,8 @@ export default class Preload {
         this.addPreloadLink(imgPath);
       }
     });
+
+    this.addPreloadLink(backgroundImage);
   }
 
   addPreloadLink(href: string) {

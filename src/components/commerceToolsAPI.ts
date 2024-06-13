@@ -204,7 +204,7 @@ export default class CommerceToolsAPI {
     return response;
   }
 
-  async getProducts() {
+  async getProducts(page: number, limit: number) {
     this.createClient();
 
     let result;
@@ -213,7 +213,8 @@ export default class CommerceToolsAPI {
         .products()
         .get({
           queryArgs: {
-            limit: 100,
+            limit,
+            offset: (page - 1) * limit,
           },
         })
         .execute()
@@ -287,9 +288,15 @@ export default class CommerceToolsAPI {
     return result;
   }
 
-  async filter(checkboxChecked: { [key: string]: string[] }, sortingApi: string, minPrice: string, maxPrice: string) {
+  async filter(
+    checkboxChecked: { [key: string]: string[] },
+    sortingApi: string,
+    minPrice: string,
+    maxPrice: string,
+    page: number,
+    limitPage: number
+  ) {
     this.createClient();
-
     const localeArr = ['color-of-toy', 'quantity'];
     let result;
     const filters: string[] = [];
@@ -310,7 +317,8 @@ export default class CommerceToolsAPI {
     if (this.apiRoot) {
       const queryArgs: { [key: string]: string | string[] | number | undefined } = {
         'filter.query': filters,
-        limit: 40,
+        limit: limitPage,
+        offset: (page - 1) * limitPage,
       };
       if (sortingApi) {
         queryArgs.sort = sortingApi;
