@@ -3,6 +3,7 @@ import BasketController from './basketController';
 import deleteButtonSrc from '../../assets/delete-icon.webp';
 import promocodeIconSrc from '../../assets/promocode-icon.webp';
 import clearIconSrc from '../../assets/clear-icon.webp';
+import EmptyBasket from './componentsUA/emptyBasket';
 
 export default class Basket {
   controller: BasketController;
@@ -11,17 +12,23 @@ export default class Basket {
 
   totalPrice: number = 0;
 
+  emptyBasket: EmptyBasket;
+
   constructor() {
     this.controller = new BasketController();
+    this.emptyBasket = new EmptyBasket();
   }
 
   async renderPage() {
     const cardsSection = await this.getCardsSection();
-    const summarySection = this.renderSummarySection();
-    const basketContainer = HTMLCreator.createElement('section', { class: 'basket-main' }, [
-      cardsSection,
-      summarySection,
-    ]);
+    let basketContainer;
+    if (cardsSection.children.length > 0) {
+      const summarySection = this.renderSummarySection();
+      basketContainer = HTMLCreator.createElement('section', { class: 'basket-main' }, [cardsSection, summarySection]);
+    } else {
+      const emptyBasket = this.emptyBasket.renderEmptyBasket();
+      basketContainer = HTMLCreator.createElement('section', { class: 'basket-main' }, [emptyBasket]);
+    }
 
     const main = HTMLCreator.createElement('main', { class: 'main-field' }, [basketContainer]);
 
@@ -141,7 +148,6 @@ export default class Basket {
           quantityDisplay.textContent = `${currentQuantity}`;
           const parent = container.parentElement;
 
-          // Отключаем кнопки
           decreaseButton.disabled = true;
           increaseButton.disabled = true;
 
@@ -149,7 +155,6 @@ export default class Basket {
             await this.controller.updateQuantity((parent as HTMLElement).dataset.id as string, currentQuantity);
             await this.updateTotalPrice();
           } finally {
-            // Включаем кнопки
             decreaseButton.disabled = false;
             increaseButton.disabled = false;
           }
@@ -162,7 +167,6 @@ export default class Basket {
         quantityDisplay.textContent = `${currentQuantity}`;
         const parent = container.parentElement;
 
-        // Отключаем кнопки
         decreaseButton.disabled = true;
         increaseButton.disabled = true;
 
@@ -170,7 +174,6 @@ export default class Basket {
           await this.controller.updateQuantity((parent as HTMLElement).dataset.id as string, currentQuantity);
           await this.updateTotalPrice();
         } finally {
-          // Включаем кнопки
           decreaseButton.disabled = false;
           increaseButton.disabled = false;
         }
@@ -185,10 +188,13 @@ export default class Basket {
         if (parent) {
           await this.controller.removeProductCart(parent.dataset.id as string);
           parent.remove();
+          this.checkQuantityOfItems();
           await this.updateTotalPrice();
         }
       });
     });
+
+    this.emptyBasket.addEventListeners();
   }
 
   async updateTotalPrice() {
@@ -211,6 +217,18 @@ export default class Basket {
     const totalElement = document.querySelector('.total-price');
     if (totalElement) {
       totalElement.textContent = `Total: ${this.totalPrice / 100} €`;
+    }
+  }
+
+  checkQuantityOfItems() {
+    const basketCards = document.querySelector('.basket__cards');
+    if (basketCards && basketCards.childElementCount === 0) {
+      const basketMain = document.querySelector('.basket-main') as HTMLElement;
+      if (basketMain) {
+        basketMain.innerHTML = '';
+        basketMain.appendChild(this.emptyBasket.renderEmptyBasket());
+        this.emptyBasket.addEventListeners();
+      }
     }
   }
 }

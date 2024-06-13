@@ -51,9 +51,7 @@ export default class Catalog {
           ]),
           HTMLCreator.createElement('form', { class: 'catalog__search' }, [
             HTMLCreator.createElement('div', { class: 'search__wrapper' }, [
-              HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, [
-                'Search the site:',
-              ]),
+              HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, ['Search:']),
               HTMLCreator.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }),
             ]),
             HTMLCreator.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
