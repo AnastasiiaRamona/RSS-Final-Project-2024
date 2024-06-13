@@ -160,7 +160,6 @@ export default class Catalog {
       catalog.innerHTML = '';
     }
     const loadProducts = async () => {
-      console.log('ff');
       if (!isLoading) {
         isLoading = true;
         currentPage += 1;

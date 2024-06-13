@@ -297,7 +297,6 @@ export default class CommerceToolsAPI {
     limitPage: number
   ) {
     this.createClient();
-    console.log('api1', page, limitPage);
     const localeArr = ['color-of-toy', 'quantity'];
     let result;
     const filters: string[] = [];
@@ -349,7 +348,6 @@ export default class CommerceToolsAPI {
           result = error;
         });
     }
-    console.log('api2', page, limitPage);
     return result;
   }
 
