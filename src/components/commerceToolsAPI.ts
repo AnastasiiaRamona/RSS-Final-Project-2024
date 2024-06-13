@@ -293,11 +293,11 @@ export default class CommerceToolsAPI {
     sortingApi: string,
     minPrice: string,
     maxPrice: string,
-    page?: number,
-    limitPage?: number
+    page: number,
+    limitPage: number
   ) {
     this.createClient();
-    console.log(page, limitPage);
+    console.log('api1', page, limitPage);
     const localeArr = ['color-of-toy', 'quantity'];
     let result;
     const filters: string[] = [];
@@ -318,7 +318,8 @@ export default class CommerceToolsAPI {
     if (this.apiRoot) {
       const queryArgs: { [key: string]: string | string[] | number | undefined } = {
         'filter.query': filters,
-        limit: 40,
+        limit: limitPage,
+        offset: (page - 1) * limitPage,
       };
       if (sortingApi) {
         queryArgs.sort = sortingApi;
@@ -348,7 +349,7 @@ export default class CommerceToolsAPI {
           result = error;
         });
     }
-    console.log(page, limitPage);
+    console.log('api2', page, limitPage);
     return result;
   }
 

@@ -21,8 +21,8 @@ export default class CatalogController {
     checkboxAll: NodeListOf<HTMLInputElement>,
     sortSelect: HTMLSelectElement,
     priceInputAll: NodeListOf<HTMLInputElement>,
-    page?: number,
-    limitPage?: number
+    page: number,
+    limitPage: number
   ) {
     const checkboxChecked: { [key: string]: string[] } = {};
     const sorting = sortSelect.value;

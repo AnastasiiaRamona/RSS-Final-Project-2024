@@ -7,6 +7,8 @@ import { BreadcrumbsInfo, CategoryMap } from './types';
 export default class Catalog {
   controller: CatalogController;
 
+  observer: IntersectionObserver | null = null;
+
   constructor() {
     this.controller = new CatalogController();
   }
@@ -14,7 +16,6 @@ export default class Catalog {
   async renderPage() {
     let form: HTMLElement | null = null;
     let category: HTMLElement | null = null;
-    let catalog: HTMLElement | null = null;
     const catalogWrapper = HTMLCreator.createElement('main', { class: 'catalog__main' }, [
       HTMLCreator.createElement('div', { class: 'catalog__wrapper' }, [
         HTMLCreator.createElement('section', { class: 'catalog__aside' }, [
@@ -63,14 +64,13 @@ export default class Catalog {
             (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
               HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
             ])),
-            (catalog = HTMLCreator.createElement('section', {
+            HTMLCreator.createElement('section', {
               class: 'catalog__gallery',
-            })),
+            }),
           ]),
         ]),
       ]),
     ]);
-    await this.productView(catalog, 1, 10);
     await this.attributesView(form);
     await this.getCategory(category);
     return catalogWrapper;
@@ -84,6 +84,7 @@ export default class Catalog {
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
     const categoryAll = document.querySelectorAll('.category__element') as NodeListOf<HTMLInputElement>;
+    const catalogGallery = document.querySelector('.catalog__gallery') as HTMLElement;
 
     categoryAll.forEach((category) => {
       category.addEventListener('click', (event) => {
@@ -96,8 +97,9 @@ export default class Catalog {
       });
     });
     resetFilter?.addEventListener('click', () => {
+      this.clearCatalog(catalogGallery);
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-      this.infiniteScrollPage();
+      this.infiniteScrollPage(false);
     });
     searchButton?.addEventListener('click', (event) => {
       this.search(event, searchInput);
@@ -111,7 +113,6 @@ export default class Catalog {
       });
     });
 
-    const catalogGallery = document.querySelector('.catalog__gallery');
     if (catalogGallery) {
       catalogGallery.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
@@ -131,9 +132,15 @@ export default class Catalog {
     }
   }
 
-  async infiniteScrollPage(isFilter?: boolean) {
+  clearCatalog(catalog: HTMLElement) {
+    const catalogElement = catalog;
+    catalogElement.innerHTML = '';
+  }
+
+  async infiniteScrollPage(useFilter: boolean = false) {
+    const isFilter = useFilter;
     const pageSize = 10;
-    let currentPage = 1;
+    let currentPage = 0;
     let isLoading = false;
     const wrapper = document.querySelector('.core__wrapper');
     const catalog = document.querySelector('.catalog__gallery') as HTMLElement;
@@ -148,33 +155,44 @@ export default class Catalog {
     });
     loadingContainer.style.display = 'none';
 
-    const initInfiniteScroll = async () => {
-      const observer = new IntersectionObserver(
-        async (entries) => {
-          if (entries[0].isIntersecting && !isLoading) {
-            isLoading = true;
-            currentPage += 1;
-            loadingContainer.style.display = 'block';
-            if (!isFilter) {
-              await this.productView(catalog, currentPage, pageSize).then(() => {
-                isLoading = false;
-                loadingContainer.style.display = 'none';
-              });
-            } else {
-              await this.filter(currentPage, pageSize).then(() => {
-                isLoading = false;
-                loadingContainer.style.display = 'none';
-              });
-            }
-          }
-        },
-        { threshold: 1.0 }
-      );
-      observer.observe(sentinel);
+    if (isFilter) {
+      currentPage = 0;
+      catalog.innerHTML = '';
+    }
+    const loadProducts = async () => {
+      console.log('ff');
+      if (!isLoading) {
+        isLoading = true;
+        currentPage += 1;
+        loadingContainer.style.display = 'block';
+
+        if (!isFilter) {
+          await this.productView(catalog, currentPage, pageSize);
+        } else {
+          await this.filter(currentPage, pageSize);
+        }
+
+        isLoading = false;
+        loadingContainer.style.display = 'none';
+      }
     };
-    initInfiniteScroll();
+
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+    this.observer = new IntersectionObserver(
+      async (entries) => {
+        if (entries[0].isIntersecting) {
+          await loadProducts();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    this.observer.observe(sentinel);
     wrapper?.append(sentinel);
     wrapper?.append(loadingContainer);
+    await loadProducts();
   }
 
   async addToCart(event: Event) {
@@ -189,10 +207,8 @@ export default class Catalog {
   }
 
   async toggleAllButtonsToCard() {
-    console.log('hhh');
     const listProductInCart = await this.controller.getProductInCart();
     const allButtonsCart = document.querySelectorAll('.product-card__addtocard') as NodeListOf<HTMLButtonElement>;
-    console.log(allButtonsCart);
     allButtonsCart.forEach((buttonCart) => {
       const button = buttonCart as HTMLButtonElement;
       button.disabled = false;
@@ -285,7 +301,7 @@ export default class Catalog {
     ]);
     breadcrumbTitle?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-      this.filter();
+      this.filter(1, 10);
       container.innerHTML = '';
       container.append(breadcrumbTitle);
     });
@@ -319,7 +335,7 @@ export default class Catalog {
     }
   }
 
-  async filter(page?: number, limitPage?: number) {
+  async filter(page: number, limitPage: number) {
     const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
@@ -333,7 +349,6 @@ export default class Catalog {
     if (filterProduct && Array.isArray(filterProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
       if (catalog) {
-        catalog.innerHTML = '';
         filterProduct.forEach((product) => {
           const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
           catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));

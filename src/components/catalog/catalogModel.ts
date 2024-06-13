@@ -40,8 +40,8 @@ export default class CatalogModel {
     sorting: string,
     minPrice: string,
     maxPrice: string,
-    page?: number,
-    limitPage?: number
+    page: number,
+    limitPage: number
   ) {
     const sortingApi = sorting;
     const filter = await this.commerceToolsAPI.filter(checkboxChecked, sortingApi, minPrice, maxPrice, page, limitPage);
