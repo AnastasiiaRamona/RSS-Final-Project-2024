@@ -21,11 +21,14 @@ export default class Basket {
 
   async renderPage() {
     const cardsSection = await this.getCardsSection();
-    const summarySection = this.renderSummarySection();
-    const basketContainer = HTMLCreator.createElement('section', { class: 'basket-main' }, [
-      cardsSection,
-      summarySection,
-    ]);
+    let basketContainer;
+    if (cardsSection.children.length > 0) {
+      const summarySection = this.renderSummarySection();
+      basketContainer = HTMLCreator.createElement('section', { class: 'basket-main' }, [cardsSection, summarySection]);
+    } else {
+      const emptyBasket = this.emptyBasket.renderEmptyBasket();
+      basketContainer = HTMLCreator.createElement('section', { class: 'basket-main' }, [emptyBasket]);
+    }
 
     const main = HTMLCreator.createElement('main', { class: 'main-field' }, [basketContainer]);
 
