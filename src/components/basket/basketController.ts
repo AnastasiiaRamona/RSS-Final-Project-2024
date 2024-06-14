@@ -7,8 +7,8 @@ export default class BasketController {
     this.model = new BasketModel();
   }
 
-  async getCart(cartId: string) {
-    const cart = await this.model.getCart(cartId);
+  async getCart() {
+    const cart = await this.model.getCart();
     const cartData = cart?.body.lineItems;
     return cartData;
   }

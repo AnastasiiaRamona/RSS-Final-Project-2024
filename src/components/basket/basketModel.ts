@@ -11,13 +11,14 @@ export default class BasketModel {
     this.commerceToolsAPI = new CommerceToolsAPI();
   }
 
-  async getCart(cartId: string) {
+  async getCart() {
+    const cartId = this.commerceToolsAPI.getCartId() as string;
     const cart = await this.commerceToolsAPI.getCart(cartId);
     return cart;
   }
 
   async removeProductCart(productId: string) {
-    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const cartId = this.commerceToolsAPI.getCartId() as string;
     const { currentCartVersion, lineItemId } = await this.getLineItemId(productId, cartId);
     if (lineItemId) {
       const result = await this.commerceToolsAPI.removeProductCart(cartId, lineItemId, currentCartVersion);
@@ -27,7 +28,7 @@ export default class BasketModel {
   }
 
   async updateQuantity(productId: string, quantity: number) {
-    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const cartId = this.commerceToolsAPI.getCartId() as string;
     let retryCount = 0;
     const maxRetries = 3;
 

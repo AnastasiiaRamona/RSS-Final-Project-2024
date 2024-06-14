@@ -8,8 +8,6 @@ import EmptyBasket from './componentsUA/emptyBasket';
 export default class Basket {
   controller: BasketController;
 
-  cartId: string | null = null;
-
   totalPrice: number = 0;
 
   emptyBasket: EmptyBasket;
@@ -37,26 +35,23 @@ export default class Basket {
 
   async getCardsSection() {
     const cardsSection = HTMLCreator.createElement('section', { class: 'basket__cards' });
-    this.cartId = localStorage.getItem('cartPetShopId');
     this.totalPrice = 0;
-    if (this.cartId) {
-      const cartData = await this.controller.getCart(this.cartId);
-      cartData?.map((item) => {
-        const id = item.productId;
-        const name = item.name['en-US'];
-        const imageUrl = item.variant.images?.[0]?.url as string;
-        const price = item.price?.value.centAmount;
-        const discountedPrice = item.price?.discounted?.value.centAmount;
-        const quantity = item?.quantity;
-        if (discountedPrice) {
-          this.totalPrice += discountedPrice * quantity;
-        } else {
-          this.totalPrice += price * quantity;
-        }
-        const card = this.renderProductCard(id, name, imageUrl, price, quantity, discountedPrice);
-        return cardsSection.append(card);
-      });
-    }
+    const cartData = await this.controller.getCart();
+    cartData?.map((item) => {
+      const id = item.productId;
+      const name = item.name['en-US'];
+      const imageUrl = item.variant.images?.[0]?.url as string;
+      const price = item.price?.value.centAmount;
+      const discountedPrice = item.price?.discounted?.value.centAmount;
+      const quantity = item?.quantity;
+      if (discountedPrice) {
+        this.totalPrice += discountedPrice * quantity;
+      } else {
+        this.totalPrice += price * quantity;
+      }
+      const card = this.renderProductCard(id, name, imageUrl, price, quantity, discountedPrice);
+      return cardsSection.append(card);
+    });
     return cardsSection;
   }
 
@@ -198,22 +193,19 @@ export default class Basket {
   }
 
   async updateTotalPrice() {
-    this.cartId = localStorage.getItem('cartPetShopId');
     this.totalPrice = 0;
-    if (this.cartId) {
-      const cartData = await this.controller.getCart(this.cartId);
-      cartData?.map((item) => {
-        const price = item.price?.value.centAmount;
-        const discountedPrice = item.price?.discounted?.value.centAmount;
-        const quantity = item?.quantity;
-        if (discountedPrice) {
-          this.totalPrice += discountedPrice * quantity;
-        } else {
-          this.totalPrice += price * quantity;
-        }
-        return this.totalPrice;
-      });
-    }
+    const cartData = await this.controller.getCart();
+    cartData?.map((item) => {
+      const price = item.price?.value.centAmount;
+      const discountedPrice = item.price?.discounted?.value.centAmount;
+      const quantity = item?.quantity;
+      if (discountedPrice) {
+        this.totalPrice += discountedPrice * quantity;
+      } else {
+        this.totalPrice += price * quantity;
+      }
+      return this.totalPrice;
+    });
     const totalElement = document.querySelector('.total-price');
     if (totalElement) {
       totalElement.textContent = `Total: ${this.totalPrice / 100} €`;
