@@ -5,6 +5,6 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleNameMapper: {
     '\\.scss$': '<rootDir>/__mocks__/styleMock.js',
-    '\\.(jpg|jpeg|png|gif|svg|webp)$': 'jest-transform-stub',
+    '\\.(jpg|jpeg|png|gif|svg|webm|webp)$': 'jest-transform-stub',
   },
 };
