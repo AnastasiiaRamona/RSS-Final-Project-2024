@@ -1,7 +1,6 @@
 .main-field {
   @include flexbox(row);
-  @include size(100vw, 100%);
-  padding-top: 15vh;
+  @include size(100vw, auto);
 }
 
 .main-area {
@@ -9,30 +8,27 @@
   overflow-y: auto;
   gap: 20px;
   position: relative;
+  @include flexbox(column, normal, center);
+  overflow-x: hidden;
+}
+
+.main-area__info {
+  @include size(90%, auto);
+  background: $light;
+  border-radius: 0 0 20px 20px;
 }
 
 .main-area__header {
   @include font($third-font-family, xxx-large, bold, normal, $primary-color);
   text-align: center;
+  margin-top: 20px;
   margin-bottom: 20px;
-}
-
-.main-area__text {
-  @include size(50vw, auto);
-  @include font($third-font-family, xx-large, normal, normal, $primary-color);
-  text-align: center;
-  background-color: $white;
-  padding: 10px 0;
-  border-radius: 20px;
-  box-shadow: 0 4px 2px rgba(61, 58, 58, 0.915);
-  transition: transform 0.2s ease-in-out;
+  transition: all 0.2s linear;
 
   &:hover {
-    transform: translateY(-5px);
-  }
-
-  @media (max-width: 1160px) {
-    font-size: medium;
+    color: $white;
+    text-shadow: 0 0 10px $primary-color;
+    transition: all 0.2s linear;
   }
 }
 
@@ -65,7 +61,7 @@
   }
 
   &__title {
-    @include font($third-font-family, x-large, bold, normal, $primary-color);
+    @include font($third-font-family, large, bold, normal, $primary-color);
     text-align: center;
     margin: 10px 0;
   }
@@ -77,8 +73,97 @@
   }
 }
 
-@media (max-width: 768px) {
+.actual-news-section {
+  @include container(90vw);
+  padding: 2rem 0;
+
+  &__content {
+    @include flexbox(column, flex-start, stretch);
+    gap: 2rem;
+  }
+
+  &__text {
+    @include font($primary-font-family, $font-size-base, $font-weight-normal, 1.5, $primary-color);
+    margin-bottom: 1rem;
+  }
+}
+
+.pet-wellness, .pet-adoption {
+  @include flexbox(column, flex-start, flex-start);
+  padding: 1.5rem;
+  border-radius: 10px;
+  color: $white;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-position 0.1s;
+  height: 80vh;
+  overflow-y: auto;
+  transition: all 1s linear;
+
+  &.pet-wellness {
+    background-image: url('./assets/cat-background-1.webp');
+    align-items: flex-end;
+  }
+
+  &.pet-adoption {
+    background-image: url('./assets/dog-background.webp');
+  }
+
+  h2 {
+    @include font($secondary-font-family, 1.75rem, $font-weight-bold, 1.2, $primary-color);
+    margin-bottom: 0.5rem;
+    max-width: 300px;
+  }
+
+  p {
+    @include font($primary-font-family, $font-size-base, $font-weight-normal, 1.5, $primary-color);
+    max-width: 300px;
+  }
+}
+
+.footer-section__content {
+  font-size: $primary-font-family;
+  color: $white;
+  @include flexbox(column);
+  width: 100vw;
+  gap: 20px;
+  padding: 20px;
+  background: $bca-gradient-second;
+}
+
+@media screen and (max-width: 1250px) {
+  .pet-wellness, .pet-adoption {
+    height: 50vh;
+  }
+}
+
+@media screen and (max-width: 1160px) {
+  .main-area__info {
+    border-radius: 20px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .pet-wellness, .pet-adoption {
+    height: 30vh;
+
+    p, h2 {
+      font-size: x-small;
+    }
+  }
+
+  .main-area__header {
+    font-size: large;
+  }
+
   .promo-code {
-    @include size(90vw, auto);
+    width: 60vw;
+  }
+}
+
+@media screen and (max-width: 605px) {
+  .pet-wellness, .pet-adoption {
+    height: 20vh;
   }
 }

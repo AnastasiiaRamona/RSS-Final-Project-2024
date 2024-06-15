@@ -158,6 +158,7 @@ export default class App {
       } else {
         this.appButtonsMethods?.toggleButton(mainButton, this.buttonsArray);
       }
+      this.main.addEventListeners();
     });
 
     renderRoute('/login', () => {

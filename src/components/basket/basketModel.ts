@@ -71,4 +71,37 @@ export default class BasketModel {
     const lineItemId = currentCart?.body.lineItems.find((item) => item.productId === productId)?.id;
     return { currentCartVersion, lineItemId };
   }
+
+  async updateCartWithPromoCode(discountId: string): Promise<{ totalPrice: { centAmount: number } }> {
+    const cartId = this.commerceToolsAPI.getCartId() as string;
+    const cartVersion = (await this.commerceToolsAPI.getCart(cartId))?.body.version;
+
+    if (cartVersion) {
+      const updateData: CartUpdate = {
+        version: cartVersion,
+        actions: [
+          {
+            action: 'addDiscountCode',
+            code: discountId,
+          },
+        ],
+      };
+      await this.commerceToolsAPI.updateCart(cartId, updateData);
+
+      const updatedCart = await this.commerceToolsAPI.getCart(cartId);
+      const totalPrice = updatedCart?.body.totalPrice;
+
+      if (totalPrice) {
+        return { totalPrice: { centAmount: totalPrice.centAmount } };
+      }
+      throw new Error('Failed to get total price after applying promo code');
+    } else {
+      throw new Error('Failed to get cart version');
+    }
+  }
+
+  async getDiscountCodeByCode(promoCode: string) {
+    const discountCode = await this.commerceToolsAPI.getDiscountCodeByCode(promoCode);
+    return discountCode;
+  }
 }

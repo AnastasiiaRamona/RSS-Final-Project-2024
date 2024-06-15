@@ -661,4 +661,22 @@ export default class CommerceToolsAPI {
     }
     return cartId;
   }
+
+  async getDiscountCodeByCode(promoCode: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .discountCodes()
+        .get({
+          queryArgs: {
+            where: `code="${promoCode}"`,
+          },
+        })
+        .execute();
+      return response.body.results[0];
+    }
+    return undefined;
+  }
 }
