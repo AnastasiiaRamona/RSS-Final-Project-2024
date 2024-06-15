@@ -246,7 +246,6 @@ export default class AboutPage {
         this.renderFooter(),
       ]),
     ]);
-
     return main;
   }
 }
