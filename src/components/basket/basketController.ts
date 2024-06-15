@@ -7,9 +7,9 @@ export default class BasketController {
     this.model = new BasketModel();
   }
 
-  async getCart(cartId: string) {
-    const cart = await this.model.getCart(cartId);
-    const cartData = cart?.body.lineItems;
+  async getCart() {
+    const cart = await this.model.getCart();
+    const cartData = cart?.body;
     return cartData;
   }
 
@@ -22,5 +22,20 @@ export default class BasketController {
   async updateQuantity(productId: string, quantity: number) {
     const result = await this.model.updateQuantity(productId, quantity);
     return result;
+  }
+
+  async getDiscountCodeByCode(promoCode: string) {
+    const discountCode = await this.model.getDiscountCodeByCode(promoCode);
+    return discountCode;
+  }
+
+  async updateCartWithPromoCode(discountId: string) {
+    const result = await this.model.updateCartWithPromoCode(discountId);
+    return result;
+  }
+
+  findOutTheDiscountPercentage(totalPrice: number, discountTotalPrice: number) {
+    const percentage = (discountTotalPrice * 100) / totalPrice;
+    return percentage;
   }
 }

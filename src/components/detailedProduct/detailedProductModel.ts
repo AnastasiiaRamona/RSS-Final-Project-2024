@@ -36,7 +36,7 @@ export default class DetailedProductModel {
   }
 
   async addToCart(productId: string) {
-    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const cartId = this.commerceToolsAPI.getCartId() as string;
     const currentCart = await this.commerceToolsAPI.getCart(cartId);
     const currentCartVersion = Number(currentCart?.body.version);
     const result = await this.commerceToolsAPI.addToCart(cartId, productId, 1, 1, currentCartVersion);
@@ -44,7 +44,7 @@ export default class DetailedProductModel {
   }
 
   async getProductInCart() {
-    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const cartId = this.commerceToolsAPI.getCartId() as string;
     let listProductInCart;
     const currentCard = await this.commerceToolsAPI.getCart(cartId);
     if (currentCard) {
@@ -54,7 +54,7 @@ export default class DetailedProductModel {
   }
 
   async removeProductCart(productId: string) {
-    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const cartId = this.commerceToolsAPI.getCartId() as string;
     const currentCart = await this.commerceToolsAPI.getCart(cartId);
     const currentCartVersion = Number(currentCart?.body.version);
     const lineItemId = currentCart?.body.lineItems.find((item) => item.productId === productId)?.id;

@@ -117,16 +117,24 @@ export default class CommerceToolsAPI {
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot
-        .me()
         .login()
         .post({
           body: {
             email,
             password,
+            anonymousCart: {
+              id: localStorage.getItem('cartPetShopId') as string,
+              typeId: 'cart',
+            },
+            anonymousCartSignInMode: 'MergeWithExistingCustomerCart',
           },
         })
         .execute();
       localStorage.setItem('userPetShopId', response.body.customer.id);
+    }
+
+    if (response?.body.cart?.id) {
+      localStorage.setItem('userCartPetShopId', response.body.cart.id);
     }
 
     localStorage.setItem('userToken', userTokenCache.get().token);
@@ -641,5 +649,34 @@ export default class CommerceToolsAPI {
         .execute();
     }
     return response;
+  }
+
+  getCartId() {
+    let cartId;
+    const isLoggedIn = !!localStorage.getItem('userToken');
+    if (isLoggedIn) {
+      cartId = localStorage.getItem('userCartPetShopId');
+    } else {
+      cartId = localStorage.getItem('cartPetShopId');
+    }
+    return cartId;
+  }
+
+  async getDiscountCodeByCode(promoCode: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .discountCodes()
+        .get({
+          queryArgs: {
+            where: `code="${promoCode}"`,
+          },
+        })
+        .execute();
+      return response.body.results[0];
+    }
+    return undefined;
   }
 }

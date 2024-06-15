@@ -68,13 +68,8 @@ export default class App {
     this.appButtonsMethods = new AppButtonsMethods();
     this.appSwiper = new AppSwiper();
     this.commerceToolsAPI = new CommerceToolsAPI();
-    const isCartIdExist = !!localStorage.getItem('cartPetShopId');
-    if (!isCartIdExist) {
-      if (this.userId) {
-        this.commerceToolsAPI.createCart(this.userId).then(() => {});
-      } else {
-        this.commerceToolsAPI.createCart().then(() => {});
-      }
+    if (!this.userId) {
+      this.commerceToolsAPI.createCart();
     }
   }
 
@@ -163,6 +158,7 @@ export default class App {
       } else {
         this.appButtonsMethods?.toggleButton(mainButton, this.buttonsArray);
       }
+      this.main.addEventListeners();
     });
 
     renderRoute('/login', () => {

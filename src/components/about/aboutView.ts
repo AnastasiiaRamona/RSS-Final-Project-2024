@@ -191,24 +191,30 @@ export default class AboutPage {
           HTMLCreator.createElement('h4', { class: 'footer-title' }, ['Development Team:']),
           HTMLCreator.createElement('ul', { class: 'footer-list' }, [
             HTMLCreator.createElement('li', { class: 'footer-item' }, [
-              HTMLCreator.createElement('a', { class: 'footer-link', href: 'https://github.com/aleks6699' }, [
-                'Oleksandr Tsurkan',
-              ]),
+              HTMLCreator.createElement(
+                'a',
+                { class: 'footer-link', href: 'https://github.com/aleks6699', target: '_blank' },
+                ['Oleksandr Tsurkan']
+              ),
             ]),
             HTMLCreator.createElement('li', { class: 'footer-item' }, [
-              HTMLCreator.createElement('a', { class: 'footer-link', href: 'https://github.com/AnastasiiaRamona' }, [
-                'Anastasiia Kabanova',
-              ]),
+              HTMLCreator.createElement(
+                'a',
+                { class: 'footer-link', href: 'https://github.com/AnastasiiaRamona', target: '_blank' },
+                ['Anastasiia Kabanova']
+              ),
             ]),
             HTMLCreator.createElement('li', { class: 'footer-item' }, [
-              HTMLCreator.createElement('a', { class: 'footer-link', href: 'https://github.com/MartiP54/' }, [
-                'Yuri Porokhin',
-              ]),
+              HTMLCreator.createElement(
+                'a',
+                { class: 'footer-link', href: 'https://github.com/MartiP54/', target: '_blank' },
+                ['Yuri Porokhin']
+              ),
             ]),
           ]),
         ]),
         HTMLCreator.createElement('div', { class: 'footer-copyright' }, ['2024 ©']),
-        HTMLCreator.createElement('a', { class: 'footer-logo__link', href: 'https://rs.school/' }),
+        HTMLCreator.createElement('a', { class: 'footer-logo__link', href: 'https://rs.school/', target: '_blank' }),
       ]),
     ]);
     const logoLink = footer.querySelector('.footer-logo__link');
