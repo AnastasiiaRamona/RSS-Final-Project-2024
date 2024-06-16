@@ -1,5 +1,6 @@
 import Toastify from 'toastify-js';
 import lottie from 'lottie-web';
+import noUiSlider, { API } from 'nouislider';
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
 import { BreadcrumbsInfo, CategoryMap } from './types';
@@ -136,6 +137,7 @@ export default class Catalog {
   }
 
   async infiniteScrollPage(useFilter: boolean = false) {
+    console.log(11);
     const isFilter = useFilter;
     const pageSize = 10;
     let currentPage = 0;
@@ -193,14 +195,70 @@ export default class Catalog {
   }
 
   async addToCart(event: Event) {
-    try {
-      await this.controller.addToCart(event);
-    } catch (error) {
-      if (error instanceof Error) {
-        this.handleResponse(error.message);
+    const button = event.target as HTMLElement;
+    if (!button.querySelector('.spinner-container')) {
+      const spinnerContainer = HTMLCreator.createElement('div', { class: 'spinner-container' });
+      button.appendChild(spinnerContainer);
+      const animation = lottie.loadAnimation({
+        container: spinnerContainer,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'https://lottie.host/85c922ef-a827-48b3-b6f8-d7c091358cfc/T7WPEeEmgF.json',
+      });
+      try {
+        await this.controller.addToCart(event);
+      } catch (error) {
+        if (error instanceof Error) {
+          this.handleResponse(error.message);
+        }
       }
+      await this.toggleAllButtonsToCard();
+
+      animation.stop();
+      button.removeChild(spinnerContainer);
     }
-    await this.toggleAllButtonsToCard();
+  }
+
+  slider() {
+    interface SliderElement extends HTMLElement {
+      noUiSlider: API;
+    }
+
+    const stepsSlider = document.getElementById('steps-slider') as SliderElement;
+    const minPriceInput = document.getElementById('min-price') as HTMLInputElement;
+    const maxPriceInput = document.getElementById('max-price') as HTMLInputElement;
+    const inputs: HTMLInputElement[] = [minPriceInput, maxPriceInput];
+    noUiSlider.create(stepsSlider, {
+      start: [2, 112],
+      connect: true,
+      range: {
+        min: 2,
+        max: 112,
+      },
+      step: 1,
+    });
+    stepsSlider.noUiSlider.on('update', (values: (string | number)[], handle: number) => {
+      inputs[handle].value = values[handle].toString();
+    });
+
+    stepsSlider.noUiSlider.on('set', () => {
+      this.infiniteScrollPage(true);
+    });
+
+    inputs.forEach((input, handle) => {
+      input.addEventListener('change', function () {
+        stepsSlider.noUiSlider.setHandle(handle, this.value);
+      });
+
+      minPriceInput.addEventListener('change', function () {
+        stepsSlider.noUiSlider.set([this.value, null]);
+      });
+
+      maxPriceInput.addEventListener('change', function () {
+        stepsSlider.noUiSlider.set([null, this.value]);
+      });
+    });
   }
 
   async toggleAllButtonsToCard() {
@@ -388,6 +446,7 @@ export default class Catalog {
         )
       );
     });
+    this.toggleAllButtonsToCard();
   }
 
   productCard(id: string, name: string, description: string, img: string, price: number, discountedPrice?: number) {
@@ -427,7 +486,7 @@ export default class Catalog {
     const maxPrice = (Number(attributes.maxPrice[0]) / 100).toFixed(0);
     const price = HTMLCreator.createElement('div', { class: 'checkbox__price' }, [
       HTMLCreator.createElement('div', { class: 'checkbox__price-min' }, [
-        HTMLCreator.createElement('span', { class: 'price__span', type: 'range', id: 'min-price' }, ['Minimum Price']),
+        HTMLCreator.createElement('span', { class: 'price__span', type: 'range' }, ['Minimum Price']),
         HTMLCreator.createElement('input', {
           type: 'number',
           value: `${minPrice}`,
@@ -439,7 +498,7 @@ export default class Catalog {
         }),
       ]),
       HTMLCreator.createElement('div', { class: 'checkbox__price-min' }, [
-        HTMLCreator.createElement('span', { class: 'price__span', type: 'range', id: 'max-price' }, ['Maximum Price']),
+        HTMLCreator.createElement('span', { class: 'price__span', type: 'range' }, ['Maximum Price']),
         HTMLCreator.createElement('input', {
           type: 'number',
           value: `${maxPrice}`,
@@ -450,6 +509,7 @@ export default class Catalog {
           min: minPrice,
         }),
       ]),
+      HTMLCreator.createElement('div', { id: 'steps-slider' }),
     ]);
     container.appendChild(price);
     Object.keys(attributes).forEach((key) => {
