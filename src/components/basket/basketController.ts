@@ -7,20 +7,39 @@ export default class BasketController {
     this.model = new BasketModel();
   }
 
-  async getCart(cartId: string) {
-    const cart = await this.model.getCart(cartId);
-    const cartData = cart?.body.lineItems;
+  async getCart() {
+    const cart = await this.model.getCart();
+    const cartData = cart?.body;
     return cartData;
   }
 
-  async removeProductCart(productId: string) {
+  async removeItemFromProductCart(productId: string) {
     if (productId) {
-      await this.model.removeProductCart(productId);
+      await this.model.removeItemFromProductCart(productId);
     }
   }
 
   async updateQuantity(productId: string, quantity: number) {
     const result = await this.model.updateQuantity(productId, quantity);
     return result;
+  }
+
+  async getDiscountCodeByCode(promoCode: string) {
+    const discountCode = await this.model.getDiscountCodeByCode(promoCode);
+    return discountCode;
+  }
+
+  async updateCartWithPromoCode(discountId: string) {
+    const result = await this.model.updateCartWithPromoCode(discountId);
+    return result;
+  }
+
+  findOutTheDiscountPercentage(totalPrice: number, discountTotalPrice: number) {
+    const percentage = (discountTotalPrice * 100) / totalPrice;
+    return percentage;
+  }
+
+  async clearCart() {
+    await this.model.clearCart();
   }
 }

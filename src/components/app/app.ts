@@ -31,8 +31,6 @@ export default class App {
 
   private aboutUs: AboutPage;
 
-  private basket: Basket;
-
   private footer: Footer;
 
   private isLoggedIn: boolean = !!localStorage.getItem('userToken');
@@ -63,18 +61,12 @@ export default class App {
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
     this.aboutUs = new AboutPage();
-    this.basket = new Basket();
     this.footer = new Footer();
     this.appButtonsMethods = new AppButtonsMethods();
     this.appSwiper = new AppSwiper();
     this.commerceToolsAPI = new CommerceToolsAPI();
-    const isCartIdExist = !!localStorage.getItem('cartPetShopId');
-    if (!isCartIdExist) {
-      if (this.userId) {
-        this.commerceToolsAPI.createCart(this.userId).then(() => {});
-      } else {
-        this.commerceToolsAPI.createCart().then(() => {});
-      }
+    if (!localStorage.getItem('cartPetShopId')) {
+      this.commerceToolsAPI.createCart();
     }
   }
 
@@ -163,6 +155,7 @@ export default class App {
       } else {
         this.appButtonsMethods?.toggleButton(mainButton, this.buttonsArray);
       }
+      this.main.addEventListeners();
     });
 
     renderRoute('/login', () => {
@@ -215,8 +208,9 @@ export default class App {
     });
 
     renderRoute('/basket', async () => {
-      this.changeMainElement(await this.basket.renderPage());
-      this.basket.addEventListeners();
+      const basket = new Basket();
+      this.changeMainElement(await basket.renderPage());
+      basket.addEventListeners();
       this.appButtonsMethods?.toggleButton(basketButton, this.buttonsArray);
     });
   }

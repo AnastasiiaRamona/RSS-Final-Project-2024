@@ -7,8 +7,15 @@ import basketIconSrc from '../../assets/basket-icon.webp';
 import userProfileIconSrc from '../../assets/user-icon.webp';
 import mainIconSrc from '../../assets/main-icon.webp';
 import aboutUsIconSrc from '../../assets/about-us-icon.webp';
+import CommerceToolsAPI from '../commerceToolsAPI';
 
 export default class Header {
+  commerceToolsAPI: CommerceToolsAPI;
+
+  constructor() {
+    this.commerceToolsAPI = new CommerceToolsAPI();
+  }
+
   renderHeader(isLoggedIn: boolean) {
     const textButton = isLoggedIn ? 'Log out' : 'Login';
 
@@ -147,12 +154,12 @@ export default class Header {
     const basketButton = document.querySelector('.basket-button') as HTMLButtonElement;
 
     if (loginButton) {
-      loginButton.addEventListener('click', () => {
+      loginButton.addEventListener('click', async () => {
         if (loginButton.textContent === 'Log out') {
           const loginEvent = new CustomEvent('loginEvent');
           document.body.dispatchEvent(loginEvent);
-          localStorage.removeItem('userPetShopId');
-          localStorage.removeItem('userToken');
+          localStorage.clear();
+          await this.commerceToolsAPI.createCart();
           const isLoggedIn = !!localStorage.getItem('userToken');
           this.changeLoginButtonToTheLogOutButton(isLoggedIn);
           this.checkUserProfileButton(isLoggedIn, userProfileButton);

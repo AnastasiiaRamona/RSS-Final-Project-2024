@@ -1,4 +1,6 @@
 import backgroundImage from '../../assets/background-image.webp';
+import backgroundCat from '../../assets/cat-background-1.webp';
+import backgroundDog from '../../assets/dog-background.webp';
 
 export default class Preload {
   constructor() {
@@ -11,6 +13,8 @@ export default class Preload {
     });
 
     this.addPreloadLink(backgroundImage);
+    this.addPreloadLink(backgroundCat);
+    this.addPreloadLink(backgroundDog);
   }
 
   addPreloadLink(href: string) {

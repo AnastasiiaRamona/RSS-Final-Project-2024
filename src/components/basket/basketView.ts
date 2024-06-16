@@ -4,19 +4,23 @@ import deleteButtonSrc from '../../assets/delete-icon.webp';
 import promocodeIconSrc from '../../assets/promocode-icon.webp';
 import clearIconSrc from '../../assets/clear-icon.webp';
 import EmptyBasket from './componentsUA/emptyBasket';
+import ModalWindow from './componentsUA/modalWindow';
 
 export default class Basket {
   controller: BasketController;
 
-  cartId: string | null = null;
-
   totalPrice: number = 0;
 
+  oldTotalPrice: number = 0;
+
   emptyBasket: EmptyBasket;
+
+  modalWindow: ModalWindow;
 
   constructor() {
     this.controller = new BasketController();
     this.emptyBasket = new EmptyBasket();
+    this.modalWindow = new ModalWindow();
   }
 
   async renderPage() {
@@ -30,33 +34,39 @@ export default class Basket {
       basketContainer = HTMLCreator.createElement('section', { class: 'basket-main' }, [emptyBasket]);
     }
 
-    const main = HTMLCreator.createElement('main', { class: 'main-field' }, [basketContainer]);
+    const basketWrapper = HTMLCreator.createElement('section', { class: 'basket-wrapper' }, [basketContainer]);
+    const main = HTMLCreator.createElement('main', { class: 'main-field' }, [basketWrapper]);
 
     return main;
   }
 
   async getCardsSection() {
     const cardsSection = HTMLCreator.createElement('section', { class: 'basket__cards' });
-    this.cartId = localStorage.getItem('cartPetShopId');
-    this.totalPrice = 0;
-    if (this.cartId) {
-      const cartData = await this.controller.getCart(this.cartId);
-      cartData?.map((item) => {
-        const id = item.productId;
-        const name = item.name['en-US'];
-        const imageUrl = item.variant.images?.[0]?.url as string;
-        const price = item.price?.value.centAmount;
-        const discountedPrice = item.price?.discounted?.value.centAmount;
-        const quantity = item?.quantity;
-        if (discountedPrice) {
-          this.totalPrice += discountedPrice * quantity;
-        } else {
-          this.totalPrice += price * quantity;
-        }
-        const card = this.renderProductCard(id, name, imageUrl, price, quantity, discountedPrice);
-        return cardsSection.append(card);
-      });
+    const cartData = await this.controller.getCart();
+    this.totalPrice = cartData?.totalPrice?.centAmount ?? 0;
+    const discountOnTheTotalPrice = cartData?.discountOnTotalPrice?.discountedAmount?.centAmount;
+    let percentage: number | undefined;
+    if (discountOnTheTotalPrice) {
+      this.oldTotalPrice = this.totalPrice + discountOnTheTotalPrice;
+      percentage = this.controller.findOutTheDiscountPercentage(this.oldTotalPrice, this.totalPrice) as number;
     }
+    cartData?.lineItems.map((item) => {
+      const id = item.productId;
+      const name = item.name['en-US'];
+      const imageUrl = item.variant.images?.[0]?.url as string;
+      const price = item.price?.value.centAmount;
+      let discountedPrice = item.price?.discounted?.value.centAmount;
+      if (discountedPrice) {
+        if (percentage) {
+          discountedPrice = (discountedPrice * percentage) / 100;
+        }
+      } else if (percentage) {
+        discountedPrice = (price * percentage) / 100;
+      }
+      const quantity = item?.quantity;
+      const card = this.renderProductCard(id, name, imageUrl, price, quantity, discountedPrice);
+      return cardsSection.append(card);
+    });
     return cardsSection;
   }
 
@@ -69,11 +79,11 @@ export default class Basket {
     discountedPrice?: number
   ) {
     const priceElement = HTMLCreator.createElement('p', { class: 'basket-product-price' }, [
-      discountedPrice ? `${discountedPrice / 100} €` : `${price / 100} €`,
+      discountedPrice ? `${this.toFixedPrice(discountedPrice)} €` : `${this.toFixedPrice(price)} €`,
     ]);
     if (discountedPrice) {
       priceElement.appendChild(
-        HTMLCreator.createElement('span', { class: 'basket-original-price' }, [`${price / 100} €`])
+        HTMLCreator.createElement('span', { class: 'basket-original-price' }, [`${this.toFixedPrice(price)} €`])
       );
     }
 
@@ -106,10 +116,22 @@ export default class Basket {
   }
 
   renderSummarySection() {
-    const totalPrice = this.calculateTotalPrice();
+    const priceElement = HTMLCreator.createElement('p', { class: 'total-price' }, [
+      `Total: ${this.toFixedPrice(this.totalPrice)} €`,
+    ]);
+
+    if (this.oldTotalPrice > 0) {
+      priceElement.appendChild(
+        HTMLCreator.createElement('span', { class: 'old-total-price' }, [`${this.toFixedPrice(this.oldTotalPrice)} €`])
+      );
+    }
+
     return HTMLCreator.createElement('section', { class: 'basket__summary' }, [
       HTMLCreator.createElement('h2', {}, ['Order Summary']),
-      HTMLCreator.createElement('p', { class: 'total-price' }, [`Total: ${totalPrice / 100} €`]),
+      priceElement,
+      HTMLCreator.createElement('p', { class: 'summary-description' }, [
+        'Promo codes are waiting for you on the main page',
+      ]),
       HTMLCreator.createElement('div', { class: 'summary-buttons' }, [
         HTMLCreator.createElement('button', { class: 'checkout-button' }, [
           'Promo Code',
@@ -127,10 +149,6 @@ export default class Basket {
         ]),
       ]),
     ]);
-  }
-
-  calculateTotalPrice() {
-    return this.totalPrice;
   }
 
   addEventListeners() {
@@ -186,7 +204,7 @@ export default class Basket {
         event.preventDefault();
         const parent = button.parentElement;
         if (parent) {
-          await this.controller.removeProductCart(parent.dataset.id as string);
+          await this.controller.removeItemFromProductCart(parent.dataset.id as string);
           parent.remove();
           this.checkQuantityOfItems();
           await this.updateTotalPrice();
@@ -195,28 +213,40 @@ export default class Basket {
     });
 
     this.emptyBasket.addEventListeners();
+
+    const promoCodeButton = document.querySelector('.checkout-button');
+    promoCodeButton?.addEventListener('click', () => {
+      const modalWindow = this.modalWindow.renderModalWindow();
+      document.body.appendChild(modalWindow);
+      this.modalWindow.addEventListeners();
+    });
+
+    const clearButton = document.querySelector('.clear-button');
+    clearButton?.addEventListener('click', async () => {
+      await this.clearCart();
+    });
   }
 
   async updateTotalPrice() {
-    this.cartId = localStorage.getItem('cartPetShopId');
-    this.totalPrice = 0;
-    if (this.cartId) {
-      const cartData = await this.controller.getCart(this.cartId);
-      cartData?.map((item) => {
-        const price = item.price?.value.centAmount;
-        const discountedPrice = item.price?.discounted?.value.centAmount;
-        const quantity = item?.quantity;
-        if (discountedPrice) {
-          this.totalPrice += discountedPrice * quantity;
-        } else {
-          this.totalPrice += price * quantity;
-        }
-        return this.totalPrice;
-      });
-    }
+    const cartData = await this.controller.getCart();
+    this.totalPrice = cartData?.totalPrice.centAmount ?? 0;
     const totalElement = document.querySelector('.total-price');
     if (totalElement) {
-      totalElement.textContent = `Total: ${this.totalPrice / 100} €`;
+      totalElement.textContent = `Total: ${this.toFixedPrice(this.totalPrice)} €`;
+
+      const discountOnTheTotalPrice = cartData?.discountOnTotalPrice?.discountedAmount?.centAmount;
+
+      if (discountOnTheTotalPrice) {
+        this.oldTotalPrice = discountOnTheTotalPrice + this.totalPrice;
+
+        if (this.oldTotalPrice > 0) {
+          totalElement.appendChild(
+            HTMLCreator.createElement('span', { class: 'old-total-price' }, [
+              `${this.toFixedPrice(this.oldTotalPrice)} €`,
+            ])
+          );
+        }
+      }
     }
   }
 
@@ -230,5 +260,19 @@ export default class Basket {
         this.emptyBasket.addEventListeners();
       }
     }
+  }
+
+  async clearCart() {
+    await this.controller.clearCart();
+    const basketMain = document.querySelector('.basket-main') as HTMLElement;
+    if (basketMain) {
+      basketMain.innerHTML = '';
+      basketMain.appendChild(this.emptyBasket.renderEmptyBasket());
+      this.emptyBasket.addEventListeners();
+    }
+  }
+
+  toFixedPrice(price: number) {
+    return (price / 100).toFixed(2);
   }
 }

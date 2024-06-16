@@ -1,5 +1,6 @@
 import {
   CartChangeLineItemQuantityAction,
+  CartRemoveLineItemAction,
   CartUpdate,
 } from '@commercetools/platform-sdk/dist/declarations/src/generated/models/cart';
 import CommerceToolsAPI from '../commerceToolsAPI';
@@ -11,23 +12,24 @@ export default class BasketModel {
     this.commerceToolsAPI = new CommerceToolsAPI();
   }
 
-  async getCart(cartId: string) {
+  async getCart() {
+    const cartId = this.commerceToolsAPI.getCartId() as string;
     const cart = await this.commerceToolsAPI.getCart(cartId);
     return cart;
   }
 
-  async removeProductCart(productId: string) {
-    const cartId = localStorage.getItem('cartPetShopId') as string;
+  async removeItemFromProductCart(productId: string) {
+    const cartId = this.commerceToolsAPI.getCartId() as string;
     const { currentCartVersion, lineItemId } = await this.getLineItemId(productId, cartId);
     if (lineItemId) {
-      const result = await this.commerceToolsAPI.removeProductCart(cartId, lineItemId, currentCartVersion);
+      const result = await this.commerceToolsAPI.removeItemFromProductCart(cartId, lineItemId, currentCartVersion);
       return result;
     }
     return undefined;
   }
 
   async updateQuantity(productId: string, quantity: number) {
-    const cartId = localStorage.getItem('cartPetShopId') as string;
+    const cartId = this.commerceToolsAPI.getCartId() as string;
     let retryCount = 0;
     const maxRetries = 3;
 
@@ -69,5 +71,65 @@ export default class BasketModel {
     const currentCartVersion = Number(currentCart?.body.version);
     const lineItemId = currentCart?.body.lineItems.find((item) => item.productId === productId)?.id;
     return { currentCartVersion, lineItemId };
+  }
+
+  async updateCartWithPromoCode(discountId: string): Promise<{ totalPrice: { centAmount: number } }> {
+    const cartId = this.commerceToolsAPI.getCartId() as string;
+    const cartVersion = (await this.commerceToolsAPI.getCart(cartId))?.body.version;
+
+    if (cartVersion) {
+      const updateData: CartUpdate = {
+        version: cartVersion,
+        actions: [
+          {
+            action: 'addDiscountCode',
+            code: discountId,
+          },
+        ],
+      };
+      await this.commerceToolsAPI.updateCart(cartId, updateData);
+
+      const updatedCart = await this.commerceToolsAPI.getCart(cartId);
+      const totalPrice = updatedCart?.body.totalPrice;
+
+      if (totalPrice) {
+        return { totalPrice: { centAmount: totalPrice.centAmount } };
+      }
+      throw new Error('Failed to get total price after applying promo code');
+    } else {
+      throw new Error('Failed to get cart version');
+    }
+  }
+
+  async getDiscountCodeByCode(promoCode: string) {
+    const discountCode = await this.commerceToolsAPI.getDiscountCodeByCode(promoCode);
+    return discountCode;
+  }
+
+  async clearCart() {
+    const cartId = this.commerceToolsAPI.getCartId() as string;
+    try {
+      const cart = await this.commerceToolsAPI.getCart(cartId);
+      const currentCartVersion = cart?.body.version;
+      const lineItems = cart?.body.lineItems;
+
+      if (!currentCartVersion || !lineItems) {
+        return;
+      }
+
+      const actions: CartRemoveLineItemAction[] = lineItems.map((item) => ({
+        action: 'removeLineItem',
+        lineItemId: item.id,
+      }));
+
+      if (actions.length > 0) {
+        await this.commerceToolsAPI.updateCart(cartId, {
+          version: currentCartVersion,
+          actions,
+        });
+      }
+    } catch (error) {
+      console.log(`Error clearing the cart:`, error);
+    }
   }
 }

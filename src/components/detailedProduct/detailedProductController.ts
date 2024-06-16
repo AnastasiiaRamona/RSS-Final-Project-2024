@@ -57,9 +57,9 @@ export default class DetailedProductController {
     this.getProductInCart(productId);
   }
 
-  async removeProductCart(productId: string) {
+  async removeItemFromProductCart(productId: string) {
     if (productId) {
-      await this.model.removeProductCart(productId);
+      await this.model.removeItemFromProductCart(productId);
     }
     this.getProductInCart(productId);
   }
@@ -76,6 +76,6 @@ export default class DetailedProductController {
       removeBtnCart.disabled = true;
     }
 
-    return console.log(listProductInCart);
+    return listProductInCart;
   }
 }
