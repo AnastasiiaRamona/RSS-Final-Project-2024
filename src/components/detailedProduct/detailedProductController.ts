@@ -1,11 +1,15 @@
 import DetailedProductModel from './detailedProductModel';
 import HTMLCreator from '../HTMLCreator';
+import QuantityUpdater from '../quantityUpdater';
 
 export default class DetailedProductController {
   model: DetailedProductModel;
 
+  quantityUpdater: QuantityUpdater;
+
   constructor() {
     this.model = new DetailedProductModel();
+    this.quantityUpdater = new QuantityUpdater();
   }
 
   async getProductByID(id: string) {
@@ -53,6 +57,7 @@ export default class DetailedProductController {
   async addToCart(productId: string) {
     if (productId) {
       await this.model.addToCart(productId);
+      await this.quantityUpdater.updateQuantity();
     }
     this.getProductInCart(productId);
   }
@@ -60,6 +65,7 @@ export default class DetailedProductController {
   async removeItemFromProductCart(productId: string) {
     if (productId) {
       await this.model.removeItemFromProductCart(productId);
+      await this.quantityUpdater.updateQuantity();
     }
     this.getProductInCart(productId);
   }

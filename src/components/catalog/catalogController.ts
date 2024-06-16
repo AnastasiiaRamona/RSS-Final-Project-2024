@@ -1,10 +1,14 @@
+import QuantityUpdater from '../quantityUpdater';
 import CatalogModel from './catalogModel';
 
 export default class CatalogController {
   model: CatalogModel;
 
+  quantityUpdater: QuantityUpdater;
+
   constructor() {
     this.model = new CatalogModel();
+    this.quantityUpdater = new QuantityUpdater();
   }
 
   async getProducts(page: number, limitPage: number) {
@@ -113,6 +117,7 @@ export default class CatalogController {
     const target = event.target as HTMLElement;
     const productId = target.parentElement?.parentElement?.id as string;
     await this.model.addToCart(productId);
+    await this.quantityUpdater.updateQuantity();
   }
 
   async getProductInCart() {

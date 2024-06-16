@@ -1,10 +1,14 @@
+import QuantityUpdater from '../quantityUpdater';
 import BasketModel from './basketModel';
 
 export default class BasketController {
   model: BasketModel;
 
+  quantityUpdater: QuantityUpdater;
+
   constructor() {
     this.model = new BasketModel();
+    this.quantityUpdater = new QuantityUpdater();
   }
 
   async getCart() {
@@ -16,6 +20,7 @@ export default class BasketController {
   async removeItemFromProductCart(productId: string) {
     if (productId) {
       await this.model.removeItemFromProductCart(productId);
+      await this.quantityUpdater.updateQuantity();
     }
   }
 
@@ -41,5 +46,6 @@ export default class BasketController {
 
   async clearCart() {
     await this.model.clearCart();
+    await this.quantityUpdater.updateQuantity();
   }
 }
