@@ -2,7 +2,7 @@ import HTMLCreator from '../HTMLCreator';
 import promoCode1Src from '../../assets/promo-code-1.webp';
 import promoCode2Src from '../../assets/promo-code-2.webp';
 import promoCode3Src from '../../assets/promo-code-3.webp';
-import promoCode4Src from '../../assets/promo-code-5.webp';
+import promoCode4Src from '../../assets/promo-code-4.webp';
 
 export default class Main {
   renderPage() {

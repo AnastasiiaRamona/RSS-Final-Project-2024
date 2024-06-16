@@ -129,6 +129,9 @@ export default class Basket {
     return HTMLCreator.createElement('section', { class: 'basket__summary' }, [
       HTMLCreator.createElement('h2', {}, ['Order Summary']),
       priceElement,
+      HTMLCreator.createElement('p', { class: 'summary-description' }, [
+        'Promo codes are waiting for you on the main page',
+      ]),
       HTMLCreator.createElement('div', { class: 'summary-buttons' }, [
         HTMLCreator.createElement('button', { class: 'checkout-button' }, [
           'Promo Code',
