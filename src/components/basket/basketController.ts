@@ -13,9 +13,9 @@ export default class BasketController {
     return cartData;
   }
 
-  async removeProductCart(productId: string) {
+  async removeItemFromProductCart(productId: string) {
     if (productId) {
-      await this.model.removeProductCart(productId);
+      await this.model.removeItemFromProductCart(productId);
     }
   }
 
@@ -37,5 +37,9 @@ export default class BasketController {
   findOutTheDiscountPercentage(totalPrice: number, discountTotalPrice: number) {
     const percentage = (discountTotalPrice * 100) / totalPrice;
     return percentage;
+  }
+
+  async clearCart() {
+    await this.model.clearCart();
   }
 }

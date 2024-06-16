@@ -608,7 +608,7 @@ export default class CommerceToolsAPI {
     return response;
   }
 
-  async removeProductCart(cardId: string, lineItemId: string, version: number) {
+  async removeItemFromProductCart(cardId: string, lineItemId: string, version: number) {
     this.createClient();
     let result;
     try {

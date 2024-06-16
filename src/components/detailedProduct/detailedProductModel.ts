@@ -53,13 +53,13 @@ export default class DetailedProductModel {
     return listProductInCart;
   }
 
-  async removeProductCart(productId: string) {
+  async removeItemFromProductCart(productId: string) {
     const cartId = this.commerceToolsAPI.getCartId() as string;
     const currentCart = await this.commerceToolsAPI.getCart(cartId);
     const currentCartVersion = Number(currentCart?.body.version);
     const lineItemId = currentCart?.body.lineItems.find((item) => item.productId === productId)?.id;
     if (lineItemId) {
-      const result = await this.commerceToolsAPI.removeProductCart(cartId, lineItemId, currentCartVersion);
+      const result = await this.commerceToolsAPI.removeItemFromProductCart(cartId, lineItemId, currentCartVersion);
       return result;
     }
     return undefined;

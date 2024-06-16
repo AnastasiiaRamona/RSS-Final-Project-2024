@@ -31,8 +31,6 @@ export default class App {
 
   private aboutUs: AboutPage;
 
-  private basket: Basket;
-
   private footer: Footer;
 
   private isLoggedIn: boolean = !!localStorage.getItem('userToken');
@@ -63,12 +61,11 @@ export default class App {
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
     this.aboutUs = new AboutPage();
-    this.basket = new Basket();
     this.footer = new Footer();
     this.appButtonsMethods = new AppButtonsMethods();
     this.appSwiper = new AppSwiper();
     this.commerceToolsAPI = new CommerceToolsAPI();
-    if (!this.userId) {
+    if (!localStorage.getItem('cartPetShopId')) {
       this.commerceToolsAPI.createCart();
     }
   }
@@ -211,8 +208,9 @@ export default class App {
     });
 
     renderRoute('/basket', async () => {
-      this.changeMainElement(await this.basket.renderPage());
-      this.basket.addEventListeners();
+      const basket = new Basket();
+      this.changeMainElement(await basket.renderPage());
+      basket.addEventListeners();
       this.appButtonsMethods?.toggleButton(basketButton, this.buttonsArray);
     });
   }

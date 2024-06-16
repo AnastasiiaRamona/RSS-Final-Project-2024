@@ -79,11 +79,11 @@ export default class Basket {
     discountedPrice?: number
   ) {
     const priceElement = HTMLCreator.createElement('p', { class: 'basket-product-price' }, [
-      discountedPrice ? `${discountedPrice / 100} €` : `${price / 100} €`,
+      discountedPrice ? `${this.toFixedPrice(discountedPrice)} €` : `${this.toFixedPrice(price)} €`,
     ]);
     if (discountedPrice) {
       priceElement.appendChild(
-        HTMLCreator.createElement('span', { class: 'basket-original-price' }, [`${price / 100} €`])
+        HTMLCreator.createElement('span', { class: 'basket-original-price' }, [`${this.toFixedPrice(price)} €`])
       );
     }
 
@@ -117,12 +117,12 @@ export default class Basket {
 
   renderSummarySection() {
     const priceElement = HTMLCreator.createElement('p', { class: 'total-price' }, [
-      `Total: ${this.totalPrice / 100} €`,
+      `Total: ${this.toFixedPrice(this.totalPrice)} €`,
     ]);
 
     if (this.oldTotalPrice > 0) {
       priceElement.appendChild(
-        HTMLCreator.createElement('span', { class: 'old-total-price' }, [`${this.oldTotalPrice / 100} €`])
+        HTMLCreator.createElement('span', { class: 'old-total-price' }, [`${this.toFixedPrice(this.oldTotalPrice)} €`])
       );
     }
 
@@ -201,7 +201,7 @@ export default class Basket {
         event.preventDefault();
         const parent = button.parentElement;
         if (parent) {
-          await this.controller.removeProductCart(parent.dataset.id as string);
+          await this.controller.removeItemFromProductCart(parent.dataset.id as string);
           parent.remove();
           this.checkQuantityOfItems();
           await this.updateTotalPrice();
@@ -217,6 +217,11 @@ export default class Basket {
       document.body.appendChild(modalWindow);
       this.modalWindow.addEventListeners();
     });
+
+    const clearButton = document.querySelector('.clear-button');
+    clearButton?.addEventListener('click', async () => {
+      await this.clearCart();
+    });
   }
 
   async updateTotalPrice() {
@@ -224,7 +229,7 @@ export default class Basket {
     this.totalPrice = cartData?.totalPrice.centAmount ?? 0;
     const totalElement = document.querySelector('.total-price');
     if (totalElement) {
-      totalElement.textContent = `Total: ${this.totalPrice / 100} €`;
+      totalElement.textContent = `Total: ${this.toFixedPrice(this.totalPrice)} €`;
 
       const discountOnTheTotalPrice = cartData?.discountOnTotalPrice?.discountedAmount?.centAmount;
 
@@ -233,7 +238,9 @@ export default class Basket {
 
         if (this.oldTotalPrice > 0) {
           totalElement.appendChild(
-            HTMLCreator.createElement('span', { class: 'old-total-price' }, [`${this.oldTotalPrice / 100} €`])
+            HTMLCreator.createElement('span', { class: 'old-total-price' }, [
+              `${this.toFixedPrice(this.oldTotalPrice)} €`,
+            ])
           );
         }
       }
@@ -250,5 +257,19 @@ export default class Basket {
         this.emptyBasket.addEventListeners();
       }
     }
+  }
+
+  async clearCart() {
+    await this.controller.clearCart();
+    const basketMain = document.querySelector('.basket-main') as HTMLElement;
+    if (basketMain) {
+      basketMain.innerHTML = '';
+      basketMain.appendChild(this.emptyBasket.renderEmptyBasket());
+      this.emptyBasket.addEventListeners();
+    }
+  }
+
+  toFixedPrice(price: number) {
+    return (price / 100).toFixed(2);
   }
 }

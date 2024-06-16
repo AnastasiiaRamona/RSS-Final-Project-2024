@@ -2,7 +2,7 @@ import HTMLCreator from '../HTMLCreator';
 import promoCode1Src from '../../assets/promo-code-1.webp';
 import promoCode2Src from '../../assets/promo-code-2.webp';
 import promoCode3Src from '../../assets/promo-code-3.webp';
-import promoCode4Src from '../../assets/promo-code-4.webp';
+import promoCode4Src from '../../assets/promo-code-5.webp';
 
 export default class Main {
   renderPage() {
@@ -15,17 +15,17 @@ export default class Main {
       {
         src: promoCode2Src,
         title: 'Promo Code 2',
-        description: 'Enjoy free shipping on orders over $50 with Promo Code 2. Shop now and save!',
+        description: `Hot June Sale: 5% Off with Promo Code 2! Don't miss out on this scorching deal available only from June 15, 2024, to June 23, 2024.`,
       },
       {
         src: promoCode3Src,
         title: 'Promo Code 3',
-        description: 'Get 10% off on your purchase of animal clothing with Promo Code 3! Hurry, offer ends soon!',
+        description: 'Get 2% off on your purchase with Promo Code 3! Hurry, offer ends soon!',
       },
       {
         src: promoCode4Src,
         title: 'Promo Code 4',
-        description: 'Save 90% on pet accessories with Promo Code 4. Perfect for spoiling your furry friends.',
+        description: 'Save 5% on all orders with Promo Code 4. Perfect for spoiling your furry friends.',
       },
     ];
 
