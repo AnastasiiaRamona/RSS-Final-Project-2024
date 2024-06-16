@@ -1,3 +1,4 @@
+@import '../../../node_modules/nouislider/dist/nouislider';
 .catalog__wrapper {
   @include flexbox();
   gap: 5px;
@@ -6,6 +7,10 @@
   input {
     border: none;
   }
+}
+#steps-slider {
+  margin-top: 5px;
+  width: 70%;
 }
 .core__wrapper {
   @include flexbox(column);
@@ -116,6 +121,7 @@
 }
 .product-card__addtocard:disabled {
   background-color: #d4c6c6;
+  position: relative;
 }
 
 .catalog__wrapper {
@@ -162,6 +168,7 @@
 
 .checkbox__price {
   @include flexbox(column);
+  align-items:flex-start;
   justify-content: normal;
   gap: 5px;
 }
@@ -387,6 +394,17 @@
 .sentinel {
   height: 1px;
 }
+
+.spinner-container {
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px; 
+  height: 250px; 
+  pointer-events: none;
+}
+
 
 @media (max-width: 1200px) {
   .catalog__category {
