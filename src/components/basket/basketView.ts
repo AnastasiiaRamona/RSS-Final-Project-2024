@@ -5,13 +5,18 @@ import promocodeIconSrc from '../../assets/promocode-icon.webp';
 import clearIconSrc from '../../assets/clear-icon.webp';
 import EmptyBasket from './componentsUA/emptyBasket';
 import ModalWindow from './componentsUA/modalWindow';
+import ExtendedLineItem from './componentsUA/types';
 
 export default class Basket {
   controller: BasketController;
 
-  totalPrice: number = 0;
+  newTotalPrice: number = 0;
 
   oldTotalPrice: number = 0;
+
+  specialDiscountedPrice: number = 0;
+
+  discountOnTheTotalPrice: number = 0;
 
   emptyBasket: EmptyBasket;
 
@@ -43,28 +48,35 @@ export default class Basket {
   async getCardsSection() {
     const cardsSection = HTMLCreator.createElement('section', { class: 'basket__cards' });
     const cartData = await this.controller.getCart();
-    this.totalPrice = cartData?.totalPrice?.centAmount ?? 0;
-    const discountOnTheTotalPrice = cartData?.discountOnTotalPrice?.discountedAmount?.centAmount;
-    let percentage: number | undefined;
-    if (discountOnTheTotalPrice) {
-      this.oldTotalPrice = this.totalPrice + discountOnTheTotalPrice;
-      percentage = this.controller.findOutTheDiscountPercentage(this.oldTotalPrice, this.totalPrice) as number;
+    this.newTotalPrice = 0;
+    this.newTotalPrice = cartData?.totalPrice?.centAmount ?? 0;
+    this.discountOnTheTotalPrice = 0;
+    if (cartData?.discountOnTotalPrice?.discountedAmount?.centAmount) {
+      this.discountOnTheTotalPrice = cartData?.discountOnTotalPrice?.discountedAmount?.centAmount;
     }
-    cartData?.lineItems.map((item) => {
+
+    this.oldTotalPrice = 0;
+
+    cartData?.lineItems?.forEach((item) => {
+      this.oldTotalPrice += item.price?.value?.centAmount ?? 0;
+    });
+
+    const lineItems = cartData?.lineItems as unknown as ExtendedLineItem[];
+    lineItems.map((item) => {
       const id = item.productId;
       const name = item.name['en-US'];
       const imageUrl = item.variant.images?.[0]?.url as string;
       const price = item.price?.value.centAmount;
-      let discountedPrice = item.price?.discounted?.value.centAmount;
-      if (discountedPrice) {
-        if (percentage) {
-          discountedPrice = (discountedPrice * percentage) / 100;
-        }
-      } else if (percentage) {
-        discountedPrice = (price * percentage) / 100;
-      }
       const quantity = item?.quantity;
-      const card = this.renderProductCard(id, name, imageUrl, price, quantity, discountedPrice);
+
+      const discountedPriceFromCommerceTools = item.price.discounted?.value?.centAmount;
+      if (item.discountedPrice?.value?.centAmount) {
+        this.specialDiscountedPrice = item.discountedPrice?.value?.centAmount;
+      }
+
+      const newPrice = this.calculateDiscount(price, this.specialDiscountedPrice, discountedPriceFromCommerceTools);
+      const card = this.renderProductCard(id, name, imageUrl, price, quantity, newPrice);
+
       return cardsSection.append(card);
     });
     return cardsSection;
@@ -81,7 +93,7 @@ export default class Basket {
     const priceElement = HTMLCreator.createElement('p', { class: 'basket-product-price' }, [
       discountedPrice ? `${this.toFixedPrice(discountedPrice)} €` : `${this.toFixedPrice(price)} €`,
     ]);
-    if (discountedPrice) {
+    if (discountedPrice && price !== discountedPrice) {
       priceElement.appendChild(
         HTMLCreator.createElement('span', { class: 'basket-original-price' }, [`${this.toFixedPrice(price)} €`])
       );
@@ -117,10 +129,10 @@ export default class Basket {
 
   renderSummarySection() {
     const priceElement = HTMLCreator.createElement('p', { class: 'total-price' }, [
-      `Total: ${this.toFixedPrice(this.totalPrice)} €`,
+      `Total: ${this.toFixedPrice(this.newTotalPrice)} €`,
     ]);
 
-    if (this.oldTotalPrice > 0) {
+    if (this.oldTotalPrice !== this.newTotalPrice) {
       priceElement.appendChild(
         HTMLCreator.createElement('span', { class: 'old-total-price' }, [`${this.toFixedPrice(this.oldTotalPrice)} €`])
       );
@@ -229,23 +241,27 @@ export default class Basket {
 
   async updateTotalPrice() {
     const cartData = await this.controller.getCart();
-    this.totalPrice = cartData?.totalPrice.centAmount ?? 0;
+
+    this.oldTotalPrice = 0;
+    cartData?.lineItems?.forEach((item) => {
+      const price = item.price?.value?.centAmount;
+      if (price) {
+        this.oldTotalPrice += price * item.quantity ?? 0;
+      }
+    });
+
+    this.newTotalPrice = 0;
+    this.newTotalPrice = cartData?.totalPrice.centAmount ?? 0;
     const totalElement = document.querySelector('.total-price');
     if (totalElement) {
-      totalElement.textContent = `Total: ${this.toFixedPrice(this.totalPrice)} €`;
+      totalElement.textContent = `Total: ${this.toFixedPrice(this.newTotalPrice)} €`;
 
-      const discountOnTheTotalPrice = cartData?.discountOnTotalPrice?.discountedAmount?.centAmount;
-
-      if (discountOnTheTotalPrice) {
-        this.oldTotalPrice = discountOnTheTotalPrice + this.totalPrice;
-
-        if (this.oldTotalPrice > 0) {
-          totalElement.appendChild(
-            HTMLCreator.createElement('span', { class: 'old-total-price' }, [
-              `${this.toFixedPrice(this.oldTotalPrice)} €`,
-            ])
-          );
-        }
+      if (this.newTotalPrice !== this.oldTotalPrice) {
+        totalElement.appendChild(
+          HTMLCreator.createElement('span', { class: 'old-total-price' }, [
+            `${this.toFixedPrice(this.oldTotalPrice)} €`,
+          ])
+        );
       }
     }
   }
@@ -274,5 +290,19 @@ export default class Basket {
 
   toFixedPrice(price: number) {
     return (price / 100).toFixed(2);
+  }
+
+  calculateDiscount(priceOfItem: number, specialDiscountedPrice?: number, discountedPriceFromCommerceTools?: number) {
+    const multiplier = this.controller.findOutTheDiscountPercentage(this.newTotalPrice, this.discountOnTheTotalPrice);
+
+    if (specialDiscountedPrice) {
+      return specialDiscountedPrice * multiplier;
+    }
+
+    if (discountedPriceFromCommerceTools) {
+      return discountedPriceFromCommerceTools * multiplier;
+    }
+
+    return priceOfItem * multiplier;
   }
 }

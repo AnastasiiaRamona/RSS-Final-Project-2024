@@ -39,9 +39,9 @@ export default class BasketController {
     return result;
   }
 
-  findOutTheDiscountPercentage(totalPrice: number, discountTotalPrice: number) {
-    const percentage = (discountTotalPrice * 100) / totalPrice;
-    return percentage;
+  findOutTheDiscountPercentage(totalPrice: number, discountOnTotalPrice: number) {
+    const multiplier = 1 - discountOnTotalPrice / (totalPrice + discountOnTotalPrice);
+    return multiplier;
   }
 
   async clearCart() {

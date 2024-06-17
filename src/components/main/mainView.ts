@@ -20,12 +20,12 @@ export default class Main {
       {
         src: promoCode3Src,
         title: 'Promo Code 3',
-        description: 'Get 2% off on your purchase with Promo Code 3! Hurry, offer ends soon!',
+        description: 'Get 20% off on your purchase with Promo Code 3! Hurry, offer ends soon!',
       },
       {
         src: promoCode4Src,
         title: 'Promo Code 4',
-        description: 'Save 5% on all orders with Promo Code 4. Perfect for spoiling your furry friends.',
+        description: 'Save 5% on the Bee Costume with Promo Code 4. Perfect for spoiling your furry friends.',
       },
     ];
 
