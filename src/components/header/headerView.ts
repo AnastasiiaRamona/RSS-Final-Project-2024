@@ -8,12 +8,16 @@ import userProfileIconSrc from '../../assets/user-icon.webp';
 import mainIconSrc from '../../assets/main-icon.webp';
 import aboutUsIconSrc from '../../assets/about-us-icon.webp';
 import CommerceToolsAPI from '../commerceToolsAPI';
+import QuantityUpdater from '../quantityUpdater';
 
 export default class Header {
   commerceToolsAPI: CommerceToolsAPI;
 
+  quantityUpdater: QuantityUpdater;
+
   constructor() {
     this.commerceToolsAPI = new CommerceToolsAPI();
+    this.quantityUpdater = new QuantityUpdater();
   }
 
   renderHeader(isLoggedIn: boolean) {
@@ -163,6 +167,7 @@ export default class Header {
           const isLoggedIn = !!localStorage.getItem('userToken');
           this.changeLoginButtonToTheLogOutButton(isLoggedIn);
           this.checkUserProfileButton(isLoggedIn, userProfileButton);
+          this.quantityUpdater.clearQuantity();
         } else if (loginButton.textContent === 'Login') {
           const loginEvent = new CustomEvent('loginEvent');
           document.body.dispatchEvent(loginEvent);

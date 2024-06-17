@@ -11,10 +11,10 @@ import UserProfile from '../userProfile/userProfileView';
 import AppButtonsMethods from './appButtonsMethods';
 import AppSwiper from './swiper';
 import AboutPage from '../about/aboutView';
-import Footer from '../footer/footerView';
 import Preload from './preloadLink';
 import CommerceToolsAPI from '../commerceToolsAPI';
 import Basket from '../basket/basketView';
+import QuantityUpdater from '../quantityUpdater';
 
 export default class App {
   private preload: Preload | null = null;
@@ -30,10 +30,6 @@ export default class App {
   private catalog: Catalog;
 
   private aboutUs: AboutPage;
-
-  private basket: Basket;
-
-  private footer: Footer;
 
   private isLoggedIn: boolean = !!localStorage.getItem('userToken');
 
@@ -55,6 +51,8 @@ export default class App {
 
   private userId: string | null = null;
 
+  private quantityUpdater: QuantityUpdater;
+
   constructor() {
     this.header = new Header();
     this.login = new Login();
@@ -63,12 +61,11 @@ export default class App {
     this.missingPage = new MissingPage();
     this.catalog = new Catalog();
     this.aboutUs = new AboutPage();
-    this.basket = new Basket();
-    this.footer = new Footer();
     this.appButtonsMethods = new AppButtonsMethods();
     this.appSwiper = new AppSwiper();
     this.commerceToolsAPI = new CommerceToolsAPI();
-    if (!this.userId) {
+    this.quantityUpdater = new QuantityUpdater();
+    if (!localStorage.getItem('cartPetShopId')) {
       this.commerceToolsAPI.createCart();
     }
   }
@@ -88,6 +85,7 @@ export default class App {
     this.header.addEventListeners();
     const main = HTMLCreator.createElement('main', { class: 'main-field' });
     this.body.appendChild(main);
+    this.quantityUpdater.updateQuantity();
   }
 
   setupEventListeners() {
@@ -177,6 +175,7 @@ export default class App {
       this.changeMainElement(await this.catalog.renderPage());
       this.catalog.infiniteScrollPage();
       this.catalog.addEventListeners();
+      this.catalog.slider();
       this.catalog.toggleAllButtonsToCard();
       this.appButtonsMethods?.toggleButton(catalogButton, this.buttonsArray);
     });
@@ -211,8 +210,9 @@ export default class App {
     });
 
     renderRoute('/basket', async () => {
-      this.changeMainElement(await this.basket.renderPage());
-      this.basket.addEventListeners();
+      const basket = new Basket();
+      this.changeMainElement(await basket.renderPage());
+      basket.addEventListeners();
       this.appButtonsMethods?.toggleButton(basketButton, this.buttonsArray);
     });
   }

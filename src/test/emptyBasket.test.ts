@@ -1,4 +1,4 @@
-import EmptyBasket from '../components/basket/componentsUA/emptyBasket';
+import EmptyBasket from '../components/basket/componentsUI/emptyBasket';
 import videoSrc from '../../../assets/corgi-meme.webm';
 
 it('should create the correct HTML structure when renderEmptyBasket is called', () => {

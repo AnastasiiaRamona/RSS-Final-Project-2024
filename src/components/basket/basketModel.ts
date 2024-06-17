@@ -1,5 +1,6 @@
 import {
   CartChangeLineItemQuantityAction,
+  CartRemoveLineItemAction,
   CartUpdate,
 } from '@commercetools/platform-sdk/dist/declarations/src/generated/models/cart';
 import CommerceToolsAPI from '../commerceToolsAPI';
@@ -17,11 +18,11 @@ export default class BasketModel {
     return cart;
   }
 
-  async removeProductCart(productId: string) {
+  async removeItemFromProductCart(productId: string) {
     const cartId = this.commerceToolsAPI.getCartId() as string;
     const { currentCartVersion, lineItemId } = await this.getLineItemId(productId, cartId);
     if (lineItemId) {
-      const result = await this.commerceToolsAPI.removeProductCart(cartId, lineItemId, currentCartVersion);
+      const result = await this.commerceToolsAPI.removeItemFromProductCart(cartId, lineItemId, currentCartVersion);
       return result;
     }
     return undefined;
@@ -103,5 +104,32 @@ export default class BasketModel {
   async getDiscountCodeByCode(promoCode: string) {
     const discountCode = await this.commerceToolsAPI.getDiscountCodeByCode(promoCode);
     return discountCode;
+  }
+
+  async clearCart() {
+    const cartId = this.commerceToolsAPI.getCartId() as string;
+    try {
+      const cart = await this.commerceToolsAPI.getCart(cartId);
+      const currentCartVersion = cart?.body.version;
+      const lineItems = cart?.body.lineItems;
+
+      if (!currentCartVersion || !lineItems) {
+        return;
+      }
+
+      const actions: CartRemoveLineItemAction[] = lineItems.map((item) => ({
+        action: 'removeLineItem',
+        lineItemId: item.id,
+      }));
+
+      if (actions.length > 0) {
+        await this.commerceToolsAPI.updateCart(cartId, {
+          version: currentCartVersion,
+          actions,
+        });
+      }
+    } catch (error) {
+      console.log(`Error clearing the cart:`, error);
+    }
   }
 }

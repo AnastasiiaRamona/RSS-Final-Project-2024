@@ -67,7 +67,11 @@ export default class DetailedProduct {
       }
     }
     await this.controller.getProductInCart(this.id);
-    addBtnCart?.addEventListener('click', () => this.controller.addToCart(this.id));
-    removeBtnCart?.addEventListener('click', () => this.controller.removeProductCart(this.id));
+    addBtnCart?.addEventListener('click', async () => {
+      this.controller.addToCart(this.id);
+    });
+    removeBtnCart?.addEventListener('click', async () => {
+      this.controller.removeItemFromProductCart(this.id);
+    });
   }
 }

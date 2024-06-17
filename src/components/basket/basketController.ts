@@ -1,10 +1,14 @@
+import QuantityUpdater from '../quantityUpdater';
 import BasketModel from './basketModel';
 
 export default class BasketController {
   model: BasketModel;
 
+  quantityUpdater: QuantityUpdater;
+
   constructor() {
     this.model = new BasketModel();
+    this.quantityUpdater = new QuantityUpdater();
   }
 
   async getCart() {
@@ -13,9 +17,10 @@ export default class BasketController {
     return cartData;
   }
 
-  async removeProductCart(productId: string) {
+  async removeItemFromProductCart(productId: string) {
     if (productId) {
-      await this.model.removeProductCart(productId);
+      await this.model.removeItemFromProductCart(productId);
+      await this.quantityUpdater.updateQuantity();
     }
   }
 
@@ -34,8 +39,13 @@ export default class BasketController {
     return result;
   }
 
-  findOutTheDiscountPercentage(totalPrice: number, discountTotalPrice: number) {
-    const percentage = (discountTotalPrice * 100) / totalPrice;
-    return percentage;
+  findOutTheDiscountPercentage(totalPrice: number, discountOnTotalPrice: number) {
+    const multiplier = 1 - discountOnTotalPrice / (totalPrice + discountOnTotalPrice);
+    return multiplier;
+  }
+
+  async clearCart() {
+    await this.model.clearCart();
+    await this.quantityUpdater.updateQuantity();
   }
 }
