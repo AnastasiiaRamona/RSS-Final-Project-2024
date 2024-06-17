@@ -1,17 +1,11 @@
 @import '../../../node_modules/nouislider/dist/nouislider';
+@import "~@fortawesome/fontawesome-free/css/all.css";
 .catalog__wrapper {
   @include flexbox();
   gap: 5px;
   overflow-x: hidden;
+}
 
-  input {
-    border: none;
-  }
-}
-#steps-slider {
-  margin-top: 5px;
-  width: 70%;
-}
 .core__wrapper {
   @include flexbox(column);
   justify-content: flex-start;
@@ -124,6 +118,9 @@
   position: relative;
 }
 
+.catalog__reset-filter {
+  width: 100%;
+}
 .catalog__wrapper {
   @include flexbox(column);
   @include size(auto, 85vh);
@@ -145,57 +142,83 @@
   @include flexbox();
   width: 75vw;
   align-items: stretch;
-  justify-content: space-evenly;
   gap: 2vh;
   padding: 10px;
+  color: rgba(246, 248, 247, 0.952);
   background-color: rgb(145, 189, 156, 0.8);
   border-radius: 40px;
   border: 2px solid rgb(0, 84, 60);
   font-size: 20px;
 }
+.search-sort__wrapper {
+  background-color: rgb(0, 84, 60, 0.3);
+  border-radius: 20px;
+  padding: 0.4vw;
+  min-width: 12vw;
+  min-height: 9vw;
+}
 
 .catalog__sorting {
-  width: 10vw;
-  height: 100%;
+  width: 11vw;
 }
 
 .sorting__select {
   width: 100%;
   padding: 2px;
-  border-radius: 20px;
+  border-radius: 11px;
   padding-left: 10px;
 }
 
 .checkbox__price {
   @include flexbox(column);
-  align-items:flex-start;
-  justify-content: normal;
-  gap: 5px;
-}
-
-.price__input {
-  width: 60%;
-  padding-left: 10px;
+  gap: 1vw;
+  background-color: rgb(0, 84, 60, 0.3);
   border-radius: 20px;
+  padding: 0.6vw;
+  min-width: 12vw;
+  min-height: 10vw;
+}
+.checkbox__price-min {
+  @include flexbox(column);
+  width: 90%;
+  font-weight: bold;
+}
+.price__input {
+  width: 100%;
+  padding-left: 10px;
+  border-radius: 11px;
 }
 
 .checkbox__container {
   @include flexbox();
   align-items: flex-start;
   gap: 10px;
-  color: $primary-color;
 }
 .checkbox__element {
   @include flexbox(column);
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: normal;
+  align-items:flex-start;
+  gap: 15px;
+  background-color: rgb(0, 84, 60, 0.3);
+  border-radius: 20px;
+  padding: 0.4vw;
+  min-width: 12vw;
+  min-height: 10vw;
+}
+
+.checkbox__h3 {
+  align-self: center;
 }
 
 .quantity-or-size {
   @include flexbox();
+  flex-wrap: wrap;
   width: 10vw;
-  gap: 3px;
+  gap: 8px;
+}
+
+.checkbox__element-container {
+  @include flexbox();
+  flex: 1 0 45%; 
 }
 
 .catalog__navigation {
@@ -251,70 +274,75 @@
   text-align: center;
   margin-right: 23px;
   transition: all 0.5s linear;
-  &:nth-child(even) {
-    background-color: rgb(0, 84, 60);
-    &:before {
-      border-color: rgb(0, 84, 60);
-      border-left-color: transparent;
-    }
-    &:after {
-      border-left-color: rgb(0, 84, 60);
-    }
-  }
-  &:first-child {
-    padding-left: 15px;
-    border-radius: (4px 0 0 4px);
-    &:before {
-      border: none;
-    }
-  }
-  &:last-child {
-    padding-right: 15px;
-    border-radius: (0 4px 4px 0);
-    &:after {
-      border: none;
-    }
-  }
-
-  &:before,
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    border: 0 solid rgba(145, 233, 167, 0.8);
-    border-width: 25px 10px;
-    width: 0;
-    height: 0;
-  }
-  &:before {
-    left: -20px;
-    border-left-color: transparent;
-  }
-  &:after {
-    left: 100%;
-    border-color: transparent;
-    border-left-color: rgba(145, 233, 167, 0.8);
-  }
-  &:hover {
-    box-shadow: 1px 3px 26px 5px rgba(0, 0, 0, 0.81);
-
-    &:before {
-      border-left-color: transparent;
-      transition: all 0.5s linear;
-    }
-    &:after {
-      transition: all 0.5s linear;
-    }
-  }
 }
 
+
+.breadcrumb__element:last-child {
+  background-color: rgb(0, 84, 60);
+  padding-right: 15px;
+  border-radius: 0 4px 4px 0;
+}
+
+.breadcrumb__element:first-child {
+  padding-left: 15px;
+  border-radius: 4px 0 0 4px;
+}
+
+.breadcrumb__element:before,
+.breadcrumb__element:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  border: 0 solid rgba(145, 233, 167, 0.8);
+  border-width: 25px 10px;
+  width: 0;
+  height: 0;
+}
+
+.breadcrumb__element:last-child:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  border: 0 solid rgb(0, 84, 60);
+  border-width: 25px 10px;
+  width: 0;
+  height: 0;
+}
+
+.breadcrumb__element:before, .breadcrumb__element:last-child:before {
+  left: -20px;
+  border-left-color: transparent;
+}
+
+.breadcrumb__element:after {
+  left: 100%;
+  border-color: transparent;
+  border-left-color: rgba(145, 233, 167, 0.8);
+}
+
+.breadcrumb__element:last-child:after {
+  left: 99%;
+  border-color: transparent;
+  border-left-color: rgb(0, 84, 60);
+}
+
+.breadcrumb__element:hover {
+  box-shadow: 1px 3px 26px 5px rgba(0, 0, 0, 0.81);
+}
+
+.breadcrumb__element:hover:before,
+.breadcrumb__element:hover:after {
+  transition: all 0.5s linear;
+}
+
+
 .catalog__category {
-  max-width: 12vw;
-  max-height: 100vh;
+  width: 15vw;
+  padding-top: 20px;
+  padding-bottom: 50px;
   @include flexbox(column);
   justify-content: flex-start;
   gap: 2vh;
-  padding: 20px;
   background-color: rgb(145, 189, 156, 0.8);
   border-radius: 40px;
   border: 2px solid rgb(0, 84, 60);
@@ -325,32 +353,31 @@
 .category__list {
   @include flexbox(column);
   gap: 2px;
+  width: 100%;
 }
 
 .category__element {
-  min-width: 9vw;
-  border: 2px solid rgb(0, 84, 60);
-  background-color: rgb(145, 189, 156, 0.8);
-  border-radius: 20px;
-  padding: 10px;
+  width: 100%;
   transition: all 0.5s linear;
+}
+
+.category__name {
+  padding: 10px;
 }
 
 .category__element:hover .hide__sub-list {
   display: block;
 }
 
-.category__element:hover {
+.category__name:hover {
   cursor: pointer;
   color: rgb(129, 18, 112, 0.7);
   background-color: rgba(145, 233, 167, 0.8);
 }
 
 .hide__sub-list {
-  position: absolute;
+  position: relative;
   display: none;
-  margin-left: 6vw;
-  margin-top: -2em;
   padding: 5px;
   color: black;
   animation: hide 1s ease;
@@ -368,17 +395,23 @@
 
 .category__sub-element {
   @include flexbox();
-  padding: 5px;
   margin: 1px;
-  border: 2px solid rgb(0, 84, 60);
-  border-radius: 20px;
-  background-color: rgb(145, 189, 156, 0.8);
-  min-width: 10vw;
+  width: 100%;
+  justify-content: flex-start;
   transition: all 0.5s linear;
+  padding-left: 25px;
 }
-.category__sub-element:hover {
+
+.subcategory__name:hover {
+  cursor: pointer;
   color: rgb(129, 18, 112, 0.7);
   background-color: rgba(145, 233, 167);
+}
+
+.subcategory__name {
+padding: 10px;
+  width: 100%;
+  
 }
 
 .product-card__actions {
@@ -405,8 +438,74 @@
   pointer-events: none;
 }
 
+#steps-slider {
+  height: 10px;
+  padding-left: 6px;
+  margin-top: 5px;
+  width: 88%;
+}
+#steps-slider .noUi-connect {
+  background: rgb(129, 18, 112, 0.7);
+}
+
+#steps-slider .noUi-handle {
+  height: 18px;
+  width: 18px;
+  top: -5px;
+  right: -9px;
+  border-radius: 9px;
+}
+
+.noUi-handle {
+  background-color:rgb(0, 84, 60, 0.95);
+  box-shadow: inset 0 0 1px rgb(90, 30, 75), inset 0 1px 7px rgb(0, 84, 60), 0 3px 6px -3px #7baa94;
+}
+
+.noUi-handle:before, .noUi-handle:after {
+  display: none;
+}
+
+.checkbox__input {
+    margin-right: 5px;
+    position: relative;
+    appearance: none;
+    font-size: inherit;
+    width: 1em;
+    color: inherit;
+    outline: none;
+    font-family: 'Font Awesome 5 Free';
+    transition: 300ms ease-out;
+
+    &::after {
+      content: '\f111';
+      display: inline-block;
+      text-align: center;
+      width: 1em;
+      font-weight: 400;
+    }
+
+    &:checked::after {
+      font-weight: 900;
+    }
+    &:active {
+      transform: scale(0.6);
+    }
+
+  }
+  
+  .checkbox__input:checked::after {
+    content: '\f058';
+  }
+
 
 @media (max-width: 1200px) {
+  .checkbox__element, .checkbox__price, .search-sort__wrapper {
+    background-color:rgba(0, 84, 60, 0);
+    color: rgb(0, 84, 60);
+  }
+  #steps-slider {
+    display: none;
+  }
   .catalog__category {
     max-width: 50vw;
   }
@@ -487,11 +586,15 @@
     font-size: 10px;
     width: 80px;
   }
+  .catalog__filter {
+    flex-direction: row-reverse;
+  }
 }
 
 @media (max-width: 450px) {
   .catalog__filter {
     font-size: 8px;
+    gap: 32px;
   }
   .catalog__filter h3,
   label {

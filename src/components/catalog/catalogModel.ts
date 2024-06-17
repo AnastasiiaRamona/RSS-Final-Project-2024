@@ -27,6 +27,12 @@ export default class CatalogModel {
       const result: { [key: string]: string[] } = {};
       Object.keys(obj).forEach((key) => {
         const uniqueArray = [...new Set(obj[key])];
+        uniqueArray.sort((a, b) => {
+          if (typeof a === 'number' && typeof b === 'number') {
+            return a - b;
+          }
+          return a.toString().localeCompare(b.toString());
+        });
         result[key] = uniqueArray.map(String);
       });
       return result;

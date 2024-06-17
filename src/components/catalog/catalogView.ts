@@ -1,6 +1,7 @@
 import Toastify from 'toastify-js';
 import lottie from 'lottie-web';
 import noUiSlider, { API } from 'nouislider';
+import wNumb from 'wnumb';
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
 import { BreadcrumbsInfo, CategoryMap } from './types';
@@ -26,6 +27,7 @@ export default class Catalog {
               class: 'catalog__filter',
             },
             [
+              (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
               HTMLCreator.createElement('div', { class: 'search-sort__wrapper' }, [
                 HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
                 HTMLCreator.createElement('form', { class: 'catalog__sorting' }, [
@@ -42,7 +44,6 @@ export default class Catalog {
                   ),
                 ]),
               ]),
-              (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
             ]
           ),
         ]),
@@ -137,7 +138,6 @@ export default class Catalog {
   }
 
   async infiniteScrollPage(useFilter: boolean = false) {
-    console.log(11);
     const isFilter = useFilter;
     const pageSize = 10;
     let currentPage = 0;
@@ -237,6 +237,9 @@ export default class Catalog {
         max: 112,
       },
       step: 1,
+      format: wNumb({
+        decimals: 0,
+      }),
     });
     stepsSlider.noUiSlider.on('update', (values: (string | number)[], handle: number) => {
       inputs[handle].value = values[handle].toString();
@@ -304,6 +307,8 @@ export default class Catalog {
       }
       await this.generateBreadcrumbs(event);
       await this.toggleAllButtonsToCard();
+      const sentinel = document.querySelector('.sentinel');
+      sentinel?.remove();
     } catch (error) {
       if (error instanceof Error) {
         this.handleResponse(error.message);
@@ -323,7 +328,7 @@ export default class Catalog {
     const ul = HTMLCreator.createElement('ul', { class: 'category__list' });
     Object.values(categoryTree).forEach(async (category) => {
       const li = HTMLCreator.createElement('li', { id: category.id, class: 'category__element' }, [
-        category.name,
+        HTMLCreator.createElement('p', { id: category.id, class: 'category__name' }, [category.name]),
       ]) as HTMLElement;
       if (Object.keys(category.children).length > 0) {
         li.appendChild(await this.createSubcategoryTree(category.children));
@@ -337,7 +342,7 @@ export default class Catalog {
     const subUl = HTMLCreator.createElement('ul', { class: 'category__sub-list hide__sub-list' });
     Object.values(subcategoryTree).forEach(async (subCategory) => {
       const li = HTMLCreator.createElement('li', { id: subCategory.id, class: 'category__sub-element' }, [
-        subCategory.name,
+        HTMLCreator.createElement('p', { id: subCategory.id, class: 'subcategory__name' }, [subCategory.name]),
       ]) as HTMLElement;
       subUl.appendChild(li);
     });
@@ -515,7 +520,7 @@ export default class Catalog {
     Object.keys(attributes).forEach((key) => {
       if (key !== 'minPrice' && key !== 'maxPrice') {
         const div = HTMLCreator.createElement('div', { class: `${key} checkbox__element` }) as HTMLElement;
-        const header = HTMLCreator.createElement('h3', { class: key }, [
+        const header = HTMLCreator.createElement('h3', { class: 'checkbox__h3' }, [
           this.controller.formatString(key),
         ]) as HTMLElement;
         attributes[key].forEach((value) => {
@@ -525,8 +530,11 @@ export default class Catalog {
             id: `${key}`,
             value,
           }) as HTMLInputElement;
-          const label = HTMLCreator.createElement('label', {}, [value]) as HTMLElement;
-          const checkboxContainer = HTMLCreator.createElement('div', {}, [checkbox, label]) as HTMLElement;
+          const label = HTMLCreator.createElement('label', { class: 'checkbox__label' }, [value]) as HTMLElement;
+          const checkboxContainer = HTMLCreator.createElement('div', { class: 'checkbox__element-container' }, [
+            checkbox,
+            label,
+          ]) as HTMLElement;
           div.appendChild(checkboxContainer);
         });
         div.insertBefore(header, div.firstChild);
