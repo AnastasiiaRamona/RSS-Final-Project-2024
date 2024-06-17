@@ -60,7 +60,6 @@ export default class ModalWindow {
         const discountCode = await this.controller.getDiscountCodeByCode(promoCodeValue);
         if (discountCode && modalWindowWrapper) {
           const cart = await this.controller.getCart();
-
           const foundDiscountCode = cart?.discountCodes.find((dc) => dc.discountCode.id === discountCode.id);
 
           if (!foundDiscountCode) {

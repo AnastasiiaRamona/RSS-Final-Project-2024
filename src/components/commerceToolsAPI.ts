@@ -45,7 +45,7 @@ export default class CommerceToolsAPI {
     fetch,
   };
 
-  private createPasswordFlowOptions(username: string, password: string): PasswordAuthMiddlewareOptions {
+  createPasswordFlowOptions(username: string, password: string): PasswordAuthMiddlewareOptions {
     return {
       host: authHostUrl,
       projectKey,

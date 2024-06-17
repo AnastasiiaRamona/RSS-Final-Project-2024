@@ -3,9 +3,9 @@ import BasketController from './basketController';
 import deleteButtonSrc from '../../assets/delete-icon.webp';
 import promocodeIconSrc from '../../assets/promocode-icon.webp';
 import clearIconSrc from '../../assets/clear-icon.webp';
-import EmptyBasket from './componentsUA/emptyBasket';
-import ModalWindow from './componentsUA/modalWindow';
-import ExtendedLineItem from './componentsUA/types';
+import EmptyBasket from './componentsUI/emptyBasket';
+import ModalWindow from './componentsUI/modalWindow';
+import ExtendedLineItem from './componentsUI/types';
 
 export default class Basket {
   controller: BasketController;
