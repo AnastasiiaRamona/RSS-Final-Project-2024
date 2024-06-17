@@ -7,13 +7,12 @@
 @import './style/components/input.scss';
 @import './style/components/label.scss';
 @import './style/vendors/toastify';
+@import './global.scss';
 @import './components/header/header.scss';
-@import './components/footer/footer.scss';
 @import './components/registration/registration.scss';
 @import './components/login/login.scss';
 @import './components/main/main.scss';
 @import './components/missingPage/missingPage.scss';
-@import './global.scss';
 @import 'swiper/scss';
 @import 'swiper/scss/navigation';
 @import 'swiper/scss/pagination';
@@ -22,5 +21,6 @@
 @import './components/userProfile/userProfile.scss';
 @import './components/about/about.scss';
 @import './components/basket/basket.scss';
-@import './components/basket/componentsUA/emptyBasket.scss';
+@import './components/basket/componentsUI/emptyBasket.scss';
+@import './components/basket/componentsUI/modalWindow.scss';
 
