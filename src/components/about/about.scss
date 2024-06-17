@@ -145,17 +145,21 @@
 
 .about-contributions {
   text-align: center;
-  margin-top: 32px;
   transition: all 0.6s linear;
   padding: 10px;
+  margin: 10px;
+  margin-top: 32px;
+  background: rgb(216, 247, 220);
+  border-radius: 20px;
 
   &__title {
-    @include font('Arial', clamp(18px, 5vw, 36px), bold, 1, $white);
+    @include font($primary-font-family, clamp(18px, 5vw, 36px), normal, 1, $primary-color);
+    margin-bottom: 20px;
   }
   &__text {
     max-width: 1200px;  
     text-align: justify;
-    @include font($primary-font-family, clamp(14px, 4vw, 20px), 600, 1, #ffff);
+    @include font($primary-font-family, clamp(14px, 4vw, 20px), normal, 1, $primary-color);
     margin: 10px auto;
   }
 }

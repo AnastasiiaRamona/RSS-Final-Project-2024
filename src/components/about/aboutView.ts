@@ -175,10 +175,13 @@ export default class AboutPage {
     const collaboration = HTMLCreator.createElement('section', { class: 'about-contributions' }, [
       HTMLCreator.createElement('h2', { class: 'about-contributions__title' }, ['Contributions']),
       HTMLCreator.createElement('p', { class: 'about-contributions__text' }, [
-        `  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quos in inventore perspiciatis, neque aspernatur unde facilis nulla quae,
-          tenetur optio asperiores nemo, sunt molestiae provident illo mollitia corporis eligendi adipisci! Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          Ratione ipsam dolorum nisi doloribus enim molestias! Exercitationem dolores obcaecati harum sed mollitia aperiam,
-          dolor, nam provident velit, explicabo reprehenderit consectetur corporis.`,
+        `Anastasiia Kabanova, team leader, managed organizational tasks, tracked progress in Trello, reviewed pull requests, and did the development of the API, CommerceTools integration, Main Page, User Profile Page, Basket Page, Header, and Routing.`,
+      ]),
+      HTMLCreator.createElement('p', { class: 'about-contributions__text' }, [
+        `Oleksandr Tsurkan reviewed pull requests, set up the project and SCSS, developed the Registration Page, Detailed Product Page and About Us Page, utilized plugins such as Swiper, Fancybox, and Toastify, and conducted unit tests.`,
+      ]),
+      HTMLCreator.createElement('p', { class: 'about-contributions__text' }, [
+        `Yuri Porokhin reviewed pull requests, worked on the API and CommerceTools integration, developed the Login Page and Catalog Page, utilized plugins such as noUiSlider, Lottie, and wNumb, and conducted unit tests.`,
       ]),
     ]);
     return collaboration;
