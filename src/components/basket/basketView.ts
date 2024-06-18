@@ -237,8 +237,14 @@ export default class Basket {
     });
 
     const clearButton = document.querySelector('.clear-button');
-    clearButton?.addEventListener('click', async () => {
-      await this.clearCart();
+    clearButton?.addEventListener('click', () => {
+      this.renderMessageAboutConfirmingTheRequestToEmptyTheCart();
+      const confirmButton = document.querySelector('.confirm-button');
+      confirmButton?.addEventListener('click', async () => {
+        const modalWindow = document.querySelector('.modal-window-wrapper') as HTMLElement;
+        document.body.removeChild(modalWindow);
+        await this.clearCart();
+      });
     });
   }
 
@@ -307,5 +313,22 @@ export default class Basket {
     }
 
     return priceOfItem * multiplier;
+  }
+
+  renderMessageAboutConfirmingTheRequestToEmptyTheCart() {
+    const modalWindowWrapper = HTMLCreator.createElement('section', { class: 'modal-window-wrapper' }, [
+      HTMLCreator.createElement('div', { class: 'modal-window' }, [
+        HTMLCreator.createElement('p', { class: 'message-about-missing-item' }, [
+          `Are you sure you want to clear the entire cart?`,
+        ]),
+        HTMLCreator.createElement('button', { class: 'confirm-button' }, ['Yes']),
+      ]),
+    ]);
+    document.body.appendChild(modalWindowWrapper);
+    modalWindowWrapper.addEventListener('click', (event) => {
+      if (event.target === modalWindowWrapper) {
+        document.body.removeChild(modalWindowWrapper);
+      }
+    });
   }
 }
