@@ -58,7 +58,10 @@ export default class Basket {
     this.oldTotalPrice = 0;
 
     cartData?.lineItems?.forEach((item) => {
-      this.oldTotalPrice += item.price?.value?.centAmount ?? 0;
+      const { quantity } = item;
+      if (item.price.value.centAmount) {
+        this.oldTotalPrice += item.price.value.centAmount * quantity;
+      }
     });
 
     const lineItems = cartData?.lineItems as unknown as ExtendedLineItem[];

@@ -78,7 +78,10 @@ export default class ModalWindow {
             this.oldTotalPrice = 0;
 
             updatedCartItems.forEach((item) => {
-              this.oldTotalPrice += item.price?.value?.centAmount ?? 0;
+              const { quantity } = item;
+              if (item.price.value.centAmount) {
+                this.oldTotalPrice += item.price.value.centAmount * quantity;
+              }
             });
 
             updatedCartItems.forEach((li) => {
