@@ -247,8 +247,8 @@
 }
 
 .search__button {
-  max-height: 5vh;
-  line-height: 2vh;
+  max-height: 5vw;
+  line-height: 2vw;
 }
 
 .breadcrumb {
@@ -506,8 +506,7 @@ padding: 10px;
     display: none;
   }
   .catalog__navigation {
-    max-width: 90vw;
-    flex-direction: column-reverse;
+    width: 87vw;
     margin-left: 0px;
   }
   .breadcrumb,
@@ -515,6 +514,9 @@ padding: 10px;
     width: 80vw;
     @include flexbox();
     justify-content: flex-start;
+  }
+  .catalog__search {
+    width: 60vw;
   }
   .product-card__addtocard {
     font-size: 10px;
@@ -529,6 +531,7 @@ padding: 10px;
     font-size: 10px;
     width: 90vw;
     justify-content: flex-start;
+    gap:0;
   }
   .catalog__filter h3,
   label {
@@ -557,11 +560,29 @@ padding: 10px;
   .breadcrumb__element:last-child:before {
     border-width: 15px 10px;
   }
+  .sorting__select {
+    font-size: 10px;
+    width: 20vw;
+  }
+  .search-sort__wrapper {
+    @include flexbox(column-reverse);
+    justify-content: space-between;
+  }
+  .search__label {
+    display: none;
+  }
+  .search__input {
+    width: 90%;
+    height: 18px;
+    font-size: 10px;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 @media (max-width: 600px) {
   .quantity-or-size {
-    width: auto;
+    width: 25vw;
   }
   .catalog__reset-filter {
     font-size: 8px;
@@ -582,38 +603,45 @@ padding: 10px;
   .search__button {
     font-size: 8px;
   }
-  .search__input {
-    height: 15px;
-    font-size: 10px;
-  }
   .price__input {
     font-size: 8px;
     width: 50px;
   }
   .sorting__select {
     font-size: 10px;
-    width: 80px;
+    width: 30vw;
   }
   .catalog__filter {
+    flex-direction: column;
+  }
+  .search-sort__wrapper {
     flex-direction: row-reverse;
+    justify-content: space-between;
+  }
+  .catalog__reset-filter {
+    width: 40vw;
+    height: 25px;
+    margin: 0;
   }
 }
 
 @media (max-width: 450px) {
-  .catalog__filter {
-    font-size: 8px;
-    gap: 32px;
-  }
   .catalog__filter h3,
   label {
-    font-size: 8px;
+    font-size: 12px;
   }
+  .quantity-or-size {
+    
+  }
+ 
   .breadcrumb__element {
     height: 14px;
     line-height: 14px;
     padding: 0 2vw 0 1vw;
   }
-
+  .breadcrumb__element:first-child {
+    padding-left: 0px;
+  }
   .breadcrumb__element:before,
   .breadcrumb__element:after {
     border-width: 7px 10px;
@@ -621,5 +649,14 @@ padding: 10px;
   
   .breadcrumb__element:last-child:before {
     border-width: 7px 10px;
+  }
+  .search__wrapper {
+    gap: 2px;
+  }
+  .search__input {
+    margin: 0;
+  }
+  .search__button {
+    margin: 0;
   }
 }

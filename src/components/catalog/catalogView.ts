@@ -138,7 +138,6 @@ export default class Catalog {
   }
 
   async infiniteScrollPage(useFilter: boolean = false) {
-    console.log(11);
     const isFilter = useFilter;
     const pageSize = 10;
     let currentPage = 0;
