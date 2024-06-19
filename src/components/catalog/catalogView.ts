@@ -361,7 +361,7 @@ export default class Catalog {
     ]);
     breadcrumbTitle?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-      this.filter(1, 10);
+      this.infiniteScrollPage();
       container.innerHTML = '';
       container.append(breadcrumbTitle);
     });
