@@ -136,6 +136,7 @@
   font-family: $third-font-family;
   font-size: large;
   color: $primary-color;
+  margin-right: 10px;
 
   button {
     @include size(30px, 30px);

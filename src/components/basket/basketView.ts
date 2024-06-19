@@ -102,6 +102,10 @@ export default class Basket {
       );
     }
 
+    const totalPrice = HTMLCreator.createElement('span', { class: 'basket-product-price total-for-product' }, [
+      `${this.toFixedPrice(price * quantity)} €`,
+    ]);
+
     const quantityContainer = HTMLCreator.createElement('div', { class: 'quantity-container' });
     const decreaseButton = HTMLCreator.createElement('button', { class: 'decrease-button' }, ['-']);
     const quantityDisplay = HTMLCreator.createElement(
@@ -120,6 +124,7 @@ export default class Basket {
       HTMLCreator.createElement('h2', { class: 'basket-product-name' }, [name]),
       priceElement,
       quantityContainer,
+      totalPrice,
       HTMLCreator.createElement('img', {
         class: 'basket-remove-button',
         src: deleteButtonSrc,
@@ -250,6 +255,18 @@ export default class Basket {
 
   async updateTotalPrice() {
     const cartData = await this.controller.getCart();
+
+    const cards = document.querySelectorAll('.basket-product-card') as NodeListOf<HTMLElement>;
+    const cardsArray = Array.from(cards);
+
+    const cartItems = cartData?.lineItems as unknown as ExtendedLineItem[];
+    cartItems.forEach((item) => {
+      const newCard = cardsArray.find((card) => card.dataset.id === item.productId);
+      const totalPriceForElement = newCard?.querySelector('.total-for-product') as HTMLElement;
+      if (item.price.value.centAmount && totalPriceForElement) {
+        totalPriceForElement.textContent = `${this.toFixedPrice(item.price.value.centAmount * item.quantity)} €`;
+      }
+    });
 
     this.oldTotalPrice = 0;
     cartData?.lineItems?.forEach((item) => {
