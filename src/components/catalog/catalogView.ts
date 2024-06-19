@@ -250,15 +250,15 @@ export default class Catalog {
     });
 
     inputs.forEach((input, handle) => {
-      input.addEventListener('change', function () {
+      input.addEventListener('change', function inputValue() {
         stepsSlider.noUiSlider.setHandle(handle, this.value);
       });
 
-      minPriceInput.addEventListener('change', function () {
+      minPriceInput.addEventListener('change', function minValue() {
         stepsSlider.noUiSlider.set([this.value, null]);
       });
 
-      maxPriceInput.addEventListener('change', function () {
+      maxPriceInput.addEventListener('change', function maxValue() {
         stepsSlider.noUiSlider.set([null, this.value]);
       });
     });
@@ -353,6 +353,7 @@ export default class Catalog {
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+    const catalogGallery = document.querySelector('.catalog__gallery') as HTMLElement;
 
     const container = document.querySelector('.breadcrumb') as HTMLElement;
     container.innerHTML = '';
@@ -362,6 +363,7 @@ export default class Catalog {
     breadcrumbTitle?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
       this.infiniteScrollPage();
+      catalogGallery.innerHTML = '';
       container.innerHTML = '';
       container.append(breadcrumbTitle);
     });
