@@ -1,10 +1,10 @@
 import Toastify from 'toastify-js';
 import lottie from 'lottie-web';
-import noUiSlider, { API } from 'nouislider';
+import noUiSlider from 'nouislider';
 import wNumb from 'wnumb';
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
-import { BreadcrumbsInfo, CategoryMap } from './types';
+import { BreadcrumbsInfo, CategoryMap, SliderElement } from './types';
 
 export default class Catalog {
   controller: CatalogController;
@@ -93,22 +93,27 @@ export default class Catalog {
     });
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
+        this.clearBreadcrumbs();
         this.infiniteScrollPage(true);
       });
     });
     resetFilter?.addEventListener('click', () => {
-      this.clearCatalog(catalogGallery);
+      this.clearCatalog();
+      this.clearBreadcrumbs();
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
       this.infiniteScrollPage(false);
     });
     searchButton?.addEventListener('click', (event) => {
+      this.clearBreadcrumbs();
       this.search(event, searchInput);
     });
     sortSelect?.addEventListener('change', () => {
+      this.clearBreadcrumbs();
       this.infiniteScrollPage(true);
     });
     priceInputAll.forEach((priceInput) => {
       priceInput.addEventListener('change', () => {
+        this.clearBreadcrumbs();
         this.infiniteScrollPage(true);
       });
     });
@@ -132,13 +137,19 @@ export default class Catalog {
     }
   }
 
-  clearCatalog(catalog: HTMLElement) {
-    const catalogElement = catalog;
-    catalogElement.innerHTML = '';
+  clearCatalog() {
+    const catalogGallery = document.querySelector('.catalog__gallery') as HTMLElement;
+    catalogGallery.innerHTML = '';
+  }
+
+  clearBreadcrumbs() {
+    const breadcrumbChildren = document.querySelectorAll('.breadcrumb__child');
+    breadcrumbChildren.forEach((element) => {
+      element.remove();
+    });
   }
 
   async infiniteScrollPage(useFilter: boolean = false) {
-    console.log(11);
     const isFilter = useFilter;
     const pageSize = 10;
     let currentPage = 0;
@@ -222,10 +233,6 @@ export default class Catalog {
   }
 
   slider() {
-    interface SliderElement extends HTMLElement {
-      noUiSlider: API;
-    }
-
     const stepsSlider = document.getElementById('steps-slider') as SliderElement;
     const minPriceInput = document.getElementById('min-price') as HTMLInputElement;
     const maxPriceInput = document.getElementById('max-price') as HTMLInputElement;
@@ -251,15 +258,15 @@ export default class Catalog {
     });
 
     inputs.forEach((input, handle) => {
-      input.addEventListener('change', function () {
+      input.addEventListener('change', function inputValue() {
         stepsSlider.noUiSlider.setHandle(handle, this.value);
       });
 
-      minPriceInput.addEventListener('change', function () {
+      minPriceInput.addEventListener('change', function minValue() {
         stepsSlider.noUiSlider.set([this.value, null]);
       });
 
-      maxPriceInput.addEventListener('change', function () {
+      maxPriceInput.addEventListener('change', function maxValue() {
         stepsSlider.noUiSlider.set([null, this.value]);
       });
     });
@@ -354,7 +361,6 @@ export default class Catalog {
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
-
     const container = document.querySelector('.breadcrumb') as HTMLElement;
     container.innerHTML = '';
     const breadcrumbTitle = HTMLCreator.createElement('div', { class: 'breadcrumb__title breadcrumb__element' }, [
@@ -362,7 +368,8 @@ export default class Catalog {
     ]);
     breadcrumbTitle?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-      this.filter(1, 10);
+      this.infiniteScrollPage();
+      this.clearCatalog();
       container.innerHTML = '';
       container.append(breadcrumbTitle);
     });
@@ -371,7 +378,10 @@ export default class Catalog {
       const breadcrumbsOfCategory = (await this.controller.getBreadcrumbsOfCategory(event)) as BreadcrumbsInfo;
       const breadCrumbsCategory = HTMLCreator.createElement(
         'div',
-        { class: 'breadcrumbs__category breadcrumb__element', id: breadcrumbsOfCategory.category?.id },
+        {
+          class: 'breadcrumbs__category breadcrumb__element breadcrumb__child',
+          id: breadcrumbsOfCategory.category?.id,
+        },
         [`${breadcrumbsOfCategory.category?.name[`en-US`]}`]
       );
       breadCrumbsCategory.addEventListener('click', (eventBreadcrumbs) => {
@@ -380,7 +390,10 @@ export default class Catalog {
       if (breadcrumbsOfCategory.parentCategory) {
         const breadCrumbsParentCategory = HTMLCreator.createElement(
           'div',
-          { class: 'breadcrumbs__parent-category breadcrumb__element', id: breadcrumbsOfCategory.parentCategory.id },
+          {
+            class: 'breadcrumbs__parent-category breadcrumb__element breadcrumb__child',
+            id: breadcrumbsOfCategory.parentCategory.id,
+          },
           [`${breadcrumbsOfCategory.parentCategory?.name[`en-US`]}`]
         );
         breadCrumbsParentCategory.addEventListener('click', (eventBreadcrumbs) => {
@@ -424,6 +437,8 @@ export default class Catalog {
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
     const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+    const sentinel = document.querySelector('.sentinel');
+    sentinel?.remove();
     this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
     if (searchProduct && Array.isArray(searchProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
