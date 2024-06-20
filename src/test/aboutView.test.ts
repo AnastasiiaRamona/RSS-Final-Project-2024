@@ -88,7 +88,7 @@ describe('AboutPage', () => {
   test('should create collaboration section', () => {
     const collaboration = aboutPage.renderCollaborationSection();
 
-    expect(HTMLCreator.createElement).toHaveBeenCalledTimes(3);
+    expect(HTMLCreator.createElement).toHaveBeenCalledTimes(5);
     expect(HTMLCreator.createElement).toHaveBeenCalledWith(
       'section',
       { class: 'about-contributions' },
@@ -114,7 +114,7 @@ describe('AboutPage', () => {
   test('should create about page', () => {
     const main = aboutPage.renderAboutPage();
 
-    expect(HTMLCreator.createElement).toHaveBeenCalledTimes(105);
+    expect(HTMLCreator.createElement).toHaveBeenCalledTimes(107);
     expect(main).toBeDefined();
   });
 });
