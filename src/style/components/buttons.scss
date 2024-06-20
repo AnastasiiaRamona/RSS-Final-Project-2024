@@ -1,0 +1,41 @@
+button {
+  @include font('Helvetica', medium, 600, 1.5, $primary-color);
+  padding: 10px 20px;
+  background-color: $white;
+  border-radius: 20px;
+  @include size(auto, 60px);
+  margin-bottom: 10px;
+  margin-top: 10px;
+  transition: all 0.5s linear;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.622);
+  cursor: pointer;
+  border: none;
+}
+
+button:not(:disabled):hover,
+.clicked {
+  color: $white;
+  background: $btn-bca-color;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.622);
+  
+  
+  img {
+    filter: invert(1);
+  }
+}
+
+button:disabled {
+  cursor: default;
+}
+
+@media (max-width: 1160px) {
+  button {
+    font-size: small;
+  }
+}
+
+@media (max-width: 480px) {
+  button {
+    padding: 8px 13px;
+  }
+}
