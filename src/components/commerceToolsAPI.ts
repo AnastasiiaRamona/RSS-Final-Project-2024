@@ -180,7 +180,6 @@ export default class CommerceToolsAPI {
   async emailCheck(email: string) {
     this.ctpClient = this.createCredentialsClient();
     this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
-
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot
