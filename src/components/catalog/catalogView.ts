@@ -1,10 +1,10 @@
 import Toastify from 'toastify-js';
 import lottie from 'lottie-web';
-import noUiSlider, { API } from 'nouislider';
+import noUiSlider from 'nouislider';
 import wNumb from 'wnumb';
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
-import { BreadcrumbsInfo, CategoryMap } from './types';
+import { BreadcrumbsInfo, CategoryMap, SliderElement } from './types';
 
 export default class Catalog {
   controller: CatalogController;
@@ -233,10 +233,6 @@ export default class Catalog {
   }
 
   slider() {
-    interface SliderElement extends HTMLElement {
-      noUiSlider: API;
-    }
-
     const stepsSlider = document.getElementById('steps-slider') as SliderElement;
     const minPriceInput = document.getElementById('min-price') as HTMLInputElement;
     const maxPriceInput = document.getElementById('max-price') as HTMLInputElement;
