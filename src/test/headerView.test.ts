@@ -1,9 +1,12 @@
+import fetchMock from 'jest-fetch-mock';
 import Header from '../components/header/headerView';
 import HTMLCreator from '../components/HTMLCreator';
 
+fetchMock.enableMocks();
+
 jest.mock('../components/HTMLCreator');
-jest.mock('../assets/dog.png', () => 'dog.png');
-jest.mock('../assets/cat.png', () => 'cat.png');
+jest.mock('../assets/dog.webp', () => 'dog.webp');
+jest.mock('../assets/cat.webp', () => 'cat.webp');
 
 describe('Header', () => {
   let header: Header;

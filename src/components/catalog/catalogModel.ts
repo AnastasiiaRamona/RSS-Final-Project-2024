@@ -7,8 +7,8 @@ export default class CatalogModel {
     this.commerceToolsAPI = new CommerceToolsAPI();
   }
 
-  async getProducts() {
-    const products = (await this.commerceToolsAPI.getProducts()) as unknown as [
+  async getProducts(page: number, limitPage: number) {
+    const products = (await this.commerceToolsAPI.getProducts(page, limitPage)) as unknown as [
       {
         id: string;
         name: string;
@@ -27,6 +27,12 @@ export default class CatalogModel {
       const result: { [key: string]: string[] } = {};
       Object.keys(obj).forEach((key) => {
         const uniqueArray = [...new Set(obj[key])];
+        uniqueArray.sort((a, b) => {
+          if (typeof a === 'number' && typeof b === 'number') {
+            return a - b;
+          }
+          return a.toString().localeCompare(b.toString());
+        });
         result[key] = uniqueArray.map(String);
       });
       return result;
@@ -39,10 +45,12 @@ export default class CatalogModel {
     checkboxChecked: { [key: string]: string[] },
     sorting: string,
     minPrice: string,
-    maxPrice: string
+    maxPrice: string,
+    page: number,
+    limitPage: number
   ) {
     const sortingApi = sorting;
-    const filter = await this.commerceToolsAPI.filter(checkboxChecked, sortingApi, minPrice, maxPrice);
+    const filter = await this.commerceToolsAPI.filter(checkboxChecked, sortingApi, minPrice, maxPrice, page, limitPage);
     return filter;
   }
 
@@ -102,7 +110,25 @@ export default class CatalogModel {
   }
 
   async getBreadcrumbsOfCategory(categoryId: string) {
-    const productOfCategory = this.commerceToolsAPI.getBreadcrumbsOfCategory(categoryId);
-    return productOfCategory;
+    const breadcrumbsOfCategory = this.commerceToolsAPI.getBreadcrumbsOfCategory(categoryId);
+    return breadcrumbsOfCategory;
+  }
+
+  async addToCart(productId: string) {
+    const cartId = this.commerceToolsAPI.getCartId() as string;
+    const currentCart = await this.commerceToolsAPI.getCart(cartId);
+    const currentCartVersion = Number(currentCart?.body.version);
+    const result = await this.commerceToolsAPI.addToCart(cartId, productId, 1, 1, currentCartVersion);
+    return result;
+  }
+
+  async getProductInCart() {
+    const cartId = this.commerceToolsAPI.getCartId() as string;
+    let listProductInCart;
+    const currentCard = await this.commerceToolsAPI.getCart(cartId);
+    if (currentCard) {
+      listProductInCart = currentCard?.body.lineItems.map((lineItem) => lineItem.productId);
+    }
+    return listProductInCart;
   }
 }

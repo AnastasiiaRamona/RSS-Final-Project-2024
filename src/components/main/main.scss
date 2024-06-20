@@ -1,33 +1,169 @@
 .main-field {
-  @include flexbox(row, center);
-  @include size(100vw, 100%);
-  overflow: hidden;
-  position: relative;
-  padding-top: 15vh;
+  @include flexbox(row);
+  @include size(100vw, auto);
 }
 
 .main-area {
-  @include flexbox(column, center, center);
+  @include size(100%, 85vh);
+  overflow-y: auto;
+  gap: 20px;
+  position: relative;
+  @include flexbox(column, normal, center);
+  overflow-x: hidden;
 }
 
-.main-area__text {
-  @include size(50vw, auto);
-  @include font($third-font-family, xx-large, normal, normal, $primary-color);
+.main-area__info {
+  @include size(90%, auto);
+  background: $light;
+  border-radius: 0 0 20px 20px;
+}
+
+.main-area__header {
+  @include font($third-font-family, xxx-large, bold, normal, $primary-color);
   text-align: center;
-  background-color: $white;
-  padding: 10px 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  transition: all 0.2s linear;
+
+  &:hover {
+    color: $white;
+    text-shadow: 0 0 10px $primary-color;
+    transition: all 0.2s linear;
+  }
+}
+
+.main-area__promo-codes {
+  @include flexbox(row, center, center);
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.promo-code {
+  @include flexbox(column, center, center);
+  @include size(40vw, auto);
+  border: 1px solid #ddd;
+  padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 4px 2px rgba(61, 58, 58, 0.915);
+  background-color: $white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
-  padding: 10px;
+  margin-bottom: 20px;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    margin-bottom: 10px;
+  }
+
+  &__title {
+    @include font($third-font-family, large, bold, normal, $primary-color);
+    text-align: center;
+    margin: 10px 0;
+  }
+
+  &__description {
+    @include font($third-font-family, large, normal, normal, #555);
+    text-align: center;
+    padding: 0 10px;
+  }
 }
 
-.main-area__text:hover {
-  transform: translateY(-5px);
+.actual-news-section {
+  @include container(90vw);
+  padding: 2rem 0;
+
+  &__content {
+    @include flexbox(column, flex-start, stretch);
+    gap: 2rem;
+  }
+
+  &__text {
+    @include font($primary-font-family, $font-size-base, $font-weight-normal, 1.5, $primary-color);
+    margin-bottom: 1rem;
+  }
 }
 
-@media (max-width: 1160px) {
-  .main-area__text {
-    font-size: medium;
+.pet-wellness, .pet-adoption {
+  @include flexbox(column, flex-start, flex-start);
+  padding: 1.5rem;
+  border-radius: 10px;
+  color: $white;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-position 0.1s;
+  height: 80vh;
+  overflow-y: auto;
+  transition: all 1s linear;
+
+  &.pet-wellness {
+    background-image: url('./assets/cat-background-1.webp');
+    align-items: flex-end;
+  }
+
+  &.pet-adoption {
+    background-image: url('./assets/dog-background.webp');
+  }
+
+  h2 {
+    @include font($secondary-font-family, 1.75rem, $font-weight-bold, 1.2, $primary-color);
+    margin-bottom: 0.5rem;
+    max-width: 300px;
+  }
+
+  p {
+    @include font($primary-font-family, $font-size-base, $font-weight-normal, 1.5, $primary-color);
+    max-width: 300px;
+  }
+}
+
+.footer-section__content {
+  font-size: $primary-font-family;
+  color: $white;
+  @include flexbox(column);
+  width: 100vw;
+  gap: 20px;
+  padding: 20px;
+  background: $bca-gradient-second;
+}
+
+@media screen and (max-width: 1250px) {
+  .pet-wellness, .pet-adoption {
+    height: 50vh;
+  }
+}
+
+@media screen and (max-width: 1160px) {
+  .main-area__info {
+    border-radius: 20px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .pet-wellness, .pet-adoption {
+    height: 30vh;
+
+    p, h2 {
+      font-size: x-small;
+    }
+  }
+
+  .main-area__header {
+    font-size: large;
+  }
+
+  .promo-code {
+    width: 60vw;
+  }
+}
+
+@media screen and (max-width: 605px) {
+  .pet-wellness, .pet-adoption {
+    height: 20vh;
   }
 }

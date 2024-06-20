@@ -1,17 +1,21 @@
 import Toastify from 'toastify-js';
+import lottie from 'lottie-web';
+import noUiSlider from 'nouislider';
+import wNumb from 'wnumb';
 import HTMLCreator from '../HTMLCreator';
 import CatalogController from './catalogController';
-import { BreadcrumbsInfo, CategoryMap } from './types';
+import { BreadcrumbsInfo, CategoryMap, SliderElement } from './types';
 
 export default class Catalog {
   controller: CatalogController;
+
+  observer: IntersectionObserver | null = null;
 
   constructor() {
     this.controller = new CatalogController();
   }
 
   async renderPage() {
-    let catalog: HTMLElement | null = null;
     let form: HTMLElement | null = null;
     let category: HTMLElement | null = null;
     const catalogWrapper = HTMLCreator.createElement('main', { class: 'catalog__main' }, [
@@ -23,6 +27,7 @@ export default class Catalog {
               class: 'catalog__filter',
             },
             [
+              (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
               HTMLCreator.createElement('div', { class: 'search-sort__wrapper' }, [
                 HTMLCreator.createElement('button', { class: 'catalog__reset-filter' }, ['Reset Filter']),
                 HTMLCreator.createElement('form', { class: 'catalog__sorting' }, [
@@ -39,7 +44,6 @@ export default class Catalog {
                   ),
                 ]),
               ]),
-              (form = HTMLCreator.createElement('form', { id: 'filter__form', class: 'filter__form' })),
             ]
           ),
         ]),
@@ -49,25 +53,24 @@ export default class Catalog {
           ]),
           HTMLCreator.createElement('form', { class: 'catalog__search' }, [
             HTMLCreator.createElement('div', { class: 'search__wrapper' }, [
-              HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, [
-                'Search the site:',
-              ]),
+              HTMLCreator.createElement('label', { for: 'product-search', class: 'search__label' }, ['Search:']),
               HTMLCreator.createElement('input', { type: 'search', id: 'product-search', class: 'search__input' }),
             ]),
             HTMLCreator.createElement('button', { type: 'submit', class: 'search__button' }, ['Search']),
           ]),
         ]),
         HTMLCreator.createElement('div', { class: 'core__wrapper' }, [
-          (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
-            HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
-          ])),
-          (catalog = HTMLCreator.createElement('section', {
-            class: 'catalog__gallery',
-          })),
+          HTMLCreator.createElement('div', { class: 'product__wrapper' }, [
+            (category = HTMLCreator.createElement('aside', { class: 'catalog__category' }, [
+              HTMLCreator.createElement('h3', { class: 'category__title' }, ['Category']),
+            ])),
+            HTMLCreator.createElement('section', {
+              class: 'catalog__gallery',
+            }),
+          ]),
         ]),
       ]),
     ]);
-    await this.productView(catalog);
     await this.attributesView(form);
     await this.getCategory(category);
     return catalogWrapper;
@@ -81,48 +84,216 @@ export default class Catalog {
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
     const categoryAll = document.querySelectorAll('.category__element') as NodeListOf<HTMLInputElement>;
+    const catalogGallery = document.querySelector('.catalog__gallery') as HTMLElement;
 
     categoryAll.forEach((category) => {
       category.addEventListener('click', (event) => {
         this.showProductsOfCategory(event);
       });
     });
-
     checkboxAll.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
-        this.filter(checkboxAll, sortSelect, priceInputAll);
+        this.clearBreadcrumbs();
+        this.infiniteScrollPage(true);
       });
     });
     resetFilter?.addEventListener('click', () => {
+      this.clearCatalog();
+      this.clearBreadcrumbs();
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-      this.filter(checkboxAll, sortSelect, priceInputAll);
+      this.infiniteScrollPage(false);
     });
     searchButton?.addEventListener('click', (event) => {
+      this.clearBreadcrumbs();
       this.search(event, searchInput);
     });
     sortSelect?.addEventListener('change', () => {
-      this.filter(checkboxAll, sortSelect, priceInputAll);
+      this.clearBreadcrumbs();
+      this.infiniteScrollPage(true);
     });
     priceInputAll.forEach((priceInput) => {
       priceInput.addEventListener('change', () => {
-        this.filter(checkboxAll, sortSelect, priceInputAll);
+        this.clearBreadcrumbs();
+        this.infiniteScrollPage(true);
       });
     });
 
-    const catalogGallery = document.querySelector('.catalog__gallery');
     if (catalogGallery) {
       catalogGallery.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
-        const productCard = target.closest('.product-card');
-        if (productCard) {
-          const productId = productCard.id;
-          const productEvent = new CustomEvent('productEvent', {
-            detail: { id: productId },
-          });
-          document.body.dispatchEvent(productEvent);
+        if (target.classList.contains('product-card__addtocard')) {
+          this.addToCart(event);
+        } else {
+          const productCard = target.closest('.product-card');
+          if (productCard) {
+            const productId = productCard.id;
+            const productEvent = new CustomEvent('productEvent', {
+              detail: { id: productId },
+            });
+            document.body.dispatchEvent(productEvent);
+          }
         }
       });
     }
+  }
+
+  clearCatalog() {
+    const catalogGallery = document.querySelector('.catalog__gallery') as HTMLElement;
+    catalogGallery.innerHTML = '';
+  }
+
+  clearBreadcrumbs() {
+    const breadcrumbChildren = document.querySelectorAll('.breadcrumb__child');
+    breadcrumbChildren.forEach((element) => {
+      element.remove();
+    });
+  }
+
+  async infiniteScrollPage(useFilter: boolean = false) {
+    const isFilter = useFilter;
+    const pageSize = 10;
+    let currentPage = 0;
+    let isLoading = false;
+    const wrapper = document.querySelector('.core__wrapper');
+    const catalog = document.querySelector('.catalog__gallery') as HTMLElement;
+    const loadingContainer = HTMLCreator.createElement('div', { class: 'catalog__loading' });
+    const sentinel = HTMLCreator.createElement('div', { class: 'sentinel' });
+    lottie.loadAnimation({
+      container: loadingContainer,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'https://lottie.host/2c005af7-a27d-42ee-92f1-91e68e7e6df0/guBNZp8sp3.json',
+    });
+    loadingContainer.style.display = 'none';
+
+    if (isFilter) {
+      currentPage = 0;
+      catalog.innerHTML = '';
+    }
+    const loadProducts = async () => {
+      if (!isLoading) {
+        isLoading = true;
+        currentPage += 1;
+        loadingContainer.style.display = 'block';
+
+        if (!isFilter) {
+          await this.productView(catalog, currentPage, pageSize);
+        } else {
+          await this.filter(currentPage, pageSize);
+        }
+
+        isLoading = false;
+        loadingContainer.style.display = 'none';
+      }
+    };
+
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+    this.observer = new IntersectionObserver(
+      async (entries) => {
+        if (entries[0].isIntersecting) {
+          await loadProducts();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    this.observer.observe(sentinel);
+    wrapper?.append(sentinel);
+    wrapper?.append(loadingContainer);
+    await loadProducts();
+  }
+
+  async addToCart(event: Event) {
+    const button = event.target as HTMLElement;
+    if (!button.querySelector('.spinner-container')) {
+      const spinnerContainer = HTMLCreator.createElement('div', { class: 'spinner-container' });
+      button.appendChild(spinnerContainer);
+      const animation = lottie.loadAnimation({
+        container: spinnerContainer,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'https://lottie.host/85c922ef-a827-48b3-b6f8-d7c091358cfc/T7WPEeEmgF.json',
+      });
+      try {
+        await this.controller.addToCart(event);
+      } catch (error) {
+        if (error instanceof Error) {
+          this.handleResponse(error.message);
+        }
+      }
+      await this.toggleAllButtonsToCard();
+
+      animation.stop();
+      button.removeChild(spinnerContainer);
+    }
+  }
+
+  slider() {
+    const stepsSlider = document.getElementById('steps-slider') as SliderElement;
+    const minPriceInput = document.getElementById('min-price') as HTMLInputElement;
+    const maxPriceInput = document.getElementById('max-price') as HTMLInputElement;
+    const inputs: HTMLInputElement[] = [minPriceInput, maxPriceInput];
+    noUiSlider.create(stepsSlider, {
+      start: [2, 112],
+      connect: true,
+      range: {
+        min: 2,
+        max: 112,
+      },
+      step: 1,
+      format: wNumb({
+        decimals: 0,
+      }),
+    });
+    stepsSlider.noUiSlider.on('update', (values: (string | number)[], handle: number) => {
+      inputs[handle].value = values[handle].toString();
+    });
+
+    stepsSlider.noUiSlider.on('set', () => {
+      this.infiniteScrollPage(true);
+    });
+
+    inputs.forEach((input, handle) => {
+      input.addEventListener('change', function inputValue() {
+        stepsSlider.noUiSlider.setHandle(handle, this.value);
+      });
+
+      minPriceInput.addEventListener('change', function minValue() {
+        stepsSlider.noUiSlider.set([this.value, null]);
+      });
+
+      maxPriceInput.addEventListener('change', function maxValue() {
+        stepsSlider.noUiSlider.set([null, this.value]);
+      });
+    });
+  }
+
+  async toggleAllButtonsToCard() {
+    const listProductInCart = await this.controller.getProductInCart();
+    const allButtonsCart = document.querySelectorAll('.product-card__addtocard') as NodeListOf<HTMLButtonElement>;
+    allButtonsCart.forEach((buttonCart) => {
+      const button = buttonCart as HTMLButtonElement;
+      button.disabled = false;
+    });
+    const productCartDiv = document.querySelectorAll('.product-card') as NodeListOf<HTMLElement>;
+    listProductInCart?.forEach((productInCart) => {
+      this.toggleButtonToCard(productInCart, productCartDiv);
+    });
+  }
+
+  toggleButtonToCard(productId: string, productCartDiv: NodeListOf<HTMLElement>) {
+    productCartDiv.forEach((productCart) => {
+      if (productCart.id === productId) {
+        const button = productCart.querySelector('.product-card__addtocard') as HTMLButtonElement;
+        if (button) {
+          button.disabled = true;
+        }
+      }
+    });
   }
 
   async showProductsOfCategory(event: Event) {
@@ -142,7 +313,10 @@ export default class Catalog {
           });
         }
       }
-      this.generateBreadcrumbs(event);
+      await this.generateBreadcrumbs(event);
+      await this.toggleAllButtonsToCard();
+      const sentinel = document.querySelector('.sentinel');
+      sentinel?.remove();
     } catch (error) {
       if (error instanceof Error) {
         this.handleResponse(error.message);
@@ -162,7 +336,7 @@ export default class Catalog {
     const ul = HTMLCreator.createElement('ul', { class: 'category__list' });
     Object.values(categoryTree).forEach(async (category) => {
       const li = HTMLCreator.createElement('li', { id: category.id, class: 'category__element' }, [
-        category.name,
+        HTMLCreator.createElement('p', { id: category.id, class: 'category__name' }, [category.name]),
       ]) as HTMLElement;
       if (Object.keys(category.children).length > 0) {
         li.appendChild(await this.createSubcategoryTree(category.children));
@@ -176,7 +350,7 @@ export default class Catalog {
     const subUl = HTMLCreator.createElement('ul', { class: 'category__sub-list hide__sub-list' });
     Object.values(subcategoryTree).forEach(async (subCategory) => {
       const li = HTMLCreator.createElement('li', { id: subCategory.id, class: 'category__sub-element' }, [
-        subCategory.name,
+        HTMLCreator.createElement('p', { id: subCategory.id, class: 'subcategory__name' }, [subCategory.name]),
       ]) as HTMLElement;
       subUl.appendChild(li);
     });
@@ -187,7 +361,6 @@ export default class Catalog {
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
-
     const container = document.querySelector('.breadcrumb') as HTMLElement;
     container.innerHTML = '';
     const breadcrumbTitle = HTMLCreator.createElement('div', { class: 'breadcrumb__title breadcrumb__element' }, [
@@ -195,7 +368,8 @@ export default class Catalog {
     ]);
     breadcrumbTitle?.addEventListener('click', () => {
       this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
-      this.filter(checkboxAll, sortSelect, priceInputAll);
+      this.infiniteScrollPage();
+      this.clearCatalog();
       container.innerHTML = '';
       container.append(breadcrumbTitle);
     });
@@ -204,7 +378,10 @@ export default class Catalog {
       const breadcrumbsOfCategory = (await this.controller.getBreadcrumbsOfCategory(event)) as BreadcrumbsInfo;
       const breadCrumbsCategory = HTMLCreator.createElement(
         'div',
-        { class: 'breadcrumbs__category breadcrumb__element', id: breadcrumbsOfCategory.category?.id },
+        {
+          class: 'breadcrumbs__category breadcrumb__element breadcrumb__child',
+          id: breadcrumbsOfCategory.category?.id,
+        },
         [`${breadcrumbsOfCategory.category?.name[`en-US`]}`]
       );
       breadCrumbsCategory.addEventListener('click', (eventBreadcrumbs) => {
@@ -213,7 +390,10 @@ export default class Catalog {
       if (breadcrumbsOfCategory.parentCategory) {
         const breadCrumbsParentCategory = HTMLCreator.createElement(
           'div',
-          { class: 'breadcrumbs__parent-category breadcrumb__element', id: breadcrumbsOfCategory.parentCategory.id },
+          {
+            class: 'breadcrumbs__parent-category breadcrumb__element breadcrumb__child',
+            id: breadcrumbsOfCategory.parentCategory.id,
+          },
           [`${breadcrumbsOfCategory.parentCategory?.name[`en-US`]}`]
         );
         breadCrumbsParentCategory.addEventListener('click', (eventBreadcrumbs) => {
@@ -229,22 +409,27 @@ export default class Catalog {
     }
   }
 
-  async filter(
-    checkboxAll: NodeListOf<HTMLInputElement>,
-    sortSelect: HTMLSelectElement,
-    priceInputAll: NodeListOf<HTMLInputElement>
-  ) {
-    const filterProduct = await this.controller.checkboxChecked(checkboxAll, sortSelect, priceInputAll);
+  async filter(page: number, limitPage: number) {
+    const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+    const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
+    const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
+    const filterProduct = await this.controller.checkboxChecked(
+      checkboxAll,
+      sortSelect,
+      priceInputAll,
+      page,
+      limitPage
+    );
     if (filterProduct && Array.isArray(filterProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
       if (catalog) {
-        catalog.innerHTML = '';
         filterProduct.forEach((product) => {
           const { id, name, description = '', imageUrl = '', price = 0, discountedPrice } = product;
           catalog.append(this.productCard(id, name, description, imageUrl, price, discountedPrice));
         });
       }
     }
+    await this.toggleAllButtonsToCard();
   }
 
   async search(event: Event, searchInput: HTMLInputElement) {
@@ -252,6 +437,8 @@ export default class Catalog {
     const sortSelect = document.querySelector('.sorting__select') as HTMLSelectElement;
     const checkboxAll = document.querySelectorAll('.checkbox__input') as NodeListOf<HTMLInputElement>;
     const priceInputAll = document.querySelectorAll('.price__input') as NodeListOf<HTMLInputElement>;
+    const sentinel = document.querySelector('.sentinel');
+    sentinel?.remove();
     this.controller.resetFilter(checkboxAll, sortSelect, priceInputAll);
     if (searchProduct && Array.isArray(searchProduct)) {
       const catalog = document.querySelector('.catalog__gallery');
@@ -263,10 +450,11 @@ export default class Catalog {
         });
       }
     }
+    await this.toggleAllButtonsToCard();
   }
 
-  async productView(catalog: HTMLElement) {
-    const products = await this.controller.getProducts();
+  async productView(catalog: HTMLElement, page: number, limitPage: number) {
+    const products = await this.controller.getProducts(page, limitPage);
     products.forEach((product) => {
       catalog.append(
         this.productCard(
@@ -279,6 +467,7 @@ export default class Catalog {
         )
       );
     });
+    this.toggleAllButtonsToCard();
   }
 
   productCard(id: string, name: string, description: string, img: string, price: number, discountedPrice?: number) {
@@ -301,6 +490,7 @@ export default class Catalog {
         HTMLCreator.createElement('h3', { class: 'product-card__name' }, [name]),
         HTMLCreator.createElement('p', { class: 'product-card__description' }, [description]),
         HTMLCreator.createElement('div', { class: 'product-card__prices' }, prices),
+        HTMLCreator.createElement('button', { class: 'product-card__addtocard' }, ['🛒 Add to Cart']),
       ]),
     ]);
     return productCard;
@@ -317,7 +507,7 @@ export default class Catalog {
     const maxPrice = (Number(attributes.maxPrice[0]) / 100).toFixed(0);
     const price = HTMLCreator.createElement('div', { class: 'checkbox__price' }, [
       HTMLCreator.createElement('div', { class: 'checkbox__price-min' }, [
-        HTMLCreator.createElement('span', { class: 'price__span', type: 'range', id: 'min-price' }, ['Minimum Price']),
+        HTMLCreator.createElement('span', { class: 'price__span', type: 'range' }, ['Minimum Price']),
         HTMLCreator.createElement('input', {
           type: 'number',
           value: `${minPrice}`,
@@ -329,7 +519,7 @@ export default class Catalog {
         }),
       ]),
       HTMLCreator.createElement('div', { class: 'checkbox__price-min' }, [
-        HTMLCreator.createElement('span', { class: 'price__span', type: 'range', id: 'max-price' }, ['Maximum Price']),
+        HTMLCreator.createElement('span', { class: 'price__span', type: 'range' }, ['Maximum Price']),
         HTMLCreator.createElement('input', {
           type: 'number',
           value: `${maxPrice}`,
@@ -340,12 +530,13 @@ export default class Catalog {
           min: minPrice,
         }),
       ]),
+      HTMLCreator.createElement('div', { id: 'steps-slider' }),
     ]);
     container.appendChild(price);
     Object.keys(attributes).forEach((key) => {
       if (key !== 'minPrice' && key !== 'maxPrice') {
         const div = HTMLCreator.createElement('div', { class: `${key} checkbox__element` }) as HTMLElement;
-        const header = HTMLCreator.createElement('h3', { class: key }, [
+        const header = HTMLCreator.createElement('h3', { class: 'checkbox__h3' }, [
           this.controller.formatString(key),
         ]) as HTMLElement;
         attributes[key].forEach((value) => {
@@ -355,8 +546,11 @@ export default class Catalog {
             id: `${key}`,
             value,
           }) as HTMLInputElement;
-          const label = HTMLCreator.createElement('label', {}, [value]) as HTMLElement;
-          const checkboxContainer = HTMLCreator.createElement('div', {}, [checkbox, label]) as HTMLElement;
+          const label = HTMLCreator.createElement('label', { class: 'checkbox__label' }, [value]) as HTMLElement;
+          const checkboxContainer = HTMLCreator.createElement('div', { class: 'checkbox__element-container' }, [
+            checkbox,
+            label,
+          ]) as HTMLElement;
           div.appendChild(checkboxContainer);
         });
         div.insertBefore(header, div.firstChild);

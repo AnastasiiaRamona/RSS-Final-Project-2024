@@ -1,14 +1,18 @@
+import QuantityUpdater from '../quantityUpdater';
 import CatalogModel from './catalogModel';
 
 export default class CatalogController {
   model: CatalogModel;
 
+  quantityUpdater: QuantityUpdater;
+
   constructor() {
     this.model = new CatalogModel();
+    this.quantityUpdater = new QuantityUpdater();
   }
 
-  async getProducts() {
-    const result = await this.model.getProducts();
+  async getProducts(page: number, limitPage: number) {
+    const result = await this.model.getProducts(page, limitPage);
     return result;
   }
 
@@ -20,7 +24,9 @@ export default class CatalogController {
   checkboxChecked(
     checkboxAll: NodeListOf<HTMLInputElement>,
     sortSelect: HTMLSelectElement,
-    priceInputAll: NodeListOf<HTMLInputElement>
+    priceInputAll: NodeListOf<HTMLInputElement>,
+    page: number,
+    limitPage: number
   ) {
     const checkboxChecked: { [key: string]: string[] } = {};
     const sorting = sortSelect.value;
@@ -42,7 +48,7 @@ export default class CatalogController {
         }
       }
     });
-    const result = this.model.checkboxChecked(checkboxChecked, sorting, minPrice, maxPrice);
+    const result = this.model.checkboxChecked(checkboxChecked, sorting, minPrice, maxPrice, page, limitPage);
     return result;
   }
 
@@ -105,5 +111,17 @@ export default class CatalogController {
     let formattedStr = str.replace(/-/g, ' ');
     formattedStr = formattedStr.charAt(0).toUpperCase() + formattedStr.slice(1);
     return formattedStr;
+  }
+
+  async addToCart(event: Event) {
+    const target = event.target as HTMLElement;
+    const productId = target.parentElement?.parentElement?.id as string;
+    await this.model.addToCart(productId);
+    await this.quantityUpdater.updateQuantity();
+  }
+
+  async getProductInCart() {
+    const listProductInCart = await this.model.getProductInCart();
+    return listProductInCart;
   }
 }

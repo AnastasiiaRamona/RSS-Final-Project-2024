@@ -6,7 +6,16 @@ import {
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
-import { BaseAddress, CustomerDraft, CustomerUpdate, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import {
+  BaseAddress,
+  CartDraft,
+  CustomerDraft,
+  CustomerUpdate,
+  createApiBuilderFromCtpClient,
+  CartUpdateAction,
+  CartUpdate,
+  LineItemDraft,
+} from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import {
   clientId,
@@ -36,7 +45,7 @@ export default class CommerceToolsAPI {
     fetch,
   };
 
-  private createPasswordFlowOptions(username: string, password: string): PasswordAuthMiddlewareOptions {
+  createPasswordFlowOptions(username: string, password: string): PasswordAuthMiddlewareOptions {
     return {
       host: authHostUrl,
       projectKey,
@@ -108,16 +117,24 @@ export default class CommerceToolsAPI {
     let response;
     if (this.apiRoot) {
       response = await this.apiRoot
-        .me()
         .login()
         .post({
           body: {
             email,
             password,
+            anonymousCart: {
+              id: localStorage.getItem('cartPetShopId') as string,
+              typeId: 'cart',
+            },
+            anonymousCartSignInMode: 'MergeWithExistingCustomerCart',
           },
         })
         .execute();
       localStorage.setItem('userPetShopId', response.body.customer.id);
+    }
+
+    if (response?.body.cart?.id) {
+      localStorage.setItem('userCartPetShopId', response.body.cart.id);
     }
 
     localStorage.setItem('userToken', userTokenCache.get().token);
@@ -194,7 +211,7 @@ export default class CommerceToolsAPI {
     return response;
   }
 
-  async getProducts() {
+  async getProducts(page: number, limit: number) {
     this.createClient();
 
     let result;
@@ -203,7 +220,8 @@ export default class CommerceToolsAPI {
         .products()
         .get({
           queryArgs: {
-            limit: 100,
+            limit,
+            offset: (page - 1) * limit,
           },
         })
         .execute()
@@ -277,9 +295,15 @@ export default class CommerceToolsAPI {
     return result;
   }
 
-  async filter(checkboxChecked: { [key: string]: string[] }, sortingApi: string, minPrice: string, maxPrice: string) {
+  async filter(
+    checkboxChecked: { [key: string]: string[] },
+    sortingApi: string,
+    minPrice: string,
+    maxPrice: string,
+    page: number,
+    limitPage: number
+  ) {
     this.createClient();
-
     const localeArr = ['color-of-toy', 'quantity'];
     let result;
     const filters: string[] = [];
@@ -300,7 +324,8 @@ export default class CommerceToolsAPI {
     if (this.apiRoot) {
       const queryArgs: { [key: string]: string | string[] | number | undefined } = {
         'filter.query': filters,
-        limit: 40,
+        limit: limitPage,
+        offset: (page - 1) * limitPage,
       };
       if (sortingApi) {
         queryArgs.sort = sortingApi;
@@ -444,7 +469,8 @@ export default class CommerceToolsAPI {
       }
     }
 
-    localStorage.clear();
+    localStorage.removeItem('userPetShopId');
+    localStorage.removeItem('userToken');
 
     this.ctpClient = null;
     this.apiRoot = null;
@@ -514,5 +540,142 @@ export default class CommerceToolsAPI {
       result = error;
     }
     return result;
+  }
+
+  async createCart(customerId?: string) {
+    this.createClient();
+
+    const cartDraft: CartDraft = {
+      currency: 'EUR',
+      country: 'US',
+      customerId: customerId || undefined,
+    };
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .carts()
+        .post({
+          body: cartDraft,
+        })
+        .execute();
+    }
+    if (response) {
+      localStorage.setItem('cartPetShopId', response.body.id);
+    }
+
+    return response;
+  }
+
+  async addToCart(cardId: string, productId: string, variantId: number, quantity: number, version: number) {
+    this.createClient();
+    let result;
+    try {
+      const lineItemDraft: LineItemDraft = {
+        productId,
+        variantId,
+        quantity,
+      };
+
+      const updateAction: CartUpdateAction = {
+        action: 'addLineItem',
+        ...lineItemDraft,
+      };
+
+      const cartUpdate: CartUpdate = {
+        version,
+        actions: [updateAction],
+      };
+
+      if (this.apiRoot) {
+        result = await this.apiRoot.carts().withId({ ID: cardId }).post({ body: cartUpdate }).execute();
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
+
+  async getCart(cartId: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.carts().withId({ ID: cartId }).get().execute();
+    }
+
+    return response;
+  }
+
+  async removeItemFromProductCart(cardId: string, lineItemId: string, version: number) {
+    this.createClient();
+    let result;
+    try {
+      if (this.apiRoot) {
+        result = await this.apiRoot
+          .carts()
+          .withId({ ID: cardId })
+          .post({
+            body: {
+              version,
+              actions: [
+                {
+                  action: 'removeLineItem',
+                  lineItemId,
+                },
+              ],
+            },
+          })
+          .execute();
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
+  }
+
+  async updateCart(cartId: string, updateData: CartUpdate) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .carts()
+        .withId({ ID: cartId })
+        .post({
+          body: updateData,
+        })
+        .execute();
+    }
+    return response;
+  }
+
+  getCartId() {
+    let cartId;
+    const isLoggedIn = !!localStorage.getItem('userToken');
+    if (isLoggedIn) {
+      cartId = localStorage.getItem('userCartPetShopId');
+    } else {
+      cartId = localStorage.getItem('cartPetShopId');
+    }
+    return cartId;
+  }
+
+  async getDiscountCodeByCode(promoCode: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .discountCodes()
+        .get({
+          queryArgs: {
+            where: `code="${promoCode}"`,
+          },
+        })
+        .execute();
+      return response.body.results[0];
+    }
+    return undefined;
   }
 }

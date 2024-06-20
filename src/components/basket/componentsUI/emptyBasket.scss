@@ -1,0 +1,74 @@
+.empty-basket-container {
+  @include container(85vw, 20px);
+  background: $light;
+  border: 1px solid $success-color;
+  border-radius: 50px;
+  box-shadow: 0 4px 8px rgba($black, 0.1);
+  text-align: center;
+  padding: 20px;
+  margin: 20px auto;
+}
+
+.catalog-button-and-video {
+  @include flexbox(row, center, center);
+  gap: 10px;
+}
+
+.catalog-button-and-video button {
+  @include flexbox(row, center, center);
+  gap: 10px;
+}
+
+.empty-cart {
+  @include size(auto, 40vh);
+}
+
+.empty-basket {
+  @include flexbox(column, center, center);
+}
+
+.empty-basket-message {
+  @include font($primary-font-family, xx-large, $font-weight-bold, 1.5, $primary-color);
+  margin-bottom: 15px;
+}
+
+.empty-basket-catalog-message {
+  @include font($third-font-family, large, $font-weight-normal, 1.4, $black);
+  width: 40vw;
+  margin-bottom: 20px;
+}
+
+.corgi-meme {
+  @include size(100px, 100px);
+  border-radius: 50%;
+  top: 20px;
+  right: 20px;
+  box-shadow: 0 4px 8px rgba($black, 0.2);
+  transition: all 0.5s linear;
+
+  &:hover {
+    @include size(110px, 110px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.622);
+    transition: all 0.5s linear;
+  }
+}
+
+@media screen and (max-width: 690px) {
+  .empty-basket-message {
+    font-size: x-large;
+  }
+
+  .empty-cart {
+    height: 30vh;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .empty-basket-message {
+    font-size: large;
+  }
+
+  .empty-basket-catalog-message {
+    font-size: small;
+  }
+}

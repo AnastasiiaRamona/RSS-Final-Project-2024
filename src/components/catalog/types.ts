@@ -1,3 +1,8 @@
+import { API } from 'nouislider';
+
+export interface SliderElement extends HTMLElement {
+  noUiSlider: API;
+}
 export interface BreadcrumbsInfo {
   parentCategory: Category | null;
   category: Category;

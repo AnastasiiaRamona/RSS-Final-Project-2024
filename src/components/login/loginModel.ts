@@ -1,10 +1,14 @@
 import CommerceToolsAPI from '../commerceToolsAPI';
+import QuantityUpdater from '../quantityUpdater';
 
 export default class LoginModel {
   commerceToolsAPI: CommerceToolsAPI;
 
+  quantityUpdater: QuantityUpdater;
+
   constructor() {
     this.commerceToolsAPI = new CommerceToolsAPI();
+    this.quantityUpdater = new QuantityUpdater();
   }
 
   validateEmail(email: string) {
@@ -43,6 +47,7 @@ export default class LoginModel {
       if (response) {
         const mainPageEvent = new CustomEvent('mainPageEvent');
         document.body.dispatchEvent(mainPageEvent);
+        await this.quantityUpdater.updateQuantity();
         return true;
       }
       return false;
