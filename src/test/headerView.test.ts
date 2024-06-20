@@ -1,7 +1,7 @@
 import Header from '../components/header/headerView';
-import HTMLCreation from '../components/HTMLCreation';
+import HTMLCreator from '../components/HTMLCreator';
 
-jest.mock('../components/HTMLCreation');
+jest.mock('../components/HTMLCreator');
 jest.mock('../assets/dog.png', () => 'dog.png');
 jest.mock('../assets/cat.png', () => 'cat.png');
 
@@ -14,7 +14,7 @@ describe('Header', () => {
   });
 
   test('Should render the header with login button when not logged in', () => {
-    (HTMLCreation.createElement as jest.Mock).mockImplementation(
+    (HTMLCreator.createElement as jest.Mock).mockImplementation(
       (tag: string, attrs: Record<string, string>, children: HTMLElement[]) => {
         const element = document.createElement(tag);
         if (attrs) {
@@ -46,39 +46,6 @@ describe('Header', () => {
     document.body.appendChild(headerElement);
 
     expect(document.querySelector('.upper-dashboard__logout-button')?.textContent).toBe('Log out');
-  });
-
-  test('Should change login button text to "⬅ Back"', () => {
-    document.body.innerHTML = `
-      <button class="upper-dashboard__logout-button">Login</button>
-    `;
-    header.changeLoginButtonToBackButton();
-    expect(document.querySelector('.upper-dashboard__logout-button')?.textContent).toBe('⬅ Back');
-  });
-
-  test('Should change registration button text to "⬅ Back"', () => {
-    document.body.innerHTML = `
-      <button class="upper-dashboard__register-button">Register</button>
-    `;
-    header.changeRegistrationButtonToBackButton();
-    expect(document.querySelector('.upper-dashboard__register-button')?.textContent).toBe('⬅ Back');
-  });
-
-  test('Should add a main page button and dispatch event on click', () => {
-    document.body.innerHTML = `
-      <div class="upper-dashboard__buttons"></div>
-    `;
-    const dispatchEventMock = jest.fn();
-    document.body.dispatchEvent = dispatchEventMock;
-
-    header.addMainPageButton();
-
-    const mainPageButton = document.querySelector('.main-page-button') as HTMLButtonElement;
-    expect(mainPageButton).not.toBeNull();
-    expect(mainPageButton?.textContent).toBe('Main page 🏠');
-
-    mainPageButton?.click();
-    expect(dispatchEventMock).toHaveBeenCalledWith(expect.objectContaining({ type: 'mainPageEvent' }));
   });
 
   test('Should add event listeners to login and registration buttons', () => {

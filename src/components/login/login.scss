@@ -59,7 +59,7 @@
 .login__main-container__image {
   @include size(auto, 30%);
   position: absolute;
-  z-index: 100;
+  z-index: 99;
   top: 12%;
   left: 20%;
   transform: rotate(10deg);

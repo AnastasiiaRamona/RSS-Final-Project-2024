@@ -6,7 +6,7 @@
 .container {
   @include container($max-width: 1200px, $padding: 15px, $margin: 0 auto);
   @include flexbox(column, center, center);
-  height: 74vh;
+  height: 80vh;
 }
 
 .fieldset-users {
@@ -42,7 +42,10 @@
   width: 100%;
 }
 
-input[type='checkbox'] {
+.check-default__billing, 
+.input-checkbox__address, 
+.check-default__shipping,
+.check-default__addresses {
   width: 60px;
   appearance: none;
   outline: none;
@@ -54,11 +57,17 @@ input[type='checkbox'] {
   cursor: pointer;
 }
 
-input[type='checkbox']:checked {
+.check-default__billing:checked,
+.input-checkbox__address:checked,
+.check-default__shipping:checked,
+.check-default__addresses:checked {
   background: $warning-color;
 }
 
-input[type='checkbox']:before {
+.check-default__billing::before,
+.input-checkbox__address::before,
+.check-default__shipping::before,
+.check-default__addresses::before {
   content: '';
   position: absolute;
   width: 25px;
@@ -72,7 +81,10 @@ input[type='checkbox']:before {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-input:checked[type='checkbox']:before {
+.check-default__billing:checked::before,
+.input-checkbox__address:checked::before,
+.check-default__shipping:checked::before,
+.check-default__addresses:checked::before {
   left: 35px;
 }
 

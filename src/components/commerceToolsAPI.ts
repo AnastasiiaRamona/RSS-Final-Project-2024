@@ -1,11 +1,12 @@
 import {
   Client,
   ClientBuilder,
+  ExistingTokenMiddlewareOptions,
   PasswordAuthMiddlewareOptions,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
-import { BaseAddress, CustomerDraft, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { BaseAddress, CustomerDraft, CustomerUpdate, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import {
   clientId,
@@ -21,6 +22,8 @@ export default class CommerceToolsAPI {
   private apiRoot: ByProjectKeyRequestBuilder | null = null;
 
   private ctpClient: Client | null = null;
+
+  private token: string | null = null;
 
   private authMiddlewareOptions: AuthMiddlewareOptions = {
     host: authHostUrl,
@@ -51,7 +54,7 @@ export default class CommerceToolsAPI {
     };
   }
 
-  httpMiddlewareOptions: HttpMiddlewareOptions = {
+  private httpMiddlewareOptions: HttpMiddlewareOptions = {
     host: apiHostUrl,
     fetch,
   };
@@ -74,6 +77,30 @@ export default class CommerceToolsAPI {
       .build();
   }
 
+  private createExistingTokenClient() {
+    this.token = localStorage.getItem('userToken');
+    const authorization: string = `Bearer ${this.token}`;
+
+    const options: ExistingTokenMiddlewareOptions = {
+      force: true,
+    };
+
+    return new ClientBuilder()
+      .withExistingTokenFlow(authorization, options)
+      .withHttpMiddleware(this.httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build();
+  }
+
+  private createClient() {
+    if (!localStorage.getItem('userToken')) {
+      this.ctpClient = this.createCredentialsClient();
+    } else {
+      this.ctpClient = this.createExistingTokenClient();
+    }
+    this.apiRoot = createApiBuilderFromCtpClient(this.ctpClient).withProjectKey({ projectKey });
+  }
+
   async login(email: string, password: string) {
     const options = this.createPasswordFlowOptions(email, password);
     this.ctpClient = this.createPasswordClient(options);
@@ -90,6 +117,7 @@ export default class CommerceToolsAPI {
           },
         })
         .execute();
+      localStorage.setItem('userPetShopId', response.body.customer.id);
     }
 
     localStorage.setItem('userToken', userTokenCache.get().token);
@@ -164,5 +192,327 @@ export default class CommerceToolsAPI {
         .execute();
     }
     return response;
+  }
+
+  async getProducts() {
+    this.createClient();
+
+    let result;
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .products()
+        .get({
+          queryArgs: {
+            limit: 100,
+          },
+        })
+        .execute()
+        .then((response) => {
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.masterData.current.name['en-US'],
+              description: product.masterData.current.description?.['en-US'],
+              imageUrl: product.masterData.current.masterVariant.images?.[0]?.url,
+              price: product.masterData.current.masterVariant.prices?.[0]?.value.centAmount,
+              discountedPrice: product.masterData.current.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
+
+  async getAttributes() {
+    this.createClient();
+
+    let result;
+    const priceArr: number[] = [];
+    const attributesObject: { [key: string]: (string | number)[] } = {};
+    if (this.apiRoot) {
+      try {
+        const response = await this.apiRoot
+          .productProjections()
+          .search()
+          .get({
+            queryArgs: {
+              limit: 100,
+            },
+          })
+          .execute();
+        const productTypes = response.body.results;
+        productTypes.forEach((productType) => {
+          const price = productType.masterVariant.prices?.[0].value.centAmount;
+          if (price) {
+            priceArr.push(price);
+          }
+          productType.masterVariant.attributes?.forEach((attribute) => {
+            const attributeName = attribute.name;
+            const attributeValue =
+              Array.isArray(attribute.value) && typeof attribute.value[0] === 'object'
+                ? attribute.value[0]['en-US']
+                : attribute.value[0];
+
+            if (attributesObject[attributeName]) {
+              attributesObject[attributeName].push(attributeValue);
+            } else {
+              attributesObject[attributeName] = [attributeValue];
+            }
+          });
+          const minPrice = Math.min(...priceArr);
+          const maxPrice = Math.max(...priceArr);
+          attributesObject.minPrice = [minPrice];
+          attributesObject.maxPrice = [maxPrice];
+        });
+      } catch (error) {
+        result = error;
+      }
+    }
+    result = attributesObject;
+    return result;
+  }
+
+  async filter(checkboxChecked: { [key: string]: string[] }, sortingApi: string, minPrice: string, maxPrice: string) {
+    this.createClient();
+
+    const localeArr = ['color-of-toy', 'quantity'];
+    let result;
+    const filters: string[] = [];
+    Object.keys(checkboxChecked).forEach((key) => {
+      const attributeValues = checkboxChecked[key];
+      const attributeName = key;
+      let locale = '';
+      if (localeArr.includes(key)) {
+        locale = '.en-US';
+      }
+      const filterValues = attributeValues.map((value) => `"${value}"`).join(', ');
+      filters.push(`variants.attributes.${attributeName}${locale}:${filterValues}`);
+    });
+
+    if (minPrice !== undefined && maxPrice !== undefined) {
+      filters.push(`variants.price.centAmount:range(${minPrice} to ${maxPrice})`);
+    }
+    if (this.apiRoot) {
+      const queryArgs: { [key: string]: string | string[] | number | undefined } = {
+        'filter.query': filters,
+        limit: 40,
+      };
+      if (sortingApi) {
+        queryArgs.sort = sortingApi;
+      }
+      result = await this.apiRoot
+        .productProjections()
+        .search()
+        .get({
+          queryArgs,
+        })
+        .execute()
+        .then((response) => {
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.name['en-US'],
+              description: product.description?.['en-US'],
+              imageUrl: product.masterVariant.images?.[0]?.url,
+              price: product.masterVariant.prices?.[0]?.value.centAmount,
+              discountedPrice: product.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
+
+  async search(text: string) {
+    this.createClient();
+
+    let result;
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .productProjections()
+        .search()
+        .get({
+          queryArgs: {
+            'text.en-US': `*${text}*`,
+            fuzzy: true,
+            limit: 40,
+          },
+        })
+        .execute()
+        .then((response) => {
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.name['en-US'],
+              description: product.description?.['en-US'],
+              imageUrl: product.masterVariant.images?.[0]?.url,
+              price: product.masterVariant.prices?.[0]?.value.centAmount,
+              discountedPrice: product.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
+
+  async getCategory() {
+    this.createClient();
+    let result;
+    if (this.apiRoot) {
+      await this.apiRoot
+        .categories()
+        .get()
+        .execute()
+        .then((response) => {
+          result = response.body.results;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
+
+  async getProductByID(id: string) {
+    this.createClient();
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.products().withId({ ID: id }).get().execute();
+    }
+    return response;
+  }
+
+  async getCustomerByID(id: string) {
+    this.createClient();
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot.customers().withId({ ID: id }).get().execute();
+    }
+    return response;
+  }
+
+  async updateCustomer(id: string, updateData: CustomerUpdate) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      response = await this.apiRoot
+        .customers()
+        .withId({ ID: id })
+        .post({
+          body: updateData,
+        })
+        .execute();
+    }
+    return response;
+  }
+
+  async changePassword(version: number, currentPassword: string, newPassword: string, email: string) {
+    this.createClient();
+
+    let response;
+    if (this.apiRoot) {
+      try {
+        response = await this.apiRoot
+          .me()
+          .password()
+          .post({
+            body: {
+              currentPassword,
+              newPassword,
+              version,
+            },
+          })
+          .execute();
+      } catch (error) {
+        throw new Error('Password change failed');
+      }
+    }
+
+    localStorage.clear();
+
+    this.ctpClient = null;
+    this.apiRoot = null;
+    userTokenCache.set({
+      token: '',
+      expirationTime: 0,
+    });
+    await this.login(email, newPassword);
+
+    return response;
+  }
+
+  async getProductsOfCategory(categoryId: string) {
+    this.createClient();
+    let result;
+    if (this.apiRoot) {
+      result = await this.apiRoot
+        .productProjections()
+        .search()
+        .get({
+          queryArgs: {
+            filter: [`categories.id:"${categoryId}"`],
+            limit: 40,
+          },
+        })
+        .execute()
+        .then((response) => {
+          const products = response.body.results.map((product) => {
+            const productData = {
+              id: product.id,
+              name: product.name['en-US'],
+              description: product.description?.['en-US'],
+              imageUrl: product.masterVariant.images?.[0]?.url,
+              price: product.masterVariant.prices?.[0]?.value.centAmount,
+              discountedPrice: product.masterVariant.prices?.[0]?.discounted?.value.centAmount,
+            };
+            return productData;
+          });
+          return products;
+        })
+        .catch((error) => {
+          result = error;
+        });
+    }
+    return result;
+  }
+
+  async getBreadcrumbsOfCategory(categoryId: string) {
+    this.createClient();
+    let result;
+    try {
+      if (this.apiRoot) {
+        const categoryResponse = await this.apiRoot.categories().withId({ ID: categoryId }).get().execute();
+        const category = categoryResponse.body;
+        let parentCategory = null;
+        if (category.parent) {
+          const parentCategoryResponse = await this.apiRoot
+            .categories()
+            .withId({ ID: category.parent.id })
+            .get()
+            .execute();
+          parentCategory = parentCategoryResponse.body;
+        }
+        result = { category, parentCategory };
+      }
+    } catch (error) {
+      result = error;
+    }
+    return result;
   }
 }

@@ -1,4 +1,3 @@
-
 button {
   @include font('Helvetica', medium, 600, 1.5, $primary-color);
   padding: 10px 20px;
@@ -13,20 +12,23 @@ button {
   border: none;
 }
 
-button:hover,
+button:not(:disabled):hover,
 .clicked {
   color: $white;
   background: $btn-bca-color;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.622);
-}
-
-@media (max-width: 1160px) {
-  button {
-    font-size: small;
+  
+  
+  img {
+    filter: invert(1);
   }
 }
 
-@media (max-width: 800px) {
+button:disabled {
+  cursor: default;
+}
+
+@media (max-width: 1160px) {
   button {
     font-size: small;
   }
@@ -36,4 +38,10 @@ button:hover,
   button {
     padding: 8px 13px;
   }
+}
+
+.inactive {
+  color: $white;
+  background: gray;
+  cursor: no-drop;
 }
