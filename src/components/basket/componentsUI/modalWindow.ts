@@ -42,7 +42,7 @@ export default class ModalWindow {
 
   addEventListeners() {
     console.log(
-      'Promo codes examples: 15%-1118907 - скидка 15% на всё, 50%-300001 - скидка 5% на всё, 2%-448921 - скидка 20% на всё, 5%-320999 - скидка 5% на Bee Costume'
+      'Promo codes examples: 1118907 - скидка 15% на всё, 300001 - скидка 5% на всё, 448921 - скидка 20% на всё, 320999 - скидка 5% на Bee Costume'
     );
 
     const modalWindowWrapper = document.querySelector('.modal-window-wrapper');

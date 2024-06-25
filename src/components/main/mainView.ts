@@ -15,7 +15,7 @@ export default class Main {
       {
         src: promoCode2Src,
         title: 'Promo Code 2',
-        description: `Hot June Sale: 5% Off with Promo Code 2! Don't miss out on this scorching deal available only from June 15, 2024, to June 23, 2024.`,
+        description: `Hot June Sale: 5% Off with Promo Code 2! Don't miss out on this scorching deal available only from June 15, 2024, to July 30, 2024.`,
       },
       {
         src: promoCode3Src,
